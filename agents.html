@@ -25,7 +25,7 @@ body{
   font-size:16px; line-height:1.5; overflow:hidden;
 }
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-input,textarea,select{font-family:inherit;font-size:15px;color:var(--txt-hi)}
+input,textarea,select{font-family:inherit;font-size:16px;color:var(--txt-hi)}
 ::placeholder{color:var(--txt-low)}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 ::-webkit-scrollbar{width:9px;height:9px}
@@ -69,7 +69,8 @@ input,textarea,select{font-family:inherit;font-size:15px;color:var(--txt-hi)}
 .field label{font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--txt-mid);text-transform:uppercase}
 .field input,.field textarea,.field select{
   background:#0d0620;border:1px solid var(--stroke-soft);border-radius:var(--r-sm);
-  padding:13px 15px;transition:border-color .18s, box-shadow .18s;min-height:48px}
+  padding:13px 15px;transition:border-color .18s, box-shadow .18s;min-height:48px;
+  width:100%;display:block;text-align:left}
 .field textarea{resize:vertical;min-height:96px;line-height:1.55}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--brand);box-shadow:0 0 0 3px #a855f72e;outline:none}
 .field .hint{font-size:12.5px;color:var(--txt-low)}
@@ -149,10 +150,10 @@ input,textarea,select{font-family:inherit;font-size:15px;color:var(--txt-hi)}
   border:2px solid var(--agent-accent,#a855f7);box-shadow:0 0 40px var(--agent-glow,#a855f74d)}
 .chat-empty h3{color:var(--txt-hi);font-size:20px;margin-bottom:6px}
 .compose{padding:16px 26px 22px;position:relative;z-index:1}
-.compose-inner{display:flex;gap:12px;align-items:flex-end;background:#0d0620;border:1px solid var(--stroke-soft);
-  border-radius:var(--r-md);padding:10px 10px 10px 18px;transition:border-color .18s, box-shadow .18s}
+.compose-inner{display:flex;gap:12px;align-items:center;background:#0d0620;border:1px solid var(--stroke-soft);
+  border-radius:var(--r-md);padding:8px 8px 8px 18px;transition:border-color .18s, box-shadow .18s}
 .compose-inner:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px #a855f72e}
-.compose textarea{flex:1;background:none;border:none;resize:none;max-height:130px;min-height:26px;line-height:1.5;padding:6px 0}
+.compose textarea{flex:1;background:none;border:none;resize:none;max-height:130px;height:24px;line-height:24px;padding:0;display:block}
 .compose textarea:focus{outline:none}
 .send-btn{width:46px;height:46px;border-radius:12px;background:linear-gradient(120deg,var(--brand),var(--brand-2));
   color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--glow);transition:transform .15s}
@@ -230,16 +231,35 @@ input,textarea,select{font-family:inherit;font-size:15px;color:var(--txt-hi)}
 
 /* responsive */
 #panelToggle{display:none}
+.panel-close{display:none;position:sticky;top:0;z-index:5;margin:10px 14px 0 auto;width:40px;height:40px;flex-shrink:0;
+  align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--stroke);background:#1a0f33;color:var(--txt-hi);font-size:17px}
+#overlay{display:none;position:fixed;inset:0;z-index:25;background:#05010bb0;backdrop-filter:blur(2px)}
+#overlay.show{display:block}
 @media (max-width:1180px){
-  .panel{position:fixed;right:0;top:0;bottom:0;z-index:30;background:#0e0620f5;transform:translateX(100%);transition:transform .25s;width:min(380px,92vw);border-left:1px solid var(--stroke)}
+  .panel{position:fixed;right:0;top:0;bottom:0;z-index:30;background:#0e0620fa;transform:translateX(100%);transition:transform .25s;width:min(380px,94vw);border-left:1px solid var(--stroke)}
   .panel.open{transform:none}
   #panelToggle{display:inline-flex}
+  .panel-close{display:inline-flex}
 }
 @media (max-width:860px){
-  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:30;background:#0e0620f5;transform:translateX(-100%);transition:transform .25s}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:30;background:#0e0620fa;transform:translateX(-100%);transition:transform .25s}
   .sidebar.open{transform:none}
   .sidebar.collapsed{width:288px}
   .msg{max-width:88%}
+  .topbar{padding:10px 12px;gap:8px}
+  .user-chip span:last-child{display:none}
+  .user-chip{padding:5px;border:none}
+  .chat{padding:16px 14px}
+  .compose{padding:10px 12px 14px}
+  .play-head{padding:12px 14px}
+  .msg{font-size:14.5px}
+}
+@media (max-width:520px){
+  .login-card{padding:34px 22px 28px}
+  .panel{width:100vw;border-left:none}
+  .profile{padding:14px 14px 0}
+  .panel-body{padding:14px 14px 20px}
+  .tabs{padding:12px 14px 0}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -312,6 +332,7 @@ input,textarea,select{font-family:inherit;font-size:15px;color:var(--txt-hi)}
 
       <!-- right panel -->
       <aside class="panel" id="panel" aria-label="Agent detail">
+        <button class="panel-close" id="panelClose" aria-label="Close agent panel">✕</button>
         <div class="profile">
           <div class="profile-card" id="profileCard">
             <img class="cutout" id="pcCutout" src="" alt="">
@@ -336,6 +357,7 @@ input,textarea,select{font-family:inherit;font-size:15px;color:var(--txt-hi)}
       </aside>
     </div>
   </div>
+  <div id="overlay"></div>
 </section>
 
 <div id="toast" role="status"></div>
@@ -414,16 +436,32 @@ function renderSidebar(){
     b.innerHTML = `<img class="agent-ava" src="${IMG[a.id+"_avatar"]}" alt="">
       <span class="agent-meta"><span class="an">${a.name}</span><span class="ar">${a.role}</span></span>
       <span class="agent-count${n?" hot":""}">${n}</span>`;
-    b.addEventListener("click", () => { selectAgent(a.id); if(window.innerWidth<=860) $("#sidebar").classList.remove("open"); });
+    b.addEventListener("click", () => { selectAgent(a.id); if(window.innerWidth<=860){ $("#sidebar").classList.remove("open"); syncOverlay(); } });
     list.appendChild(b);
   });
 }
+function syncOverlay(){
+  const open = $("#sidebar").classList.contains("open") || $("#panel").classList.contains("open");
+  $("#overlay").classList.toggle("show", open);
+}
+function closeDrawers(){
+  $("#sidebar").classList.remove("open");
+  $("#panel").classList.remove("open");
+  syncOverlay();
+}
 $("#sideToggle").addEventListener("click", () => {
   const sb = $("#sidebar");
-  if(window.innerWidth<=860) sb.classList.toggle("open");
+  if(window.innerWidth<=860){ $("#panel").classList.remove("open"); sb.classList.toggle("open"); }
   else sb.classList.toggle("collapsed");
+  syncOverlay();
 });
-$("#panelToggle").addEventListener("click", () => $("#panel").classList.toggle("open"));
+$("#panelToggle").addEventListener("click", () => {
+  $("#sidebar").classList.remove("open");
+  $("#panel").classList.toggle("open");
+  syncOverlay();
+});
+$("#panelClose").addEventListener("click", closeDrawers);
+$("#overlay").addEventListener("click", closeDrawers);
 
 function selectAgent(id){
   currentId = id; editIndex = -1;
@@ -476,7 +514,7 @@ function renderChat(){
           $("#tfPrompt").value = m.userText || "";
           $("#tfAnswer").value = "";
           $("#tfPrompt").focus();
-          if(window.innerWidth<=1180) $("#panel").classList.add("open");
+          if(window.innerWidth<=1180){ $("#panel").classList.add("open"); syncOverlay(); }
           toast("Prompt copied into the Teach form — write the ideal answer.");
         });
         d.appendChild(btn);
