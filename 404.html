@@ -19,6 +19,10 @@
          tile host connections are warm before the map component mounts. -->
     <link rel="preload" as="image" href="/brand/phaza-logo.svg" fetchpriority="high" />
     <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin />
+    <!-- Start the basemap style + overlay-data downloads in parallel with the
+         JS bundles instead of serially after React boots. -->
+    <link rel="preload" as="fetch" href="https://tiles.openfreemap.org/styles/dark" crossorigin />
+    <link rel="preload" as="fetch" href="/data/agent-overlays.json" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
