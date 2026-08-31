@@ -20,6 +20,30 @@
     <script type="module" crossorigin src="/assets/index-DtPEwAVO.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/cjs-helpers-CqkleIqs.js">
     <link rel="stylesheet" crossorigin href="/assets/index-DpOubK7I.css">
+    <style>
+      /* Phaza mark inside the hero orb: fades in once the orb's genesis
+         reveal has finished (intro: brand out ~3.9s, orb 4.8–9.8s), so it
+         never fights the opening logo lockup. Pseudo-element on the section
+         keeps it outside React's tree and scrolls away with the hero. */
+      #opening::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: clamp(44px, 9vmin, 76px);
+        height: clamp(44px, 9vmin, 76px);
+        transform: translate(-50%, -50%);
+        background: url('/brand/phaza-icon.svg') center / contain no-repeat;
+        opacity: 0;
+        filter: drop-shadow(0 0 18px rgba(120, 180, 255, 0.35));
+        animation: phaza-orb-icon-in 2.2s ease-out 6.8s forwards;
+        pointer-events: none;
+      }
+      @keyframes phaza-orb-icon-in { to { opacity: 0.92; } }
+      @media (prefers-reduced-motion: reduce) {
+        #opening::after { animation: none; opacity: 0.92; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
