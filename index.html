@@ -35,13 +35,16 @@
         transform: translate(-50%, -50%);
         background: url('/brand/phaza-icon.svg') center / contain no-repeat;
         opacity: 0;
+        /* Translucent: the mark sits INSIDE the orb, so the particles must
+           read through it rather than being masked by a solid glyph. */
+        mix-blend-mode: screen;
         filter: drop-shadow(0 0 18px rgba(120, 180, 255, 0.35));
         animation: phaza-orb-icon-in 2.2s ease-out 6.8s forwards;
         pointer-events: none;
       }
-      @keyframes phaza-orb-icon-in { to { opacity: 0.92; } }
+      @keyframes phaza-orb-icon-in { to { opacity: 0.4; } }
       @media (prefers-reduced-motion: reduce) {
-        #opening::after { animation: none; opacity: 0.92; }
+        #opening::after { animation: none; opacity: 0.4; }
       }
     </style>
   </head>
