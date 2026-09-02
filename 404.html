@@ -15,11 +15,9 @@
     <meta name="twitter:description" content="Phaza builds the intelligence layer for governments — live models of cities, infrastructure, and resources across the MENA region." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script type="module" crossorigin src="/assets/index-DtPEwAVO.js"></script>
+    <script type="module" crossorigin src="/assets/index-ce5f0c84.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/cjs-helpers-CqkleIqs.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DpOubK7I.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-391a40ef.css">
     <style>
       /* Phaza mark inside the hero orb: fades in once the orb's genesis
          reveal has finished (intro: brand out ~3.9s, orb 4.8–9.8s), so it
@@ -35,13 +33,16 @@
         transform: translate(-50%, -50%);
         background: url('/brand/phaza-icon.svg') center / contain no-repeat;
         opacity: 0;
+        /* Translucent: the mark sits INSIDE the orb, so the particles must
+           read through it rather than being masked by a solid glyph. */
+        mix-blend-mode: screen;
         filter: drop-shadow(0 0 18px rgba(120, 180, 255, 0.35));
-        animation: phaza-orb-icon-in 2.2s ease-out 6.8s forwards;
+        animation: phaza-orb-icon-in 1.6s ease-out 3.6s forwards;
         pointer-events: none;
       }
-      @keyframes phaza-orb-icon-in { to { opacity: 0.92; } }
+      @keyframes phaza-orb-icon-in { to { opacity: 0.4; } }
       @media (prefers-reduced-motion: reduce) {
-        #opening::after { animation: none; opacity: 0.92; }
+        #opening::after { animation: none; opacity: 0.4; }
       }
     </style>
   </head>
