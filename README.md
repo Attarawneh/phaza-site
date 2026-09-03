@@ -53,3 +53,23 @@ Never delete a previously published entry filename. Old names stay as small
 self-resolving shims: they read the current entry out of a no-store fetch of
 `index.html`, so a browser holding cached HTML still lands on the current
 build. `sw.js` is a tombstone that uninstalls the pre-rebuild service worker.
+
+## Releasing
+
+Run `python3 release.py`, then commit and push. It moves the entry bundle and
+map chunk to a new deploy tag together, regenerates the legacy shims, and
+recomputes Subresource Integrity for the entry and stylesheet. Do not rename
+those files by hand -- that is what caused the blank-page incidents.
+
+## Hardening in place
+
+- **CSP** (meta, in `index.html`): `default-src 'self'`, no inline scripts, no
+  `eval`, `object-src 'none'`. Allowed egress is only the map tile host and
+  ArcGIS imagery. An injected inline script is refused by the browser.
+- **Subresource Integrity** on the entry bundle and stylesheet: if anything in
+  the delivery path alters them, the browser refuses to execute.
+- **Referrer-Policy** `strict-origin-when-cross-origin`.
+- No training/pipeline status is present in the DOM or the bundle.
+
+Two things CSP cannot set from a meta tag and that need Cloudflare rules:
+`frame-ancestors` (clickjacking) and `X-Content-Type-Options: nosniff`.
