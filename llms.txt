@@ -1,0 +1,37 @@
+# Phaza
+
+> Phaza builds sovereign AI for governments: Salam, an Arabic-first large
+> language model trained from scratch with no open-source base, delivered
+> with national knowledge, air-gapped or in-country infrastructure, an
+> application layer and ready-to-deploy AI agents — one stack, owned
+> outright by the buying institution. Built across the UAE and Jordan.
+
+## The model
+
+Salam (peace in Arabic) is a sparse mixture-of-experts LLM, Arabic and
+English as equals, trained on 125B to 1T rights-cleared tokens:
+
+- Salam Nano (v1) — 48 experts · 7.8B parameters · 125B tokens
+- Salam Core (v2) — 96 experts · 14.4B parameters · 250B tokens
+- Salam Pro (v4) — 192 experts · 27.6B parameters · 500B tokens
+- Salam Max (v8) — 384 experts · 54B parameters · 1T tokens
+
+The weights transfer with the deal. Air-gapped or sovereign cloud, no
+external inference, nothing calls home.
+
+## The stack
+
+1. Salam — the LLM (the mind)
+2. Knowledge — national data, law, heritage, science; partner-nation
+   knowledge packages, licensed never scraped
+3. Infrastructure — air-gapped on national soil or in-country cloud
+4. Application layer — the surfaces ministries, businesses and citizens use
+5. Agents — Atlas (planning), Flow (mobility), Grid (energy), Terra
+   (environment), Civic (services), Prosper (economy), Sentinel (safety),
+   Phaza One (the orchestrator)
+
+## Contact
+
+- Website: https://phaza.io
+- Email: support@phaza.io
+- Offices: Abu Dhabi, United Arab Emirates · Amman, Jordan
