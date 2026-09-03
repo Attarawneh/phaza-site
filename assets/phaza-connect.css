@@ -1,0 +1,40 @@
+/* Phaza enquiry modal — matches the site: dark glass, cyan accent, Inter. */
+.pz-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:rgba(2,5,10,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:24px;
+  animation:pz-in .18s ease-out}
+@keyframes pz-in{from{opacity:0}to{opacity:1}}
+.pz-panel{position:relative;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;
+  background:linear-gradient(180deg,rgba(12,20,34,.96),rgba(6,11,20,.96));
+  border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:32px 30px 26px;
+  box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.pz-x{position:absolute;top:12px;right:16px;background:none;border:0;color:rgba(255,255,255,.45);
+  font-size:26px;line-height:1;cursor:pointer;padding:4px 8px}
+.pz-x:hover{color:#fff}
+.pz-kicker{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.45);margin:0 0 10px}
+.pz-title{font-size:22px;font-weight:300;color:#fff;margin:0 0 8px;line-height:1.25}
+.pz-sub{font-size:13px;font-weight:300;color:rgba(255,255,255,.6);margin:0 0 22px;line-height:1.55}
+.pz-row{margin-bottom:14px}
+.pz-label{display:block;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px}
+.pz-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:11px 12px;color:#fff;font-size:14px;
+  font-family:inherit;transition:border-color .2s}
+.pz-input:focus{outline:none;border-color:rgba(47,180,236,.65);background:rgba(255,255,255,.06)}
+.pz-area{resize:vertical;min-height:84px}
+select.pz-input{appearance:none;background-image:linear-gradient(45deg,transparent 50%,rgba(255,255,255,.5) 50%),
+  linear-gradient(135deg,rgba(255,255,255,.5) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat}
+select.pz-input option{background:#0b1420;color:#fff}
+.pz-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.pz-err{color:#ff9b9b;font-size:12.5px;margin:0 0 12px}
+.pz-send{width:100%;padding:13px;border:0;border-radius:999px;background:#fff;color:#06101c;cursor:pointer;
+  font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  transition:background .2s}
+.pz-send:hover:not(:disabled){background:#2FB4EC;color:#03080f}
+.pz-send:disabled{opacity:.6;cursor:default}
+.pz-note{font-size:11px;color:rgba(255,255,255,.38);text-align:center;margin:12px 0 0;line-height:1.5}
+.pz-done{text-align:center;padding:14px 0 4px}
+@media (max-width:520px){.pz-panel{padding:26px 20px 20px}.pz-title{font-size:19px}}
+@media (prefers-reduced-motion:reduce){.pz-overlay{animation:none}}

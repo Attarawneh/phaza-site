@@ -18,6 +18,16 @@ class H(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Cache-Control', 'no-store')
         super().end_headers()
+    def do_POST(self):
+        if self.path.startswith('/__mock-contact'):
+            n = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(n)
+            print('MOCK CONTACT RECEIVED:', body.decode()[:400], flush=True)
+            self.send_response(200); self.send_header('Content-Type', 'application/json')
+            self.end_headers(); self.wfile.write(b'{"ok":true}')
+            return
+        self.send_response(404); self.end_headers()
+
     def send_head(self):
         path = self.translate_path(self.path)
         if not os.path.exists(path) and '.' not in os.path.basename(path):
