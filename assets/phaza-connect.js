@@ -1,21 +1,36 @@
 /**
  * Phaza Connect — the enquiry form.
  *
- * Replaces the two mailto links with one in-page form. The visitor fills it
- * in and submits knowingly; what stays out of the page is the plumbing --
- * no mail client handoff, no page reload, and no recipient addresses in the
- * client source. Routing to the recipients happens server-side at the
- * endpoint, so the addresses are never exposed to visitors or scrapers.
+ * The visitor fills the form and it is delivered straight to the team from
+ * the website. No mail-client handoff, no page reload, and the recipient
+ * addresses are never in the page: routing happens at the endpoint, so
+ * visitors and scrapers cannot read who receives it.
  *
- * Endpoint is read from <meta name="phaza-contact-endpoint">.
+ * Endpoint comes from <meta name="phaza-contact-endpoint">.
  */
-const ENDPOINT = document.querySelector('meta[name="phaza-contact-endpoint"]')?.content || '';
+const ENDPOINT = document.querySelector('meta[name="phaza-contact-endpoint"]')?.content?.trim() || '';
+
+const RE_EMAIL = /^[^\s@]+@[^\s@,]+\.[a-z]{2,}$/i;
+const RE_URL = /https?:\/\/|www\./i;
 
 const FIELDS = [
-  { n: 'name', l: 'Full name', t: 'text', required: true, ac: 'name' },
-  { n: 'organisation', l: 'Organisation or ministry', t: 'text', required: true, ac: 'organization' },
-  { n: 'country', l: 'Country', t: 'text', required: true, ac: 'country-name' },
-  { n: 'email', l: 'Work email', t: 'email', required: true, ac: 'email' },
+  { n: 'name', l: 'Full name', t: 'text', ac: 'name', max: 80,
+    check: (v) => !v ? 'Please enter your full name.'
+      : v.length < 2 ? 'That name looks too short.'
+      : RE_URL.test(v) ? 'Please enter a name, not a link.' : '' },
+  { n: 'organisation', l: 'Organisation or ministry', t: 'text', ac: 'organization', max: 120,
+    check: (v) => !v ? 'Please tell us which organisation you represent.'
+      : v.length < 2 ? 'That looks too short.' : '' },
+  { n: 'country', l: 'Country', t: 'text', ac: 'country-name', max: 60,
+    check: (v) => !v ? 'Please enter your country.'
+      : v.length < 2 ? 'Please enter a full country name.'
+      : /\d/.test(v) ? 'Country should not contain numbers.' : '' },
+  { n: 'email', l: 'Work email', t: 'email', ac: 'email', max: 120,
+    check: (v) => !v ? 'Please enter an email address so we can reply.'
+      : !RE_EMAIL.test(v) ? 'That email address is not valid.'
+      : v.length > 120 ? 'That address is too long.' : '' },
+  { n: 'message', l: 'What would you like to cover?', t: 'area', max: 2000, optional: true,
+    check: (v) => v.length > 2000 ? 'Please keep this under 2000 characters.' : '' },
 ];
 
 let lastFocus = null;
@@ -33,6 +48,17 @@ function build() {
   dlg.setAttribute('aria-modal', 'true');
   dlg.setAttribute('aria-labelledby', 'pz-title');
 
+  const field = (f) => `
+    <div class="pz-row">
+      <label class="pz-label" for="pz-${f.n}">${f.l}${f.optional ? ' <span class="pz-opt">(optional)</span>' : ''}</label>
+      ${f.t === 'area'
+        ? `<textarea class="pz-input pz-area" id="pz-${f.n}" name="${f.n}" rows="4" maxlength="${f.max}"
+             aria-describedby="pz-e-${f.n}"></textarea>`
+        : `<input class="pz-input" id="pz-${f.n}" name="${f.n}" type="${f.t}" autocomplete="${f.ac}"
+             maxlength="${f.max}" aria-describedby="pz-e-${f.n}" />`}
+      <p class="pz-fe" id="pz-e-${f.n}" hidden></p>
+    </div>`;
+
   dlg.innerHTML = `
     <div class="pz-panel">
       <button class="pz-x" type="button" aria-label="Close">&times;</button>
@@ -43,25 +69,14 @@ function build() {
         <div class="pz-row">
           <label class="pz-label" for="pz-purpose">Reason</label>
           <select class="pz-input" id="pz-purpose" name="purpose">
-            <option>Technical inquiry</option>
-            <option>Demo request</option>
-            <option>Both</option>
+            <option>Technical inquiry</option><option>Demo request</option><option>Both</option>
           </select>
         </div>
-        ${FIELDS.map((f) => `
-        <div class="pz-row">
-          <label class="pz-label" for="pz-${f.n}">${f.l}</label>
-          <input class="pz-input" id="pz-${f.n}" name="${f.n}" type="${f.t}"
-                 autocomplete="${f.ac}" ${f.required ? 'required' : ''} />
-        </div>`).join('')}
-        <div class="pz-row">
-          <label class="pz-label" for="pz-message">What would you like to cover?</label>
-          <textarea class="pz-input pz-area" id="pz-message" name="message" rows="4"></textarea>
-        </div>
+        ${FIELDS.map(field).join('')}
         <input type="text" name="company_website" class="pz-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <p class="pz-err" hidden></p>
+        <p class="pz-err" role="alert" hidden></p>
         <button class="pz-send" type="submit">Send</button>
-        <p class="pz-note">Sent to the Phaza team. We reply from a monitored address.</p>
+        <p class="pz-note">Sent straight to the Phaza team. We reply to the address you give.</p>
       </form>
       <div class="pz-done" hidden>
         <h3 class="pz-title">Thank you.</h3>
@@ -75,6 +90,25 @@ function build() {
   const err = dlg.querySelector('.pz-err');
   const send = dlg.querySelector('.pz-send');
 
+  const showFieldError = (f, msg) => {
+    const input = dlg.querySelector('#pz-' + f.n);
+    const slot = dlg.querySelector('#pz-e-' + f.n);
+    slot.textContent = msg; slot.hidden = !msg;
+    input.classList.toggle('pz-bad', !!msg);
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    return !msg;
+  };
+
+  const validate = (f) => showFieldError(f, f.check(String(dlg.querySelector('#pz-' + f.n).value || '').trim()));
+
+  FIELDS.forEach((f) => {
+    const input = dlg.querySelector('#pz-' + f.n);
+    input.addEventListener('blur', () => validate(f));
+    input.addEventListener('input', () => {                    // clear as they fix it
+      if (input.classList.contains('pz-bad')) validate(f);
+    });
+  });
+
   const shut = () => close(dlg);
   dlg.querySelector('.pz-x').addEventListener('click', shut);
   dlg.querySelector('.pz-close2').addEventListener('click', shut);
@@ -82,7 +116,8 @@ function build() {
   dlg.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') shut();
     if (e.key === 'Tab') {
-      const f = [...panel.querySelectorAll('button,input,select,textarea')].filter((x) => !x.disabled && x.offsetParent !== null);
+      const f = [...panel.querySelectorAll('button,input,select,textarea')]
+        .filter((x) => !x.disabled && x.offsetParent !== null);
       if (!f.length) return;
       const first = f[0], last = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
@@ -93,47 +128,52 @@ function build() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     err.hidden = true;
-    const data = Object.fromEntries(new FormData(form).entries());
-    if (data.company_website) return;                    // bot trap
-    const missing = FIELDS.filter((f) => f.required && !String(data[f.n] || '').trim());
-    if (missing.length) {
-      err.textContent = 'Please complete: ' + missing.map((f) => f.l.toLowerCase()).join(', ') + '.';
-      err.hidden = false; return;
-    }
-    if (!/^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(data.email)) {
-      err.textContent = 'That email address does not look right.'; err.hidden = false; return;
-    }
-    // Until the relay endpoint is configured, hand off to the visitor's mail
-    // client addressed to the public role address, with everything filled in.
-    // Never leaves the visitor staring at a form that cannot deliver.
-    if (!ENDPOINT) {
-      const body = ['Reason: ' + data.purpose, 'Name: ' + data.name,
-        'Organisation: ' + data.organisation, 'Country: ' + data.country,
-        'Email: ' + data.email, '', data.message || ''].join('\n');
-      window.location.href = 'mailto:support@phaza.io'
-        + '?subject=' + encodeURIComponent('Phaza Connect \u2014 ' + data.purpose + ' \u2014 ' + data.organisation)
-        + '&body=' + encodeURIComponent(body);
-      form.hidden = true;
-      const done = dlg.querySelector('.pz-done');
-      done.querySelector('.pz-sub').textContent =
-        'Your email app is opening with the message ready \u2014 press send there and it reaches the team.';
-      done.hidden = false;
-      dlg.querySelector('.pz-close2').focus();
+    if (send.disabled) return;                                  // no double submit
+
+    const results = FIELDS.map(validate);
+    if (results.includes(false)) {
+      const firstBad = dlg.querySelector('.pz-bad');
+      if (firstBad) firstBad.focus();
+      err.textContent = 'Please correct the highlighted fields.';
+      err.hidden = false;
       return;
     }
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (data.company_website) return;                           // bot trap
+    Object.keys(data).forEach((k) => { data[k] = String(data[k]).trim(); });
+
+    if (!ENDPOINT) {
+      err.textContent = 'Sending is being connected right now. Please email support@phaza.io in the meantime.';
+      err.hidden = false;
+      return;
+    }
+
     send.disabled = true; send.textContent = 'Sending…';
     try {
+      // Relay fields. _cc puts the second recipient on the same message; the
+      // relay decides delivery, so neither address is in this file.
+      const payload = {
+        ...data,
+        _subject: `Phaza Connect \u2014 ${data.purpose} \u2014 ${data.organisation}`,
+        _cc: 'znasser@phaza.io',
+        _template: 'table',
+        _captcha: 'false',
+        page: location.pathname,
+        sent_at: new Date().toISOString(),
+      };
+      delete payload.company_website;
       const res = await fetch(ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, page: location.pathname, sent_at: new Date().toISOString() }),
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(String(res.status));
       form.hidden = true;
       dlg.querySelector('.pz-done').hidden = false;
       dlg.querySelector('.pz-close2').focus();
     } catch {
-      err.textContent = 'That did not send. Please try once more.';
+      err.textContent = 'That did not send. Please try once more, or email support@phaza.io.';
       err.hidden = false; send.disabled = false; send.textContent = 'Send';
     }
   });
