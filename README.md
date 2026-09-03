@@ -38,3 +38,18 @@ The previous site (the cinematic Abu Dhabi map journey, with full source) is
 archived on the original machine under
 `Desktop/Phaza/Phaza Online/Website/` (source + build), in case anything
 needs to be recovered from it.
+
+## Deploy rule (learned the hard way)
+
+GitHub Pages serves `/assets/*` with `max-age=14400`, so Cloudflare can hold a
+file for four hours. **Any file whose CONTENT changes must also change NAME.**
+
+The entry bundle and the map chunk import each other, so they move together
+under one deploy tag (`index-b<N>.js` + `AbuDhabiMap-b<N>.js`). If only one
+moves, the CDN can serve a mismatched pair from two different deploys, React
+initialises twice, and the page goes blank with minified error #321.
+
+Never delete a previously published entry filename. Old names stay as small
+self-resolving shims: they read the current entry out of a no-store fetch of
+`index.html`, so a browser holding cached HTML still lands on the current
+build. `sw.js` is a tombstone that uninstalls the pre-rebuild service worker.
