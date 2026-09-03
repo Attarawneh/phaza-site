@@ -7,4 +7,4 @@ try {
     }
   });
 } catch {}
-import('/assets/index-bf8941ff.js');
+import('/assets/index-72401566.js');
