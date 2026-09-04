@@ -19,6 +19,7 @@ const RECIPIENTS = ['attarawneh@phaza.io', 'znasser@phaza.io'];
 const ORIGIN     = 'https://phaza.io';
 const RATE_DIR   = '/tmp/phaza-connect-rate';
 const RATE_MAX   = 20;               // submissions per IP per hour
+const AUTOREPLY  = __DIR__ . '/autoreply.html';
 
 function envv(string $key): string
 {
@@ -36,20 +37,28 @@ function envv(string $key): string
     return $env[$key] ?? '';
 }
 
+function mailer(): Symfony\Component\Mailer\Mailer
+{
+    static $m = null;
+    if ($m === null) {
+        require_once AUTOLOAD;
+        $dsn = sprintf(
+            'smtp://%s:%s@%s:%s',
+            rawurlencode(envv('MAIL_USERNAME')),
+            rawurlencode(envv('MAIL_PASSWORD')),
+            envv('MAIL_HOST'),
+            envv('MAIL_PORT') ?: '587',
+        );
+        $m = new Symfony\Component\Mailer\Mailer(
+            Symfony\Component\Mailer\Transport::fromDsn($dsn)
+        );
+    }
+    return $m;
+}
+
 function send_mail(array $d): void
 {
-    require AUTOLOAD;
-
-    $dsn = sprintf(
-        'smtp://%s:%s@%s:%s',
-        rawurlencode(envv('MAIL_USERNAME')),
-        rawurlencode(envv('MAIL_PASSWORD')),
-        envv('MAIL_HOST'),
-        envv('MAIL_PORT') ?: '587',
-    );
-    $mailer = new Symfony\Component\Mailer\Mailer(
-        Symfony\Component\Mailer\Transport::fromDsn($dsn)
-    );
+    require_once AUTOLOAD;
 
     $esc  = fn ($s) => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
     $rows = '';
@@ -60,27 +69,124 @@ function send_mail(array $d): void
         }
     }
 
-    $email = (new Symfony\Component\Mime\Email())
-        ->from(new Symfony\Component\Mime\Address(
-            envv('MAIL_FROM_ADDRESS') ?: 'no-reply@phaza.io',
-            'Phaza Connect'
-        ))
-        ->to(...RECIPIENTS)
-        ->replyTo((string) $d['email'])
-        ->subject('Phaza Connect — ' . (($d['purpose'] ?? '') ?: 'Enquiry') . ' — ' . ($d['organisation'] ?? ''))
-        ->html(
-            '<h2 style="font:600 15px system-ui">New enquiry from phaza.io</h2>'
-            . '<table style="font:14px system-ui;border-collapse:collapse">' . $rows . '</table>'
-            . '<p style="font:14px system-ui;white-space:pre-wrap">' . $esc($d['message'] ?? '') . '</p>'
-        );
+    /* One message per recipient. Exchange Online throttles multi-recipient
+       transactions from an unfamiliar IP with "452 4.5.3 Too many recipients",
+       which would defer half the team's copy on every submission. */
+    $failed = [];
+    foreach (RECIPIENTS as $to) {
+        $email = (new Symfony\Component\Mime\Email())
+            ->from(new Symfony\Component\Mime\Address(
+                envv('MAIL_FROM_ADDRESS') ?: 'no-reply@phaza.io',
+                'Phaza Connect'
+            ))
+            ->to($to)
+            ->replyTo((string) $d['email'])
+            ->subject('Phaza Connect — ' . (($d['purpose'] ?? '') ?: 'Enquiry') . ' — ' . ($d['organisation'] ?? ''))
+            ->html(
+                '<h2 style="font:600 15px system-ui">New enquiry from phaza.io</h2>'
+                . '<table style="font:14px system-ui;border-collapse:collapse">' . $rows . '</table>'
+                . '<p style="font:14px system-ui;white-space:pre-wrap">' . $esc($d['message'] ?? '') . '</p>'
+            );
 
-    $mailer->send($email);
+        try {
+            mailer()->send($email);
+        } catch (Throwable $e) {
+            $failed[] = $to . ': ' . $e->getMessage();
+        }
+    }
+
+    /* Only a total failure is an error: if one address bounces the enquiry
+       still reached the team, and the visitor should not be told to retry. */
+    if (count($failed) === count(RECIPIENTS)) {
+        throw new RuntimeException(implode(' | ', $failed));
+    }
+    foreach ($failed as $f) {
+        error_log('phaza-connect partial: ' . $f);
+    }
+}
+
+/**
+ * Confirmation sent to the visitor from no-reply@phaza.io.
+ *
+ * Best-effort: a failure here must never fail the submission, because the
+ * team notification has already gone out and the visitor's message is safe.
+ */
+function send_autoreply(array $d): void
+{
+    require_once AUTOLOAD;
+
+    $esc  = fn ($s) => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
+    $html = file_get_contents(AUTOREPLY);
+    if ($html === false) {
+        throw new RuntimeException('autoreply template missing');
+    }
+
+    $first   = trim(explode(' ', trim((string) $d['name']))[0]) ?: 'there';
+    $message = trim((string) ($d['message'] ?? ''));
+
+    $html = strtr($html, [
+        '{{NAME}}'         => $esc($first),
+        '{{EMAIL}}'        => $esc($d['email']),
+        '{{PURPOSE}}'      => $esc(($d['purpose'] ?? '') ?: 'Enquiry'),
+        '{{ORGANISATION}}' => $esc($d['organisation']),
+        '{{COUNTRY}}'      => $esc($d['country']),
+        '{{MESSAGE}}'      => nl2br($esc($message)),
+    ]);
+
+    /* Drop the quoted-message block entirely when they left it blank. */
+    if ($message === '') {
+        $html = preg_replace('#<div style="margin-top:16px;padding:15px 17px;background:rgba\(255,255,255,0\.03\).*?</div>#s', '', $html, 1);
+    }
+
+    $text = "Thank you, {$first}.\n\n"
+          . "Your message is with the Phaza team. A person — not an autoresponder — will read it "
+          . "and reply to you directly at {$d['email']}, usually within one working day.\n\n"
+          . "What we received\n"
+          . "  Reason:       " . (($d['purpose'] ?? '') ?: 'Enquiry') . "\n"
+          . "  Organisation: {$d['organisation']}\n"
+          . "  Country:      {$d['country']}\n"
+          . ($message !== '' ? "\n  \"{$message}\"\n" : '')
+          . "\nSalam is a sovereign large language model — Arabic-native, trained from scratch, "
+          . "and owned outright by the institution that buys it.\n\n"
+          . "Jordan · United Arab Emirates\nhttps://phaza.io\n\n"
+          . "This confirmation was sent automatically from an unmonitored address — please don't "
+          . "reply to it. Your actual reply will come from a member of the team.\n";
+
+    $email = (new Symfony\Component\Mime\Email())
+        ->from(new Symfony\Component\Mime\Address('no-reply@phaza.io', 'Phaza'))
+        ->to(new Symfony\Component\Mime\Address((string) $d['email'], (string) $d['name']))
+        ->subject('We received your message — Phaza')
+        ->text($text)
+        ->html($html);
+    $email->getHeaders()->addTextHeader('Auto-Submitted', 'auto-replied');
+    $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
+
+    mailer()->send($email);
 }
 
 /* ---- CLI self-test ----------------------------------------------------- */
 if (PHP_SAPI === 'cli') {
-    if (($argv[1] ?? '') !== '--test') {
-        fwrite(STDERR, "usage: php relay.php --test\n");
+    $mode = $argv[1] ?? '';
+    if ($mode === '--test-autoreply') {
+        $to = $argv[2] ?? '';
+        if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+            fwrite(STDERR, "usage: php relay.php --test-autoreply you@example.com\n");
+            exit(1);
+        }
+        send_autoreply([
+            'purpose'      => 'Demo request',
+            'name'         => 'Aisha Rahman',
+            'organisation' => 'Ministry of Digital Economy',
+            'country'      => 'Jordan',
+            'email'        => $to,
+            'message'      => 'We are evaluating sovereign options for a national language model '
+                            . 'and would like to see Salam working against our own records.',
+        ]);
+        echo "autoreply sent to {$to}\n";
+        exit(0);
+    }
+    if ($mode !== '--test') {
+        fwrite(STDERR, "usage: php relay.php --test | --test-autoreply you@example.com\n");
         exit(1);
     }
     send_mail([
@@ -139,6 +245,15 @@ try {
     error_log('phaza-connect: ' . $e->getMessage());
     http_response_code(502);
     exit;
+}
+
+/* The visitor's confirmation is best-effort: the enquiry is already with the
+   team, so a bounce or a bad address must not turn a delivered message into
+   an error the visitor sees. */
+try {
+    send_autoreply($d);
+} catch (Throwable $e) {
+    error_log('phaza-connect autoreply: ' . $e->getMessage());
 }
 
 header('Content-Type: application/json');
