@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#05080f;">
+<!-- Preheader: shown in the inbox list, hidden in the body -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your message reached the Phaza team — here is what we received, and what happens next.</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#05080f;padding:32px 16px;">
+<tr><td align="center">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#0a1018;border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <!-- Masthead -->
+  <tr><td bgcolor="#0a1018" style="padding:34px 38px 0 38px;background:#0a1018;">
+    <!-- Phaza wordmark: transparent PNG so it sits flush on the card.
+         bgcolor guards white glyphs against clients that force a light background.
+         Alt text carries the brand if images are blocked. -->
+    <img src="https://phaza.io/brand/phaza-wordmark.png" width="172" height="36" alt="PHAZA"
+         style="display:block;border:0;outline:none;text-decoration:none;">
+  </td></tr>
+
+  <!-- Headline -->
+  <tr><td style="padding:30px 38px 0 38px;">
+    <p style="margin:0 0 10px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:10px;letter-spacing:.24em;color:#2FB4EC;text-transform:uppercase;">Message received</p>
+    <h1 style="margin:0;font-size:27px;line-height:1.25;font-weight:300;color:#ffffff;">
+      Thank you, {{NAME}}.
+    </h1>
+    <p style="margin:14px 0 0 0;font-size:15px;line-height:1.65;color:rgba(255,255,255,0.66);">
+      Your message is with the Phaza team. A person — not an autoresponder —
+      will read it and reply to you directly at
+      <span style="color:#ffffff;">{{EMAIL}}</span>, usually within one working day.
+    </p>
+  </td></tr>
+
+  <!-- Hairline -->
+  <tr><td style="padding:28px 38px 0 38px;">
+    <div style="height:1px;background:linear-gradient(to right,rgba(47,180,236,.5),rgba(255,255,255,0.06));"></div>
+  </td></tr>
+
+  <!-- What we received -->
+  <tr><td style="padding:24px 38px 0 38px;">
+    <p style="margin:0 0 14px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,0.42);text-transform:uppercase;">What we received</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
+      <tr>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);width:40%;">Reason</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:#ffffff;text-align:right;">{{PURPOSE}}</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);">Organisation</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:#ffffff;text-align:right;">{{ORGANISATION}}</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);">Country</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:#ffffff;text-align:right;">{{COUNTRY}}</td>
+      </tr>
+    </table>
+    <div style="margin-top:16px;padding:15px 17px;background:rgba(255,255,255,0.03);border-left:2px solid #2FB4EC;border-radius:0 8px 8px 0;">
+      <p style="margin:0;font-size:14px;line-height:1.6;color:rgba(255,255,255,0.75);font-style:italic;">{{MESSAGE}}</p>
+    </div>
+  </td></tr>
+
+  <!-- What happens next -->
+  <tr><td style="padding:30px 38px 0 38px;">
+    <p style="margin:0 0 16px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,0.42);text-transform:uppercase;">What happens next</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;">
+      <tr>
+        <td style="width:26px;vertical-align:top;padding-bottom:13px;"><span style="color:#2FB4EC;font-family:monospace;font-size:11px;">01</span></td>
+        <td style="padding-bottom:13px;color:rgba(255,255,255,0.72);">We read your message and match it to the right person on the team.</td>
+      </tr>
+      <tr>
+        <td style="width:26px;vertical-align:top;padding-bottom:13px;"><span style="color:#2FB4EC;font-family:monospace;font-size:11px;">02</span></td>
+        <td style="padding-bottom:13px;color:rgba(255,255,255,0.72);">You get a direct reply — technical questions answered by the people who built Salam.</td>
+      </tr>
+      <tr>
+        <td style="width:26px;vertical-align:top;"><span style="color:#2FB4EC;font-family:monospace;font-size:11px;">03</span></td>
+        <td style="color:rgba(255,255,255,0.72);">If you asked for a demonstration, we propose times that suit your timezone.</td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- Sovereign line -->
+  <tr><td style="padding:30px 38px 0 38px;">
+    <div style="padding:18px 20px;background:linear-gradient(135deg,rgba(47,180,236,0.07),rgba(47,180,236,0.02));border:1px solid rgba(47,180,236,0.16);border-radius:10px;">
+      <p style="margin:0;font-size:14px;line-height:1.6;color:rgba(255,255,255,0.78);">
+        <span style="color:#ffffff;font-weight:600;">Salam</span> is a sovereign large language model —
+        Arabic-native, trained from scratch, and owned outright by the institution that buys it.
+        Not rented. Not a wrapper.
+      </p>
+    </div>
+  </td></tr>
+
+  <!-- Footer -->
+  <tr><td style="padding:30px 38px 34px 38px;">
+    <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
+    <p style="margin:0 0 6px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:10px;letter-spacing:.15em;color:rgba(255,255,255,0.5);text-transform:uppercase;">
+      Jordan &nbsp;·&nbsp; United Arab Emirates
+    </p>
+    <p style="margin:0 0 16px 0;font-size:13px;color:rgba(255,255,255,0.4);">
+      <a href="https://phaza.io" style="color:#2FB4EC;text-decoration:none;">phaza.io</a>
+      &nbsp;·&nbsp; The intelligence layer for governments
+    </p>
+    <p style="margin:0;font-size:11px;line-height:1.55;color:rgba(255,255,255,0.28);">
+      This confirmation was sent automatically from an unmonitored address —
+      please don't reply to it. Your actual reply will come from a member of the team.
+    </p>
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>
