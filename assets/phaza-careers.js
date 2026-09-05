@@ -1,0 +1,263 @@
+/* Phaza Careers — the "upload your CV" door.
+ *
+ * The flow is two honest steps. The file goes up first and the portal
+ * reads it on the spot; whatever the CV already answers — name, email,
+ * phone, LinkedIn — is never asked again. The popup asks ONLY for the
+ * gaps, then the application lands on the screening desk and a copy goes
+ * to the careers mailbox.
+ *
+ * Reuses Phaza Connect's dialog styling (.pz-*) so the two doors read as
+ * one system; only the drop zone's own dress is added here.
+ */
+(() => {
+  const META = document.querySelector('meta[name="phaza-contact-endpoint"]');
+  const ENDPOINT = META?.content?.trim() || '';
+  if (!ENDPOINT) return;
+
+  const ACCEPT = '.pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp';
+  const MAX_MB = 15;
+
+  const ASK = {
+    full_name: { label: 'Your name', type: 'text', required: true, autocomplete: 'name' },
+    email: { label: 'Email', type: 'email', required: true, autocomplete: 'email' },
+    phone: { label: 'Phone', type: 'tel', required: true, autocomplete: 'tel', hint: 'With country code — +962 …' },
+    linkedin_url: { label: 'LinkedIn', type: 'text', required: false, autocomplete: 'url', hint: 'linkedin.com/in/you (optional)' },
+  };
+
+  let lastFocus = null;
+
+  /* The drop zone's own clothes; everything else is Connect's. */
+  const style = document.createElement('style');
+  style.textContent = `
+    .pz-drop { border: 1.5px dashed rgba(0, 205, 255, .35); border-radius: 12px;
+      padding: 2.1rem 1.2rem; text-align: center; cursor: pointer;
+      transition: border-color .18s ease, background .18s ease; }
+    .pz-drop:hover, .pz-drop.is-over { border-color: #00CDFF; background: rgba(0, 205, 255, .06); }
+    .pz-drop b { color: #00CDFF; font-weight: 600; }
+    .pz-drop small { display: block; margin-top: .45rem; opacity: .55; }
+    .pz-found { font-size: .8rem; opacity: .75; margin: .2rem 0 .6rem; line-height: 1.55; }
+    .pz-found b { opacity: 1; }
+    .pz-reading { display: flex; gap: .6rem; align-items: center; justify-content: center;
+      padding: 2rem 0; opacity: .8; }
+    .pz-reading::before { content: ''; width: 1rem; height: 1rem; border-radius: 999px;
+      border: 2px solid rgba(0,205,255,.25); border-top-color: #00CDFF;
+      animation: pzc-spin .8s linear infinite; }
+    @keyframes pzc-spin { to { transform: rotate(360deg); } }
+    .pz-careers-fab { position: fixed; left: 1.1rem; bottom: 1.1rem; z-index: 60;
+      font: 500 .78rem/1 Inter, system-ui, sans-serif; letter-spacing: .02em;
+      color: #cfeaf5; background: rgba(10, 16, 24, .72); backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 205, 255, .28); border-radius: 999px;
+      padding: .55rem .95rem; cursor: pointer;
+      transition: border-color .18s ease, color .18s ease; }
+    .pz-careers-fab:hover { border-color: #00CDFF; color: #fff; }
+    @media (max-width: 640px) { .pz-careers-fab { left: .7rem; bottom: .7rem; } }
+  `;
+  document.head.appendChild(style);
+
+  const shut = (dlg) => {
+    dlg.remove();
+    document.body.style.overflow = '';
+    lastFocus?.focus?.();
+  };
+
+  function build() {
+    const dlg = document.createElement('div');
+    dlg.className = 'pz-overlay pz-careers';
+    dlg.setAttribute('role', 'dialog');
+    dlg.setAttribute('aria-modal', 'true');
+    dlg.setAttribute('aria-labelledby', 'pzc-title');
+
+    dlg.innerHTML = `
+      <div class="pz-panel">
+        <button class="pz-x" type="button" aria-label="Close">&times;</button>
+        <p class="pz-kicker">Careers</p>
+        <h2 class="pz-title" id="pzc-title">Join the team</h2>
+        <p class="pz-sub">Send your CV. We read every one — and only ask for what it does not already say.</p>
+
+        <div class="pzc-step" data-step="pick">
+          <div class="pz-drop" role="button" tabindex="0" aria-label="Upload your CV">
+            <b>Choose your CV</b> or drop it here
+            <small>PDF or Word, up to ${MAX_MB}MB</small>
+          </div>
+          <input type="file" accept="${ACCEPT}" hidden />
+          <p class="pz-err" role="alert" hidden></p>
+        </div>
+
+        <div class="pzc-step" data-step="reading" hidden>
+          <div class="pz-reading">Reading your CV…</div>
+        </div>
+
+        <form class="pzc-step pz-form" data-step="ask" hidden novalidate>
+          <p class="pz-found"></p>
+          <div class="pzc-fields"></div>
+          <p class="pz-err" role="alert" hidden></p>
+          <button class="pz-send" type="submit">Send my application</button>
+          <p class="pz-note">Goes straight to the hiring team at careers@phaza.io.</p>
+        </form>
+
+        <div class="pzc-step pz-done" data-step="done" hidden>
+          <h3 class="pz-title">Thank you.</h3>
+          <p class="pz-sub">Your CV is with the team. If there is a fit, we reply to the address you gave.</p>
+          <button class="pz-send pz-close2" type="button">Close</button>
+        </div>
+      </div>`;
+
+    const show = (name) => dlg.querySelectorAll('.pzc-step')
+      .forEach((s) => { s.hidden = s.dataset.step !== name; });
+    const errAt = (step, message) => {
+      const slot = dlg.querySelector(`[data-step="${step}"] .pz-err`);
+      if (slot) { slot.textContent = message; slot.hidden = false; }
+    };
+
+    const drop = dlg.querySelector('.pz-drop');
+    const file = dlg.querySelector('input[type=file]');
+    const form = dlg.querySelector('[data-step="ask"]');
+    let token = null;
+
+    const inspect = async (picked) => {
+      if (!picked) return;
+      if (picked.size > MAX_MB * 1024 * 1024) {
+        errAt('pick', `That file is over ${MAX_MB}MB — a CV should travel lighter.`);
+        return;
+      }
+      show('reading');
+      try {
+        const body = new FormData();
+        body.append('cv', picked, picked.name);
+        const r = await fetch(`${ENDPOINT}?action=cv-inspect`, { method: 'POST', body });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok || !d.token) {
+          show('pick');
+          errAt('pick', d.error || d.message || 'We could not read that file — is it really a CV?');
+          return;
+        }
+        token = d.token;
+
+        /* Nothing missing: the CV said it all. Send without asking. */
+        if (!d.missing?.length) { await submit({}); return; }
+
+        const knows = Object.entries(d.found || {})
+          .filter(([, v]) => v).map(([, v]) => `<b>${escapeHtml(String(v))}</b>`);
+        dlg.querySelector('.pz-found').innerHTML = knows.length
+          ? `Your CV already tells us: ${knows.join(' · ')}. Just a couple more things:`
+          : 'A couple of details your CV does not mention:';
+
+        dlg.querySelector('.pzc-fields').innerHTML = d.missing
+          .filter((k) => ASK[k])
+          .map((k) => `
+            <div class="pz-row">
+              <label class="pz-label" for="pzc-${k}">${ASK[k].label}${ASK[k].required ? '' : ' <span class="pz-opt">(optional)</span>'}</label>
+              <input class="pz-input" id="pzc-${k}" name="${k}" type="${ASK[k].type}"
+                autocomplete="${ASK[k].autocomplete}" ${ASK[k].hint ? `placeholder="${ASK[k].hint}"` : ''} />
+            </div>`).join('');
+        show('ask');
+        dlg.querySelector('.pzc-fields input')?.focus();
+      } catch {
+        show('pick');
+        errAt('pick', 'That did not go through. Please try once more, or email careers@phaza.io.');
+      }
+    };
+
+    const submit = async (fields) => {
+      show('reading');
+      try {
+        const r = await fetch(`${ENDPOINT}?action=cv-submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, ...fields }),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.status === 410) {           // stash expired while they typed
+          token = null;
+          show('pick');
+          errAt('pick', d.error || 'That took a while — please choose your file again.');
+          return;
+        }
+        if (!r.ok) {
+          show('ask');
+          errAt('ask', d.error || d.message || 'That did not send. Please try once more.');
+          return;
+        }
+        show('done');
+        dlg.querySelector('.pz-close2').focus();
+      } catch {
+        show('ask');
+        errAt('ask', 'That did not send. Please try once more, or email careers@phaza.io.');
+      }
+    };
+
+    drop.addEventListener('click', () => file.click());
+    drop.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); }
+    });
+    file.addEventListener('change', () => inspect(file.files?.[0]));
+    ['dragover', 'dragenter'].forEach((t) => drop.addEventListener(t, (e) => {
+      e.preventDefault(); drop.classList.add('is-over');
+    }));
+    ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => {
+      e.preventDefault(); drop.classList.remove('is-over');
+      if (t === 'drop') inspect(e.dataTransfer?.files?.[0]);
+    }));
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fields = {};
+      let bad = null;
+      form.querySelectorAll('.pz-input').forEach((input) => {
+        const v = input.value.trim();
+        if (v) fields[input.name] = v;
+        const spec = ASK[input.name];
+        if (spec?.required && !v) bad = bad || input;
+        if (input.name === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) bad = bad || input;
+      });
+      if (bad) { errAt('ask', 'A couple of fields still need you — the ones we could not read from the CV.'); bad.focus(); return; }
+      submit(fields);
+    });
+
+    dlg.querySelector('.pz-x').addEventListener('click', () => shut(dlg));
+    dlg.querySelector('.pz-close2').addEventListener('click', () => shut(dlg));
+    dlg.addEventListener('mousedown', (e) => { if (e.target === dlg) shut(dlg); });
+    dlg.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(dlg); });
+
+    document.body.appendChild(dlg);
+    document.body.style.overflow = 'hidden';
+    drop.focus();
+  }
+
+  const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+
+  const open = (from) => {
+    lastFocus = from || document.activeElement;
+    if (!document.querySelector('.pz-careers')) build();
+  };
+
+  /* Doors in, in order of subtlety:
+     1. anything marked data-phaza-careers (survives React re-renders);
+     2. a quiet fixed pill so the door exists even where no section carries it;
+     3. a line inside Phaza Connect when it opens — people reaching out are
+        exactly the people who might be applying. */
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-phaza-careers]');
+    if (!t) return;
+    e.preventDefault();
+    open(t);
+  });
+
+  const fab = document.createElement('button');
+  fab.type = 'button';
+  fab.className = 'pz-careers-fab';
+  fab.textContent = 'Careers — upload your CV';
+  fab.setAttribute('data-phaza-careers', '');
+  document.body.appendChild(fab);
+
+  new MutationObserver(() => {
+    const connect = document.querySelector('.pz-overlay:not(.pz-careers) .pz-form');
+    if (!connect || connect.querySelector('.pzc-cross')) return;
+    const line = document.createElement('p');
+    line.className = 'pz-note pzc-cross';
+    line.innerHTML = 'Joining the team instead? <a href="#" data-phaza-careers style="color:#00CDFF">Upload your CV</a>.';
+    connect.appendChild(line);
+  }).observe(document.body, { childList: true });
+})();
