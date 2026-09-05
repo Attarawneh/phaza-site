@@ -19,6 +19,7 @@ const RECIPIENTS = ['attarawneh@phaza.io', 'znasser@phaza.io'];
 const ORIGIN     = 'https://phaza.io';
 const RATE_DIR   = '/tmp/phaza-connect-rate';
 const RATE_MAX   = 20;               // submissions per IP per hour
+const SPOOL_DIR  = __DIR__ . '/spool';
 const SEEN_DIR   = '/tmp/phaza-connect-seen';
 const SEEN_TTL   = 86400;            // remember a message for a day
 const AUTOREPLY  = __DIR__ . '/autoreply.html';
@@ -51,9 +52,13 @@ function mailer(): Symfony\Component\Mailer\Mailer
             envv('MAIL_HOST'),
             envv('MAIL_PORT') ?: '587',
         );
-        $m = new Symfony\Component\Mailer\Mailer(
-            Symfony\Component\Mailer\Transport::fromDsn($dsn)
-        );
+        $transport = Symfony\Component\Mailer\Transport::fromDsn($dsn);
+        /* Fail fast. A visitor must never sit on a spinner because the mail
+           host is unreachable — a short timeout drops us into the spool. */
+        if ($transport instanceof Symfony\Component\Mailer\Transport\Smtp\SmtpTransport) {
+            $transport->getStream()->setTimeout(6);
+        }
+        $m = new Symfony\Component\Mailer\Mailer($transport);
     }
     return $m;
 }
@@ -75,6 +80,7 @@ function send_mail(array $d): void
        transactions from an unfamiliar IP with "452 4.5.3 Too many recipients",
        which would defer half the team's copy on every submission. */
     $failed = [];
+    $sentAny = false;
     foreach (RECIPIENTS as $to) {
         $email = (new Symfony\Component\Mime\Email())
             ->from(new Symfony\Component\Mime\Address(
@@ -92,14 +98,22 @@ function send_mail(array $d): void
 
         try {
             mailer()->send($email);
+            $sentAny = true;
         } catch (Throwable $e) {
             $failed[] = $to . ': ' . $e->getMessage();
+            /* All recipients share one transport, so if the first attempt
+               fails before anything has gone out the rest will fail the same
+               way. Stop rather than making the visitor wait out one timeout
+               per recipient. */
+            if (!$sentAny) {
+                break;
+            }
         }
     }
 
     /* Only a total failure is an error: if one address bounces the enquiry
        still reached the team, and the visitor should not be told to retry. */
-    if (count($failed) === count(RECIPIENTS)) {
+    if (!$sentAny) {
         throw new RuntimeException(implode(' | ', $failed));
     }
     foreach ($failed as $f) {
@@ -134,6 +148,26 @@ function steps_text(string $variant): string
         $out .= '  ' . str_pad($when, 16) . $body . "\n";
     }
     return $out;
+}
+
+/**
+ * Hold an enquiry that could not be sent.
+ *
+ * Mail can be down for reasons that have nothing to do with the visitor — a
+ * rotated credential, a dead transport. Losing a ministry's enquiry to that
+ * is far worse than delivering it late, so the payload is written to disk and
+ * replayed later with `php relay.php --replay`.
+ */
+function spool(array $d): bool
+{
+    if (!is_dir(SPOOL_DIR) && !@mkdir(SPOOL_DIR, 0700, true)) {
+        return false;
+    }
+    $name = sprintf('%s-%s.json', date('Ymd-His'), substr(md5(json_encode($d)), 0, 8));
+    return (bool) @file_put_contents(
+        SPOOL_DIR . '/' . $name,
+        json_encode($d, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    );
 }
 
 /**
@@ -332,8 +366,30 @@ if (PHP_SAPI === 'cli') {
         echo "autoreply sent to {$to}\n";
         exit(0);
     }
+    if ($mode === '--replay') {
+        $files = glob(SPOOL_DIR . '/*.json') ?: [];
+        if (!$files) { echo "spool empty\n"; exit(0); }
+        $ok = 0;
+        foreach ($files as $f) {
+            $d = json_decode((string) file_get_contents($f), true);
+            if (!is_array($d)) { echo "skip (unreadable): $f\n"; continue; }
+            try {
+                send_mail($d);
+                try { send_autoreply($d); } catch (Throwable $e) {
+                    echo "  note: autoreply failed for " . ($d['email'] ?? '?') . ": " . $e->getMessage() . "\n";
+                }
+                unlink($f);
+                $ok++;
+                echo "sent   " . basename($f) . "  " . ($d['email'] ?? '?') . "\n";
+            } catch (Throwable $e) {
+                echo "FAILED " . basename($f) . ": " . $e->getMessage() . "\n";
+            }
+        }
+        echo "replayed {$ok} of " . count($files) . "\n";
+        exit($ok === count($files) ? 0 : 1);
+    }
     if ($mode !== '--test') {
-        fwrite(STDERR, "usage: php relay.php --test | --test-autoreply you@example.com\n");
+        fwrite(STDERR, "usage: php relay.php --test | --test-autoreply you@example.com | --replay\n");
         exit(1);
     }
     send_mail([
@@ -424,21 +480,29 @@ if (mb_strlen($norm) >= 12) {
     }
 }
 
+$delivered = false;
 try {
     send_mail($d);
+    $delivered = true;
 } catch (Throwable $e) {
-    error_log('phaza-connect: ' . $e->getMessage());
-    http_response_code(502);
-    exit;
+    error_log('phaza-connect SEND FAILED, spooling: ' . $e->getMessage());
+    if (!spool($d)) {
+        error_log('phaza-connect SPOOL FAILED, enquiry lost: ' . json_encode($d));
+        http_response_code(502);
+        exit;
+    }
 }
 
 /* The visitor's confirmation is best-effort: the enquiry is already with the
    team, so a bounce or a bad address must not turn a delivered message into
-   an error the visitor sees. */
-try {
-    send_autoreply($d);
-} catch (Throwable $e) {
-    error_log('phaza-connect autoreply: ' . $e->getMessage());
+   an error the visitor sees. Skipped when the enquiry is only spooled — the
+   confirmation goes out with it on replay. */
+if ($delivered) {
+    try {
+        send_autoreply($d);
+    } catch (Throwable $e) {
+        error_log('phaza-connect autoreply: ' . $e->getMessage());
+    }
 }
 
 header('Content-Type: application/json');
