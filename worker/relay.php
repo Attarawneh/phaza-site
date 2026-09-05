@@ -158,16 +158,14 @@ function steps_text(string $variant): string
  * is far worse than delivering it late, so the payload is written to disk and
  * replayed later with `php relay.php --replay`.
  */
-function spool(array $d): bool
+function spool(array $d): string|false
 {
     if (!is_dir(SPOOL_DIR) && !@mkdir(SPOOL_DIR, 0700, true)) {
         return false;
     }
-    $name = sprintf('%s-%s.json', date('Ymd-His'), substr(md5(json_encode($d)), 0, 8));
-    return (bool) @file_put_contents(
-        SPOOL_DIR . '/' . $name,
-        json_encode($d, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-    );
+    $path = SPOOL_DIR . '/' . sprintf('%s-%s.json', date('Ymd-His'), substr(md5(json_encode($d)), 0, 8));
+    return @file_put_contents($path, json_encode($d, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))
+        ? $path : false;
 }
 
 /**
@@ -382,7 +380,12 @@ if (PHP_SAPI === 'cli') {
                 $ok++;
                 echo "sent   " . basename($f) . "  " . ($d['email'] ?? '?') . "\n";
             } catch (Throwable $e) {
+                /* One shared transport: if this failed, so will the rest.
+                   Leave them for the next run rather than paying a timeout
+                   per file. */
                 echo "FAILED " . basename($f) . ": " . $e->getMessage() . "\n";
+                echo "stopping; " . (count($files) - $ok) . " left for the next run\n";
+                break;
             }
         }
         echo "replayed {$ok} of " . count($files) . "\n";
@@ -480,30 +483,35 @@ if (mb_strlen($norm) >= 12) {
     }
 }
 
-$delivered = false;
-try {
-    send_mail($d);
-    $delivered = true;
-} catch (Throwable $e) {
-    error_log('phaza-connect SEND FAILED, spooling: ' . $e->getMessage());
-    if (!spool($d)) {
-        error_log('phaza-connect SPOOL FAILED, enquiry lost: ' . json_encode($d));
-        http_response_code(502);
-        exit;
-    }
+/* Take the enquiry to disk first. It is the only step that must not fail, and
+   it costs a millisecond — everything after this is delivery, which the
+   visitor should never have to wait for. */
+$held = spool($d);
+
+header('Content-Type: application/json');
+echo '{"ok":true}';
+
+/* Answer now and hang up. Under PHP-FPM the visitor's browser is released
+   here; the mail below runs on our own time, so an unreachable mail host
+   costs them nothing. */
+ignore_user_abort(true);
+if (function_exists('fastcgi_finish_request')) {
+    fastcgi_finish_request();
 }
 
-/* The visitor's confirmation is best-effort: the enquiry is already with the
-   team, so a bounce or a bad address must not turn a delivered message into
-   an error the visitor sees. Skipped when the enquiry is only spooled — the
-   confirmation goes out with it on replay. */
-if ($delivered) {
+try {
+    send_mail($d);
     try {
         send_autoreply($d);
     } catch (Throwable $e) {
         error_log('phaza-connect autoreply: ' . $e->getMessage());
     }
+    if ($held !== false) {
+        @unlink($held);                       // delivered, nothing left to replay
+    }
+} catch (Throwable $e) {
+    error_log('phaza-connect send failed, held for replay: ' . $e->getMessage());
+    if ($held === false) {
+        error_log('phaza-connect ENQUIRY LOST (spool unavailable): ' . json_encode($d));
+    }
 }
-
-header('Content-Type: application/json');
-echo '{"ok":true}';
