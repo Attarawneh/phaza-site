@@ -55,6 +55,7 @@
   document.head.appendChild(style);
 
   const shut = (dlg) => {
+    dlg.dataset.userClosed = '1';
     dlg.remove();
     document.body.style.overflow = '';
     lastFocus?.focus?.();
@@ -222,6 +223,18 @@
     document.body.appendChild(dlg);
     document.body.style.overflow = 'hidden';
     drop.focus();
+
+    /* Some browser extensions (Adobe Acrobat's PDF interception, watched
+       doing exactly this) tear foreign dialogs out of the DOM the moment a
+       PDF is picked — the applicant sees everything vanish with no word of
+       why. The dialog defends itself: removed by anything other than its
+       own close controls, it steps straight back in and carries on. */
+    new MutationObserver(() => {
+      if (!document.body.contains(dlg) && dlg.dataset.userClosed !== '1') {
+        document.body.appendChild(dlg);
+        document.body.style.overflow = 'hidden';
+      }
+    }).observe(document.body, { childList: true });
   }
 
   /* When the server gives no words, the status code still has some. */
