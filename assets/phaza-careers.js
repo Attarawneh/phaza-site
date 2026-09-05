@@ -298,9 +298,20 @@
       box.setAttribute('aria-label', 'Upload your CV');
       box.innerHTML = '<b>Choose your CV</b> or drop it here<small>PDF or Word — read the moment it arrives</small>';
 
-      box.addEventListener('click', () => open(box));
+      /* Straight to the file browser — no intermediate popup. The dialog
+         only appears once a file is chosen, already reading it. */
+      const picker = document.createElement('input');
+      picker.type = 'file';
+      picker.accept = ACCEPT;
+      picker.hidden = true;
+      box.appendChild(picker);
+      picker.addEventListener('change', () => {
+        if (picker.files?.[0]) { open(box, picker.files[0]); picker.value = ''; }
+      });
+
+      box.addEventListener('click', () => picker.click());
       box.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(box); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); picker.click(); }
       });
       ['dragenter', 'dragover'].forEach((t) => box.addEventListener(t, (e) => {
         e.preventDefault(); box.classList.add('is-over');
@@ -332,13 +343,6 @@
     e.stopPropagation();
     open(zone, e.dataTransfer?.files?.[0] || undefined);
   }, true);
-
-  const fab = document.createElement('button');
-  fab.type = 'button';
-  fab.className = 'pz-careers-fab';
-  fab.textContent = 'Careers — upload your CV';
-  fab.setAttribute('data-phaza-careers', '');
-  document.body.appendChild(fab);
 
   new MutationObserver(() => {
     const connect = document.querySelector('.pz-overlay:not(.pz-careers) .pz-form');
