@@ -17,6 +17,7 @@
     .pz-when { padding:14px 0 2px 0 !important; }
     .pz-what { padding:0 0 14px 0 !important; border-top:0 !important; }
     .pz-meta { display:block !important; width:100% !important; text-align:right !important; padding:2px 0 10px 0 !important; }
+    .pz-fig  { display:none !important; }
   }
 </style>
 </head>
@@ -69,28 +70,24 @@
   </td></tr>
 
   <!--AINOTE-->
+  <!-- Phaza One stands in the card, as the site presents the agents. -->
   <tr><td class="pz-pad" style="padding:26px 38px 0 38px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(200deg,rgba(47,180,236,0.09),rgba(47,180,236,0.02));border:1px solid rgba(47,180,236,0.2);border-radius:12px;">
-      <tr><td style="padding:20px 22px 0 22px;">
-        <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-          <td style="vertical-align:middle;padding-left:13px;">
-            <img src="https://phaza.io/brand/phaza-one.afbd9746.png" width="48" height="48" alt="Phaza One" style="display:block;border:0;outline:none;border-radius:50%;">
-          </td>
-          <td style="vertical-align:middle;">
-            <p style="margin:0;font-size:15px;font-weight:600;color:#ffffff;line-height:1.4;" dir="ltr">Phaza One</p>
-            <p style="margin:3px 0 0 0;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.4;">منسّقة الذكاء</p>
-          </td>
-        </tr></table>
-      </td></tr>
-      <tr><td style="padding:16px 22px 6px 22px;">
-        <div style="height:1px;background:rgba(47,180,236,0.18);"></div>
-      </td></tr>
-      <tr><td style="padding:12px 22px 20px 22px;">
-        <div dir="auto" style="font-size:14px;line-height:1.95;color:rgba(255,255,255,0.86);">{{AI_NOTE}}</div>
-        <p style="margin:14px 0 0 0;font-size:11px;line-height:1.8;color:rgba(255,255,255,0.35);">
-          قراءة أولى من Phaza One، كتبتها بعد قراءة رسالتك، ويتبعها ردّ الفريق نفسه.
-        </p>
-      </td></tr>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" dir="rtl" style="background:linear-gradient(200deg,rgba(47,180,236,0.10),rgba(47,180,236,0.02));border:1px solid rgba(47,180,236,0.2);border-radius:12px;">
+      <tr>
+        <td class="pz-fig" width="130" style="width:130px;vertical-align:bottom;padding:0 10px 0 0;">
+          <img src="https://phaza.io/brand/phaza-one-figure.172a3d28.png" width="120" height="230" alt="Phaza One"
+               style="display:block;border:0;outline:none;">
+        </td>
+        <td style="vertical-align:top;padding:20px 10px 20px 22px;">
+          <p style="margin:0;font-size:15px;font-weight:600;color:#ffffff;line-height:1.4;"><span dir="ltr">Phaza One</span></p>
+          <p style="margin:3px 0 0 0;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.4;">منسّقة الذكاء</p>
+          <div style="height:1px;background:rgba(47,180,236,0.2);margin:14px 0 13px 0;"></div>
+          <div dir="auto" style="font-size:14px;line-height:1.95;color:rgba(255,255,255,0.86);">{{AI_NOTE}}</div>
+          <p style="margin:13px 0 0 0;font-size:11px;line-height:1.8;color:rgba(255,255,255,0.35);">
+            قراءة أولى من Phaza One، كتبتها بعد قراءة رسالتك، ويتبعها ردّ الفريق نفسه.
+          </p>
+        </td>
+      </tr>
     </table>
   </td></tr>
   <!--/AINOTE-->
