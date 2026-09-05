@@ -56,6 +56,25 @@
       background: rgba(10, 16, 24, .55); backdrop-filter: blur(6px); }
     .pz-drop-inline small { font-family: ui-monospace, monospace; font-size: .62rem;
       letter-spacing: .14em; text-transform: uppercase; }
+    .pzc-bars { display: grid; gap: .7rem; margin: .9rem 0 1.2rem; }
+    .pzc-bar-row { display: flex; justify-content: space-between; font-size: .8rem;
+      color: #cfeaf5; margin-bottom: .25rem; }
+    .pzc-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+    .pzc-fill { height: 100%; border-radius: inherit;
+      background: linear-gradient(90deg, #00CDFF, #8A2BE2);
+      animation: pzc-grow .8s cubic-bezier(.22,.9,.3,1) both; }
+    @keyframes pzc-grow { from { width: 0 !important; } }
+    .pzc-decline { display: block; width: 100%; margin-top: .55rem; background: none; border: 0;
+      color: rgba(255,255,255,.55); font-size: .78rem; cursor: pointer; padding: .4rem; }
+    .pzc-decline:hover { color: #fff; }
+    .pzc-file { border: 1px dashed rgba(0,205,255,.3); border-radius: 9px; padding: .6rem .8rem;
+      font-size: .78rem; color: rgba(255,255,255,.6); cursor: pointer;
+      transition: border-color .15s ease, color .15s ease; }
+    .pzc-file:hover { border-color: #00CDFF; color: #fff; }
+    .pzc-file.is-set { border-style: solid; border-color: rgba(0,205,255,.6); color: #00CDFF; }
+    .pzc-consent { display: flex; gap: .6rem; align-items: flex-start; margin: 1rem 0 .4rem;
+      font-size: .74rem; line-height: 1.5; color: rgba(255,255,255,.75); cursor: pointer; }
+    .pzc-consent input { margin-top: .2rem; accent-color: #00CDFF; }
   `;
   document.head.appendChild(style);
 
@@ -78,9 +97,9 @@
         <button class="pz-x" type="button" aria-label="Close">&times;</button>
         <p class="pz-kicker">Careers</p>
         <h2 class="pz-title" id="pzc-title">Join the team</h2>
-        <p class="pz-sub">Send your CV. We read every one — and only ask for what it does not already say.</p>
 
         <div class="pzc-step" data-step="pick">
+          <p class="pz-sub">Send your CV. We read it on the spot and show you honestly where you fit.</p>
           <div class="pz-drop" role="button" tabindex="0" aria-label="Upload your CV">
             <b>Choose your CV</b> or drop it here
             <small>PDF or Word — any reasonable size</small>
@@ -93,17 +112,31 @@
           <div class="pz-reading">Reading your CV…</div>
         </div>
 
-        <form class="pzc-step pz-form" data-step="ask" hidden novalidate>
-          <p class="pz-found"></p>
-          <div class="pzc-fields"></div>
+        <div class="pzc-step" data-step="result" hidden>
+          <p class="pz-sub pzc-verdict"></p>
+          <div class="pzc-bars"></div>
           <p class="pz-err" role="alert" hidden></p>
-          <button class="pz-send" type="submit">Send my application</button>
+          <button class="pz-send pzc-proceed" type="button">I&rsquo;d like to proceed</button>
+          <button class="pzc-decline" type="button">Not right now</button>
+        </div>
+
+        <form class="pzc-step pz-form" data-step="details" hidden novalidate>
+          <p class="pz-sub">A few things your CV didn&rsquo;t carry, to complete your file:</p>
+          <div class="pzc-fields"></div>
+          <div class="pzc-uploads"></div>
+          <label class="pzc-consent">
+            <input type="checkbox" name="scout_consent" value="1" />
+            <span>I approve Phaza researching my public professional presence and social
+            activity through its channels as part of evaluating my application.</span>
+          </label>
+          <p class="pz-err" role="alert" hidden></p>
+          <button class="pz-send" type="submit">Complete my application</button>
           <p class="pz-note">Goes straight to the hiring team at careers@phaza.io.</p>
         </form>
 
         <div class="pzc-step pz-done" data-step="done" hidden>
-          <h3 class="pz-title">Thank you.</h3>
-          <p class="pz-sub">Your CV is with the team. If there is a fit, we reply to the address you gave.</p>
+          <h3 class="pz-title pzc-done-title">Thank you.</h3>
+          <p class="pz-sub pzc-done-sub">Your application is with the team. We reply to the address you gave.</p>
           <button class="pz-send pz-close2" type="button">Close</button>
         </div>
       </div>`;
@@ -117,8 +150,19 @@
 
     const drop = dlg.querySelector('.pz-drop');
     const file = dlg.querySelector('input[type=file]');
-    const form = dlg.querySelector('[data-step="ask"]');
+    const form = dlg.querySelector('[data-step="details"]');
     let token = null;
+
+    const post = async (action, payload, isForm = false) => {
+      const opts = { method: 'POST' };
+      if (isForm) { opts.body = payload; }
+      else { opts.headers = { 'Content-Type': 'application/json' }; opts.body = JSON.stringify(payload); }
+      const r = await fetch(`${ENDPOINT}?action=${action}`, opts);
+      const d = await r.json().catch(() => ({}));
+      return { r, d };
+    };
+
+    let missing = [];
 
     const inspect = async (picked) => {
       if (!picked) return;
@@ -127,68 +171,168 @@
         return;
       }
       show('reading');
+      dlg.querySelector('.pz-reading').textContent = 'Reading your CV…';
       try {
         const body = new FormData();
         body.append('cv', picked, picked.name);
-        const r = await fetch(`${ENDPOINT}?action=cv-inspect`, { method: 'POST', body });
-        const d = await r.json().catch(() => ({}));
+        const { r, d } = await post('cv-inspect', body, true);
         if (!r.ok || !d.token) {
           show('pick');
           errAt('pick', d.error || d.message || statusWords(r.status));
           return;
         }
         token = d.token;
-
-        /* Nothing missing: the CV said it all. Send without asking. */
-        if (!d.missing?.length) { await submit({}); return; }
-
-        const knows = Object.entries(d.found || {})
-          .filter(([, v]) => v).map(([, v]) => `<b>${escapeHtml(String(v))}</b>`);
-        dlg.querySelector('.pz-found').innerHTML = knows.length
-          ? `Your CV already tells us: ${knows.join(' · ')}. Just a couple more things:`
-          : 'A couple of details your CV does not mention:';
-
-        dlg.querySelector('.pzc-fields').innerHTML = d.missing
-          .filter((k) => ASK[k])
-          .map((k) => `
-            <div class="pz-row">
-              <label class="pz-label" for="pzc-${k}">${ASK[k].label}${ASK[k].required ? '' : ' <span class="pz-opt">(optional)</span>'}</label>
-              <input class="pz-input" id="pzc-${k}" name="${k}" type="${ASK[k].type}"
-                autocomplete="${ASK[k].autocomplete}" ${ASK[k].hint ? `placeholder="${ASK[k].hint}"` : ''} />
-            </div>`).join('');
-        show('ask');
-        dlg.querySelector('.pzc-fields input')?.focus();
+        analyze();
       } catch {
         show('pick');
         errAt('pick', 'The connection dropped mid-upload — check your network and try again, or email careers@phaza.io.');
       }
     };
 
-    const submit = async (fields) => {
-      show('reading');
+    /* The CV goes to the same screener the hiring team uses, scored against
+       the functions Phaza actually runs on — and the applicant is shown the
+       result before being asked for anything more. */
+    const analyze = async () => {
+      dlg.querySelector('.pz-reading').textContent = 'Matching you against what Phaza is building…';
       try {
-        const r = await fetch(`${ENDPOINT}?action=cv-submit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token, ...fields }),
+        const { r, d } = await post('cv-analyze', { token });
+        if (!r.ok || !d.ok) {
+          show('pick');
+          errAt('pick', d.error || statusWords(r.status));
+          return;
+        }
+        poll(0);
+      } catch {
+        show('pick');
+        errAt('pick', 'The connection dropped — try again, or email careers@phaza.io.');
+      }
+    };
+
+    const poll = async (tries) => {
+      if (tries > 40) {            // ~2 minutes: stop spinning, keep the truth
+        showResult(null);
+        return;
+      }
+      try {
+        const { d } = await post('cv-status', { token });
+        if (d.state === 'screened') { missing = d.missing || []; showResult(d); return; }
+        if (d.state === 'not_cv') {
+          show('pick');
+          errAt('pick', 'That file does not read as a CV — send the document that tells your work story.');
+          return;
+        }
+        if (d.state === 'failed' || !d.ok) { showResult(null); return; }
+      } catch { /* transient; keep polling */ }
+      setTimeout(() => poll(tries + 1), 3000);
+    };
+
+    const showResult = (d) => {
+      const verdict = dlg.querySelector('.pzc-verdict');
+      const bars = dlg.querySelector('.pzc-bars');
+      if (!d) {
+        verdict.textContent = 'Your CV is in — the deeper read finishes on our side. Complete your file and the team takes it from there.';
+        bars.innerHTML = '';
+      } else {
+        verdict.innerHTML = {
+          strong: 'A <b>strong match</b>. Your experience lines up closely with work we are hiring for:',
+          promising: 'A <b>promising match</b>. Parts of your experience line up well with:',
+          early: 'An <b>early-stage match</b> today — the closest areas to your experience:',
+        }[d.band];
+        bars.innerHTML = (d.top || []).map((t) => `
+          <div class="pzc-bar">
+            <div class="pzc-bar-row"><span>${escapeHtml(t.function || '')}</span><span>${t.score}</span></div>
+            <div class="pzc-track"><div class="pzc-fill" style="width:${Math.max(3, t.score)}%"></div></div>
+          </div>`).join('');
+      }
+      show('result');
+      dlg.querySelector('.pzc-proceed').focus();
+    };
+
+    const UPLOADS = [
+      { n: 'photo', label: 'A headshot', hint: 'A clear photo of your face', accept: '.png,.jpg,.jpeg,.webp' },
+      { n: 'id_doc', label: 'ID card', hint: 'Optional at this stage — passport or national ID', accept: '.pdf,.png,.jpg,.jpeg,.webp', optional: true },
+    ];
+
+    const buildDetails = () => {
+      dlg.querySelector('.pzc-fields').innerHTML = ['full_name', 'email', 'phone', 'linkedin_url']
+        .filter((k) => missing.includes(k)).concat(['instagram_url'])
+        .map((k) => {
+          const f = ASK[k];
+          return `
+            <div class="pz-row">
+              <label class="pz-label" for="pzc-${k}">${f.label}${f.required ? '' : ' <span class="pz-opt">(optional)</span>'}</label>
+              <input class="pz-input" id="pzc-${k}" name="${k}" type="${f.type}"
+                autocomplete="${f.autocomplete}" ${f.hint ? `placeholder="${f.hint}"` : ''} />
+            </div>`;
+        }).join('');
+
+      dlg.querySelector('.pzc-uploads').innerHTML = UPLOADS.map((u) => `
+        <div class="pz-row">
+          <label class="pz-label">${u.label}${u.optional ? ' <span class="pz-opt">(optional)</span>' : ''}</label>
+          <div class="pzc-file" data-slot="${u.n}" role="button" tabindex="0">${u.hint}</div>
+          <input type="file" name="${u.n}" accept="${u.accept}" hidden />
+        </div>`).join('');
+
+      dlg.querySelectorAll('.pzc-file').forEach((el) => {
+        const input = el.nextElementSibling;
+        el.addEventListener('click', () => input.click());
+        input.addEventListener('change', () => {
+          el.textContent = input.files?.[0]?.name || el.textContent;
+          el.classList.toggle('is-set', !!input.files?.length);
         });
-        const d = await r.json().catch(() => ({}));
-        if (r.status === 410) {           // stash expired while they typed
+      });
+      show('details');
+      dlg.querySelector('.pzc-fields input, .pzc-file')?.focus();
+    };
+
+    dlg.querySelector('.pzc-proceed').addEventListener('click', buildDetails);
+    dlg.querySelector('.pzc-decline').addEventListener('click', async () => {
+      show('reading');
+      dlg.querySelector('.pz-reading').textContent = 'Noted…';
+      try { await post('cv-complete', { token, proceed: false }); } catch { /* their choice stands regardless */ }
+      dlg.querySelector('.pzc-done-title').textContent = 'Understood.';
+      dlg.querySelector('.pzc-done-sub').textContent = 'Your CV stays with us — if the fit strengthens, we know where to find you.';
+      show('done');
+    });
+
+    const submit = async () => {
+      const body = new FormData();
+      body.append('token', token);
+      body.append('proceed', '1');
+      let bad = null;
+      form.querySelectorAll('.pz-input').forEach((input) => {
+        const v = input.value.trim();
+        if (v) body.append(input.name, v);
+        const spec = ASK[input.name];
+        if (spec?.required && !v) bad = bad || input;
+        if (input.name === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) bad = bad || input;
+      });
+      if (bad) { errAt('details', 'A couple of fields still need you.'); bad.focus(); return; }
+      form.querySelectorAll('input[type=file]').forEach((input) => {
+        if (input.files?.[0]) body.append(input.name, input.files[0], input.files[0].name);
+      });
+      if (form.querySelector('[name=scout_consent]').checked) body.append('scout_consent', '1');
+
+      show('reading');
+      dlg.querySelector('.pz-reading').textContent = 'Completing your application…';
+      try {
+        const { r, d } = await post('cv-complete', body, true);
+        if (r.status === 410) {
           token = null;
           show('pick');
           errAt('pick', d.error || 'That took a while — please choose your file again.');
           return;
         }
         if (!r.ok) {
-          show('ask');
-          errAt('ask', d.error || d.message || statusWords(r.status));
+          buildDetails();
+          errAt('details', d.error || d.message || statusWords(r.status));
           return;
         }
         show('done');
         dlg.querySelector('.pz-close2').focus();
       } catch {
-        show('ask');
-        errAt('ask', 'The connection dropped — your file is still with us for a few minutes, just press send again.');
+        buildDetails();
+        errAt('details', 'The connection dropped — your file is still with us, press complete again.');
       }
     };
 
@@ -205,20 +349,7 @@
       if (t === 'drop') inspect(e.dataTransfer?.files?.[0]);
     }));
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fields = {};
-      let bad = null;
-      form.querySelectorAll('.pz-input').forEach((input) => {
-        const v = input.value.trim();
-        if (v) fields[input.name] = v;
-        const spec = ASK[input.name];
-        if (spec?.required && !v) bad = bad || input;
-        if (input.name === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) bad = bad || input;
-      });
-      if (bad) { errAt('ask', 'A couple of fields still need you — the ones we could not read from the CV.'); bad.focus(); return; }
-      submit(fields);
-    });
+    form.addEventListener('submit', (e) => { e.preventDefault(); submit(); });
 
     dlg.querySelector('.pz-x').addEventListener('click', () => shut(dlg));
     dlg.querySelector('.pz-close2').addEventListener('click', () => shut(dlg));
