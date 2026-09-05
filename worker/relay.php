@@ -45,13 +45,22 @@ function mailer(): Symfony\Component\Mailer\Mailer
     static $m = null;
     if ($m === null) {
         require_once AUTOLOAD;
-        $dsn = sprintf(
-            'smtp://%s:%s@%s:%s',
-            rawurlencode(envv('MAIL_USERNAME')),
-            rawurlencode(envv('MAIL_PASSWORD')),
-            envv('MAIL_HOST'),
-            envv('MAIL_PORT') ?: '587',
-        );
+        /* Two supported shapes: a mailbox credential, or an unauthenticated
+           relay where the mail host trusts this machine by address. Blank
+           MAIL_USERNAME selects the second — Symfony must not be handed an
+           empty user:pass pair, it will try to authenticate with it. */
+        $host = envv('MAIL_HOST') ?: 'mail.phaza.io';
+        $port = envv('MAIL_PORT') ?: '587';
+        $user = envv('MAIL_USERNAME');
+        $dsn  = $user === ''
+            ? sprintf('smtp://%s:%s', $host, $port)
+            : sprintf(
+                'smtp://%s:%s@%s:%s',
+                rawurlencode($user),
+                rawurlencode(envv('MAIL_PASSWORD')),
+                $host,
+                $port,
+            );
         $transport = Symfony\Component\Mailer\Transport::fromDsn($dsn);
         /* Fail fast. A visitor must never sit on a spinner because the mail
            host is unreachable — a short timeout drops us into the spool. */
@@ -332,7 +341,10 @@ function send_autoreply(array $d): void
           . "reply to it. Your actual reply will come from a member of the team.\n";
 
     $email = (new Symfony\Component\Mime\Email())
-        ->from(new Symfony\Component\Mime\Address('no-reply@phaza.io', 'Phaza'))
+        ->from(new Symfony\Component\Mime\Address(
+            envv('MAIL_FROM_ADDRESS') ?: 'no-reply@phaza.io',
+            'Phaza'
+        ))
         ->to(new Symfony\Component\Mime\Address((string) $d['email'], (string) $d['name']))
         ->subject('We received your message — Phaza')
         ->text($text)
