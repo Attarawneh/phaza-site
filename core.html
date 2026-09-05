@@ -53,11 +53,20 @@ const mk=(t,boost)=>{const c=document.createElement('canvas');c.width=c.height=6
   rg.addColorStop(.55,`rgba(${r},${g2},${b},.18)`);
   rg.addColorStop(1,`rgba(${r},${g2},${b},0)`);
   x.fillStyle=rg;x.fillRect(0,0,64,64);return c};
-const SP=[],HI=[];for(let i=0;i<16;i++){SP.push(mk(i/15,0));HI.push(mk(i/15,110))}
+const mkf=t=>{const c=document.createElement('canvas');c.width=c.height=64;
+  const x=c.getContext('2d'),[r,g2,b]=rgbc(t),
+    w=v=>Math.round(v+(255-v)*.5),                 // washed halfway to white
+    rg=x.createRadialGradient(32,32,0,32,32,32);
+  rg.addColorStop(0,`rgba(${w(r)},${w(g2)},${w(b)},.5)`);
+  rg.addColorStop(.30,`rgba(${r},${g2},${b},.28)`);
+  rg.addColorStop(.64,`rgba(${r},${g2},${b},.10)`);
+  rg.addColorStop(1,`rgba(${r},${g2},${b},0)`);
+  x.fillStyle=rg;x.fillRect(0,0,64,64);return c};
+const SP=[],HI=[],FD=[];for(let i=0;i<16;i++){SP.push(mk(i/15,0));HI.push(mk(i/15,110));FD.push(mkf(i/15))}
 
 /* ── population: a soft outer shell, three rings that cross it, an inner
       core shell. Rings get the largest share so they read as structure. ── */
-let COUNT=2600, RINGS=true, SHELL=true, P=[], SX,SY,SA,SB,SS,SD,SG;
+let COUNT=2600, RINGS=true, SHELL=true, P=[], SX,SY,SA,SB,SS,SD,SG,SF;
 function build(){
   P=[];
   for(let i=0;i<COUNT;i++){
@@ -95,7 +104,7 @@ function build(){
   table(p=>p.role>=1&&p.role<=3?p.role:0,'link');
   table(p=>p.ring,'linkAll');
   SX=new Float32Array(COUNT);SY=new Float32Array(COUNT);SA=new Float32Array(COUNT);SB=new Int8Array(COUNT);
-  SS=new Float32Array(COUNT);SD=new Float32Array(COUNT);SG=new Float32Array(COUNT);
+  SS=new Float32Array(COUNT);SD=new Float32Array(COUNT);SG=new Float32Array(COUNT);SF=new Int8Array(COUNT);
 }
 build();
 
@@ -126,8 +135,15 @@ function frame(now){
   ag.addColorStop(1,'rgba(138,43,226,0)');
   g.fillStyle=ag;g.fillRect(0,0,W,H);
 
-  const R0=RAD()*(1+.022*Math.sin(k*.5));          // the whole form breathes
-  const tiltX=.42+.05*Math.sin(k*.23), tiltY=k*.07; // slow drift, gives parallax
+  const R0=RAD()*(1+.022*Math.sin(k*.5))*(1-DIST*.33);  // breathes, and draws in as it matures
+  // the camera settles square-on as it matures: a ring in perspective
+  // becomes a circle drawn flat
+  /* Matured, the drift stops accumulating and becomes a gentle sway, so the
+     circle settles square-on and stays there instead of slowly turning back
+     into an ellipse. */
+  const mt=DIST;
+  const tiltX=(.42+.05*Math.sin(k*.23))*(1-mt) + .07*Math.sin(k*.19)*mt,
+        tiltY=(k*.07)*(1-mt)               + .10*Math.sin(k*.13)*mt;
   const cx=Math.cos(tiltY),sx=Math.sin(tiltY),cy=Math.cos(tiltX),sy=Math.sin(tiltX);
   const wave=(k*.16)%1;                            // energy front travelling round
 
@@ -146,15 +162,15 @@ function frame(now){
        — three circles becoming a single circle of glow. */
     const rg=p.ring,
           spin=SPIN[rg]+(.30-SPIN[rg])*ds,
-          tilt=TILT[rg]*(1-ds),
+          tilt=TILT[rg]*(1-ds)+1.5708*ds,   // folds up into the screen plane
           roll=ROLL[rg]*(1-ds),
-          rrr=R0+(rg-2)*R0*.007*ds,
+          rrr=R0+(rg-2)*R0*.045*ds,
           th2=p.th+k*spin,
           /* A ring is three strands, not a cloud. Loose, each point sits
              anywhere in a wide off-plane haze; formed, it settles onto its own
              exact circle — so the band is thick and smooth rather than ragged,
              and an edge-on ring stays three arcs instead of one hard bar. */
-          tight=1-ds*.86,
+          tight=1+ds*.15,
           w  =RSTR[p.strand]*R0*.055*tight*fm + p.band *R0*.42*loose,
           off=NSTR[p.strand]*R0*.055*tight*fm + p.band2*R0*.40*loose,
           px=(rrr+w)*Math.cos(th2), py=off, pz=(rrr+w)*Math.sin(th2),
@@ -179,18 +195,26 @@ function frame(now){
     const per=520/(520+rz); if(per<=0) continue;
     const sxp=W/2+rx*per, syp=H/2+ry*per;
 
-    const ang=(Math.atan2(z,x)/6.2832+1)%1;
+    /* Where this point sits in the ramp. Depth angle while there is a sphere
+       to have depth; once the form is flat, atan2 has nothing left to read, so
+       it hands over to the point's own angle around the ring — which is what
+       makes the gradient travel round the circle instead of splitting it in
+       two. Blended on the shortest path so the ramp does not spin on the way. */
+    const angS=(Math.atan2(z,x)/6.2832+1)%1, angR=((th2/6.2832)%1+1)%1;
+    let dA=angR-angS; dA-=Math.round(dA);
+    const ang=(angS+dA*ds+1)%1;
     const dw=Math.abs(((ang-wave+1.5)%1)-.5);
-    const en=Math.max(0,1-dw*7);                     // narrow bright front
+    const en=Math.max(0,1-dw*7)*(1-ds*.55);          // travelling front, restrained once faded
     const depth=(rz+R0)/(2*R0);                      // 0 front · 1 back
     const flick=.62+.38*Math.sin(k*.9+p.seed*21);    // assemble / fade / reconnect
 
     // arriving points take on the ring's own weight as they join it
     const a0=p.role===0?.20:p.role===4?.30:.52, s0=p.role===0?4.2:p.role===4?3.6:4.6;
-    let a=(a0+(.52-a0)*ds)*flick*(1-depth*.6)*(1+en*1.15)*(.55+.45*fm);
-    let s=p.sz*per*(s0+(4.6-s0)*ds)*(1+en*.55);
-    SX[i]=sxp;SY[i]=syp;SA[i]=a;SS[i]=s;SD[i]=depth;SG[i]=ang;
-    out.push({sxp,syp,s,a,ang,en,depth});
+    let a=(a0+(.52-a0)*ds)*flick*(1-depth*.6)*(1+en*1.15)*(.55+.45*fm)*(1-ds*.30);
+    let s=p.sz*per*(s0+(4.6-s0)*ds)*(1+en*.55)*(1+ds*1.05);
+    const fade=p.seed<ds;
+    SX[i]=sxp;SY[i]=syp;SA[i]=a;SS[i]=s;SD[i]=depth;SG[i]=ang;SF[i]=fade?1:0;
+    out.push({sxp,syp,s,a,ang,en,depth,fade});
   }
 
   /* Closing the circles. Not a wire between beads — the gap is packed with
@@ -201,7 +225,7 @@ function frame(now){
   if(join>.01){
     // A gap is only closed between points genuinely adjacent on screen;
     // anything longer is a chord across the middle, not an arc.
-    const near=RAD()*.155, near2=near*near;
+    const near=R0*.155, near2=near*near;
     const pass=(field,weight)=>{
     if(weight<=.005) return;
     for(let i=0;i<P.length;i++){
@@ -214,7 +238,7 @@ function frame(now){
       const a=Math.min(SA[i],SA[j])*join*.62*weight, dp=(SD[i]+SD[j])*.5;
       for(let q=1;q<=n;q++){
         const t=q/(n+1);
-        out.push({sxp:SX[i]+dx*t, syp:SY[i]+dy*t, s:sz*.92, a, ang:SG[i], en:0, depth:dp});
+        out.push({sxp:SX[i]+dx*t, syp:SY[i]+dy*t, s:sz*.92, a, ang:SG[i], en:0, depth:dp, fade:!!SF[i]});
       }
     }};
     pass('link',1-ds); pass('linkAll',ds);
@@ -226,7 +250,7 @@ function frame(now){
   for(const o of out){
     g.globalAlpha=Math.min(1,o.a);
     const idx=((o.ang+.5+k*.055)%1*16|0)%16;         // ramp travels with the form
-    const img=o.en>.5?HI[idx]:SP[idx];
+    const img=o.en>.5?HI[idx]:o.fade?FD[idx]:SP[idx];
     g.drawImage(img,o.sxp-o.s,o.syp-o.s,o.s*2,o.s*2);
   }
   g.globalAlpha=1;g.globalCompositeOperation='source-over';
