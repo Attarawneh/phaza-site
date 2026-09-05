@@ -25,7 +25,7 @@
 <div class="keys">
   1 · 2 · 3 &nbsp;density<br>
   [ &nbsp;·&nbsp; ] &nbsp;formation &nbsp;·&nbsp; A &nbsp;auto<br>
-  , &nbsp;·&nbsp; . &nbsp;maturity<br>
+  , &nbsp;·&nbsp; . &nbsp;maturity &nbsp;·&nbsp; L &nbsp;lock<br>
   R &nbsp;rings on / off &nbsp;·&nbsp; S &nbsp;shell
 </div>
 <script>
@@ -117,6 +117,10 @@ let FORM=1, AUTO=false;
    circle of glow. Tokens at one end, knowledge at the other. */
 let DIST=0;
 
+/* Locked: the last section, where the circle stops arriving and simply is.
+   The sway stops, the spin all but stops, and it holds. */
+let LOCK=0;
+
 /* the three strands of a ring: offset across it and off its plane */
 const RSTR=[-.55,0,.55], NSTR=[.42,-.5,.36];
 const SPIN=[0,.30,-.235,.185], TILT=[0,0,1.05,-.92], ROLL=[0,0,.34,-.5];
@@ -142,10 +146,27 @@ function frame(now){
      circle settles square-on and stays there instead of slowly turning back
      into an ellipse. */
   const mt=DIST;
-  const tiltX=(.42+.05*Math.sin(k*.23))*(1-mt) + .07*Math.sin(k*.19)*mt,
-        tiltY=(k*.07)*(1-mt)               + .10*Math.sin(k*.13)*mt;
+  const tiltX=(.42+.05*Math.sin(k*.23))*(1-mt) + .07*Math.sin(k*.19)*mt*(1-LOCK),
+        tiltY=(k*.07)*(1-mt)               + .10*Math.sin(k*.13)*mt*(1-LOCK);
   const cx=Math.cos(tiltY),sx=Math.sin(tiltY),cy=Math.cos(tiltX),sy=Math.sin(tiltX);
   const wave=(k*.16)%1;                            // energy front travelling round
+
+  /* What is inside the circle. The travelling front stops being a bright bead
+     running round the band and becomes this: a slow breath of light held in
+     the ring, brightest just inside it, gone by the middle. A magic circle is
+     lit from within, not decorated on its edge. */
+  if(DIST>.01){
+    const ir=R0*1.16, pulse=.70+.30*Math.sin(k*.42)+.12*Math.sin(k*.67+1.3),
+          A=DIST*.30*pulse,
+          ig=g.createRadialGradient(W/2,H/2,0,W/2,H/2,ir);
+    ig.addColorStop(0,   `rgba(0,190,235,${A*.22})`);
+    ig.addColorStop(.50, `rgba(33,160,255,${A*.45})`);
+    ig.addColorStop(.84, `rgba(105,108,255,${A})`);
+    ig.addColorStop(1,   'rgba(138,43,226,0)');
+    g.globalCompositeOperation='lighter';
+    g.fillStyle=ig; g.fillRect(W/2-ir,H/2-ir,ir*2,ir*2);
+    g.globalCompositeOperation='source-over';
+  }
 
   if(AUTO) FORM=(Math.sin(k*.16)*.5+.5);
   const fm=FORM, loose=1-fm, ds=DIST;
@@ -160,12 +181,16 @@ function frame(now){
     /* This point's seat on its ring. As maturity rises the three rings give
        up their own tilt, roll and speed and fold onto one plane turning as one
        — three circles becoming a single circle of glow. */
+    /* The three circles never quite agree: each keeps a little of its own
+       tilt and roll once folded, and the radius breathes unevenly around the
+       turn. Drawn by hand, not struck with a compass. */
     const rg=p.ring,
-          spin=SPIN[rg]+(.30-SPIN[rg])*ds,
-          tilt=TILT[rg]*(1-ds)+1.5708*ds,   // folds up into the screen plane
-          roll=ROLL[rg]*(1-ds),
-          rrr=R0+(rg-2)*R0*.045*ds,
+          spin=(SPIN[rg]+(.30-SPIN[rg])*ds)*(1-LOCK*.8),
+          tilt=TILT[rg]*(1-ds)+(1.5708+(rg-2)*.075)*ds,  // folds into the screen plane
+          roll=ROLL[rg]*(1-ds)+(rg-2)*.06*ds,
           th2=p.th+k*spin,
+          wob=1+ds*(.024*Math.sin(th2*3+k*.21+rg*2.1)+.014*Math.sin(th2*5-k*.17+rg)),
+          rrr=(R0+(rg-2)*R0*.045*ds)*wob,
           /* A ring is three strands, not a cloud. Loose, each point sits
              anywhere in a wide off-plane haze; formed, it settles onto its own
              exact circle — so the band is thick and smooth rather than ragged,
@@ -204,13 +229,13 @@ function frame(now){
     let dA=angR-angS; dA-=Math.round(dA);
     const ang=(angS+dA*ds+1)%1;
     const dw=Math.abs(((ang-wave+1.5)%1)-.5);
-    const en=Math.max(0,1-dw*7)*(1-ds*.55);          // travelling front, restrained once faded
+    const en=Math.max(0,1-dw*7)*(1-ds*.9);           // the front moves inside, not along the band
     const depth=(rz+R0)/(2*R0);                      // 0 front · 1 back
     const flick=.62+.38*Math.sin(k*.9+p.seed*21);    // assemble / fade / reconnect
 
     // arriving points take on the ring's own weight as they join it
     const a0=p.role===0?.20:p.role===4?.30:.52, s0=p.role===0?4.2:p.role===4?3.6:4.6;
-    let a=(a0+(.52-a0)*ds)*flick*(1-depth*.6)*(1+en*1.15)*(.55+.45*fm)*(1-ds*.30);
+    let a=(a0+(.52-a0)*ds)*flick*(1-depth*.6)*(1+en*1.15)*(.55+.45*fm)*(1-ds*.12);
     let s=p.sz*per*(s0+(4.6-s0)*ds)*(1+en*.55)*(1+ds*1.05);
     const fade=p.seed<ds;
     SX[i]=sxp;SY[i]=syp;SA[i]=a;SS[i]=s;SD[i]=depth;SG[i]=ang;SF[i]=fade?1:0;
@@ -257,7 +282,7 @@ function frame(now){
   document.getElementById('bar').style.width=(fm*100).toFixed(1)+'%';
 
   document.getElementById('hud').innerHTML=
-    `<b>${out.length}</b> points &nbsp;·&nbsp; formation <b>${(fm*100)|0}%</b> &nbsp;·&nbsp; maturity <b>${(ds*100)|0}%</b> &nbsp;·&nbsp; shell ${SHELL?'on':'off'} &nbsp;·&nbsp; rings ${RINGS?'on':'off'}`;
+    `<b>${out.length}</b> points &nbsp;·&nbsp; formation <b>${(fm*100)|0}%</b> &nbsp;·&nbsp; maturity <b>${(ds*100)|0}%</b> &nbsp;·&nbsp; ${LOCK?'locked':'free'} &nbsp;·&nbsp; shell ${SHELL?'on':'off'} &nbsp;·&nbsp; rings ${RINGS?'on':'off'}`;
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -268,6 +293,7 @@ addEventListener('keydown',e=>{
   if(K==='r')RINGS=!RINGS; if(K==='s')SHELL=!SHELL;
   if(K==='[')FORM=Math.max(0,FORM-.1); if(K===']')FORM=Math.min(1,FORM+.1);
   if(K===',')DIST=Math.max(0,DIST-.1); if(K==='.')DIST=Math.min(1,DIST+.1);
+  if(K==='l')LOCK=LOCK?0:1;
   if(K==='a')AUTO=!AUTO;
 });
 </script>
