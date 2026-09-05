@@ -165,23 +165,29 @@ function frame(now){
     /* This point's seat on its ring. As maturity rises the three rings give
        up their own tilt, roll and speed and fold onto one plane turning as one
        — three circles becoming a single circle of glow. */
-    /* The three circles never quite agree: each keeps a little of its own
-       tilt and roll once folded, and the radius breathes unevenly around the
-       turn. Drawn by hand, not struck with a compass. */
+    /* Matured, the three rings stop being three. They take the same plane and
+       the same turn, and every point scatters across one band — so what is
+       left is a single cloud in the shape of a circle, not a set of tracks. */
     const rg=p.ring,
-          spin=(SPIN[rg]+(.30-SPIN[rg])*ds)*(1-LOCK*.8),
-          tilt=TILT[rg]*(1-ds)+(1.5708+(rg-2)*.075)*ds,  // folds into the screen plane
-          roll=ROLL[rg]*(1-ds)+(rg-2)*.06*ds,
+          spin=(SPIN[rg]+(.30-SPIN[rg])*ds)*(1-LOCK*.72),
+          tilt=TILT[rg]*(1-ds)+1.5708*ds,   // folds into the screen plane
+          roll=ROLL[rg]*(1-ds),
           th2=p.th+k*spin,
-          wob=1+ds*(.024*Math.sin(th2*3+k*.21+rg*2.1)+.014*Math.sin(th2*5-k*.17+rg)),
-          rrr=(R0+(rg-2)*R0*.045*ds)*wob,
-          /* A ring is three strands, not a cloud. Loose, each point sits
-             anywhere in a wide off-plane haze; formed, it settles onto its own
-             exact circle — so the band is thick and smooth rather than ragged,
-             and an edge-on ring stays three arcs instead of one hard bar. */
-          tight=1+ds*.15,
-          w  =RSTR[p.strand]*R0*.055*tight*fm + p.band *R0*.42*loose,
-          off=NSTR[p.strand]*R0*.055*tight*fm + p.band2*R0*.40*loose,
+          /* An organic edge, not a struck circle: slow harmonics running round
+             the turn, drifting against each other in time. */
+          wob=1+ds*(.030*Math.sin(th2*2+k*.17)
+                   +.020*Math.sin(th2*3.3-k*.13+1.7)
+                   +.012*Math.sin(th2*5.1+k*.09+3.1)),
+          rrr=R0*wob,
+          /* Across the band. Two uniforms summed pile the points toward the
+             middle and leave the edges thin, so the halo dissolves outward
+             instead of ending. Each breathes on its own clock. While the
+             sphere still exists, the old strand seats hold instead. */
+          spread=(p.band+p.band2)*(1+.28*Math.sin(k*.5+p.seed*6.3)),
+          w  = R0*.155*spread*ds
+             + (RSTR[p.strand]*R0*.055*fm + p.band *R0*.42*loose)*(1-ds),
+          off= R0*.05*(p.seed-.5)*ds
+             + (NSTR[p.strand]*R0*.055*fm + p.band2*R0*.40*loose)*(1-ds),
           px=(rrr+w)*Math.cos(th2), py=off, pz=(rrr+w)*Math.sin(th2),
           sy1=py*Math.cos(tilt)-pz*Math.sin(tilt), sz1=py*Math.sin(tilt)+pz*Math.cos(tilt),
           seatX=px*Math.cos(roll)-sy1*Math.sin(roll),
@@ -211,7 +217,8 @@ function frame(now){
        two. Blended on the shortest path so the ramp does not spin on the way. */
     const angS=(Math.atan2(z,x)/6.2832+1)%1, angR=((th2/6.2832)%1+1)%1;
     let dA=angR-angS; dA-=Math.round(dA);
-    const ang=(angS+dA*ds+1)%1;
+    // a little jitter so the colours bleed into each other rather than banding
+    const ang=(angS+dA*ds+(p.seed-.5)*.05*ds+1)%1;
     const dw=Math.abs(((ang-wave+1.5)%1)-.5);
     const en=Math.max(0,1-dw*7)*(1-ds*.9);           // the front moves inside, not along the band
     const depth=(rz+R0)/(2*R0);                      // 0 front · 1 back
@@ -220,9 +227,21 @@ function frame(now){
 
     // arriving points take on the ring's own weight as they join it
     const a0=p.role===0?.20:p.role===4?.30:.52, s0=p.role===0?4.2:p.role===4?3.6:4.6;
-    let a=(a0+(.52-a0)*ds)*flick*(1-depth*.6)*(1+en*1.15)*(.55+.45*fm)*(1-ds*.58);
-    // sizes even out too, so no point stands proud of the band
-    let s=(p.sz+(1-p.sz)*ds)*per*(s0+(4.6-s0)*ds)*(1+en*.55)*(1+ds*1.75);
+    /* Density is not even. Points thin out toward the edges of the band, and
+       the band itself is richer in some stretches than others -- which is what
+       stops it reading as a drawn line and starts it reading as weather. */
+    let edge=Math.max(0,1-Math.abs(spread)*.85); edge*=edge;
+    const den=(.40+.60*(.5+.5*Math.sin(th2*2.3+k*.19)))*(.62+.38*Math.sin(th2*4.1-k*.11));
+    let a=(a0+(.52-a0)*ds)*flick*(1-depth*.6)*(1+en*1.15)*(.55+.45*fm)
+          *(1-ds*.22)*(1+ds*(edge*den*2.05-1));
+    /* Sizes even out, so no point stands proud of the band. Then two things
+       soften the outside: points near the fringe swell as they dim, so the
+       edge blurs rather than stops; and roughly one in six is drawn far larger
+       and far fainter, which lays an atmosphere over the whole form. */
+    const bloom=p.seed>.83?1+2.4*ds:1;
+    let s=(p.sz+(1-p.sz)*ds)*per*(s0+(4.6-s0)*ds)*(1+en*.55)*(1+ds*1.75)
+          *(1+Math.abs(spread)*.95*ds)*bloom;
+    if(bloom>1) a*=.24;
     const fade=p.seed<ds;
     SX[i]=sxp;SY[i]=syp;SA[i]=a;SS[i]=s;SD[i]=depth;SG[i]=ang;SF[i]=fade?1:0;
     out.push({sxp,syp,s,a,ang,en,depth,fade});
@@ -236,7 +255,7 @@ function frame(now){
   if(join>.01){
     // A gap is only closed between points genuinely adjacent on screen;
     // anything longer is a chord across the middle, not an arc.
-    const near=R0*.155, near2=near*near;
+    const near=R0*(.155-.105*ds), near2=near*near;
     const pass=(field,weight)=>{
     if(weight<=.005) return;
     for(let i=0;i<P.length;i++){
