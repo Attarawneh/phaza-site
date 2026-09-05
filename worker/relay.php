@@ -14,6 +14,7 @@
 declare(strict_types=1);
 
 const ENV_FILE   = '/var/www/phaza-portal-staging/shared/.env';
+const MAIL_ENV   = __DIR__ . '/mail.env';   // relay-only overrides, optional
 const AUTOLOAD   = '/var/www/phaza-portal-staging/current/vendor/autoload.php';
 const RECIPIENTS = ['attarawneh@phaza.io', 'znasser@phaza.io'];
 const ORIGIN     = 'https://phaza.io';
@@ -29,12 +30,22 @@ function envv(string $key): string
     static $env = null;
     if ($env === null) {
         $env = [];
-        foreach (file(ENV_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-            if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) {
+        /* The portal's .env first, then relay-only overrides. The portal
+           application shares that file for its own mail, so anything specific
+           to Phaza Connect belongs in mail.env where it cannot reconfigure
+           the portal by accident. */
+        foreach ([ENV_FILE, MAIL_ENV] as $file) {
+            if (!is_readable($file)) {
                 continue;
             }
-            [$k, $v] = explode('=', $line, 2);
-            $env[trim($k)] = trim(trim($v), "\"'");
+            foreach (file($file, FILE_IGNORE_NEW_LINES) as $line) {
+                $line = trim($line);
+                if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) {
+                    continue;
+                }
+                [$k, $v] = explode('=', $line, 2);
+                $env[trim($k)] = trim(trim($v), "\"'");
+            }
         }
     }
     return $env[$key] ?? '';
@@ -67,6 +78,12 @@ function mailer(): Symfony\Component\Mailer\Mailer
         if ($transport instanceof Symfony\Component\Mailer\Transport\Smtp\SmtpTransport) {
             $transport->getStream()->setTimeout(6);
         }
+        /* Introduce ourselves properly. Left alone, Symfony greets with the
+           local hostname, which resolves to 127.0.0.1 here — rspamd scores
+           that as a forged HELO and rejects the message. */
+        if ($transport instanceof Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport) {
+            $transport->setLocalDomain(envv('MAIL_HELO') ?: 'portal.phaza.io');
+        }
         $m = new Symfony\Component\Mailer\Mailer($transport);
     }
     return $m;
@@ -85,6 +102,14 @@ function send_mail(array $d): void
         }
     }
 
+    $text = "New enquiry from phaza.io\n\n";
+    foreach (['purpose', 'name', 'organisation', 'country', 'email', 'page', 'sent_at'] as $k) {
+        if (!empty($d[$k])) {
+            $text .= '  ' . str_pad($k . ':', 15) . $d[$k] . "\n";
+        }
+    }
+    $text .= "\n" . trim((string) ($d['message'] ?? '')) . "\n";
+
     /* One message per recipient. Exchange Online throttles multi-recipient
        transactions from an unfamiliar IP with "452 4.5.3 Too many recipients",
        which would defer half the team's copy on every submission. */
@@ -99,6 +124,7 @@ function send_mail(array $d): void
             ->to($to)
             ->replyTo((string) $d['email'])
             ->subject('Phaza Connect — ' . (($d['purpose'] ?? '') ?: 'Enquiry') . ' — ' . ($d['organisation'] ?? ''))
+            ->text($text)
             ->html(
                 '<h2 style="font:600 15px system-ui">New enquiry from phaza.io</h2>'
                 . '<table style="font:14px system-ui;border-collapse:collapse">' . $rows . '</table>'
