@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny-ps" viewBox="0 0 128 128">
+  <title>Phaza</title>
+  <defs>
+    <linearGradient id="pz" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0662AF"/>
+      <stop offset="1" stop-color="#5B41C4"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" fill="url(#pz)"/>
+  <path d="M48 37 H 89 A 12.5 12.5 0 0 1 89 62 H 56 L 26 91 L 42 43 Q 43 37 48 37 Z" fill="#FFFFFF" transform="translate(64 64) scale(1.18) translate(-64 -64)"/>
+</svg>
