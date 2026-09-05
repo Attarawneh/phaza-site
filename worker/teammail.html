@@ -1,68 +1,75 @@
 <!doctype html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#eef1f5;">
-<!-- Team notification: light on purpose — this is a triage email read in
-     Outlook, not a brand piece. The banner says where it came from before
-     a single word is read. -->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f5;padding:28px 14px;">
+<body style="margin:0;padding:0;background:#05080f;">
+<!-- Team notification. Same dark identity as the visitor confirmation so every
+     Phaza Connect email reads as one family; the content is triage, not a
+     thank-you. -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Website enquiry from phaza.io — {{PURPOSE}} — {{ORGANISATION}}.</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#05080f;padding:32px 16px;">
 <tr><td align="center">
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#0a1018;border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
 
-  <!-- Source banner -->
-  <tr><td style="background:#0a1018;border-radius:12px 12px 0 0;padding:16px 24px;border-bottom:3px solid #2FB4EC;">
+  <!-- Masthead -->
+  <tr><td bgcolor="#0a1018" style="padding:30px 38px 0 38px;background:#0a1018;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td style="vertical-align:middle;">
-        <p style="margin:0;font-family:'SFMono-Regular',Consolas,monospace;font-size:10px;letter-spacing:.24em;color:#2FB4EC;text-transform:uppercase;">Website enquiry</p>
-        <p style="margin:4px 0 0 0;font-size:16px;font-weight:600;color:#ffffff;">{{PURPOSE}}</p>
+        <img src="https://phaza.io/brand/phaza-wordmark.d3821622.png" width="140" height="29" alt="PHAZA" style="display:block;border:0;outline:none;text-decoration:none;">
       </td>
       <td align="right" style="vertical-align:middle;">
-        <img src="https://phaza.io/brand/phaza-wordmark.d3821622.png" width="96" height="20" alt="PHAZA" style="display:block;border:0;">
+        <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:10px;letter-spacing:.22em;color:#2FB4EC;text-transform:uppercase;">Website enquiry</span>
       </td>
     </tr></table>
+  </td></tr>
+
+  <!-- Headline -->
+  <tr><td style="padding:22px 38px 0 38px;">
+    <h1 style="margin:0;font-size:24px;line-height:1.25;font-weight:300;color:#ffffff;">{{PURPOSE}}</h1>
+    <p style="margin:8px 0 0 0;font-size:15px;color:rgba(255,255,255,0.6);">from <span style="color:#ffffff;">{{ORGANISATION}}</span> &middot; {{COUNTRY}}</p>
+  </td></tr>
+
+  <!-- Hairline -->
+  <tr><td style="padding:22px 38px 0 38px;">
+    <div style="height:1px;background:linear-gradient(to right,rgba(47,180,236,.5),rgba(255,255,255,0.06));"></div>
   </td></tr>
 
   <!-- Phaza One assessment -->
   {{ASSESS_BLOCK}}
 
-  <!-- Body card -->
-  <tr><td style="background:#ffffff;padding:22px 24px 6px 24px;border:1px solid #e2e7ee;border-top:0;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#1a2330;">
+  <!-- Details -->
+  <tr><td style="padding:22px 38px 0 38px;">
+    <p style="margin:0 0 14px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,0.42);text-transform:uppercase;">Contact</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
       <tr>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;width:34%;">Name</td>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;font-weight:600;">{{NAME}}</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);width:34%;">Name</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:#ffffff;text-align:right;">{{NAME}}</td>
       </tr>
       <tr>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;">Organisation</td>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;font-weight:600;">{{ORGANISATION}}</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);">Email</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);text-align:right;"><a href="mailto:{{EMAIL}}" style="color:#2FB4EC;text-decoration:none;">{{EMAIL}}</a></td>
       </tr>
       <tr>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;">Country</td>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;">{{COUNTRY}}</td>
-      </tr>
-      <tr>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;">Email</td>
-        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;"><a href="mailto:{{EMAIL}}" style="color:#1d7fb5;text-decoration:none;">{{EMAIL}}</a></td>
-      </tr>
-      <tr>
-        <td style="padding:8px 0;color:#8492a6;">Received</td>
-        <td style="padding:8px 0;color:#5a6a80;">{{SENT_AT}} &nbsp;·&nbsp; {{PAGE}}</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);">Received</td>
+        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);text-align:right;">{{SENT_AT}}</td>
       </tr>
     </table>
   </td></tr>
 
-  <!-- Their message -->
-  <tr><td style="background:#ffffff;padding:12px 24px 22px 24px;border:1px solid #e2e7ee;border-top:0;">
-    <p style="margin:0 0 8px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:#8492a6;text-transform:uppercase;">Message</p>
-    <div dir="auto" style="padding:14px 16px;background:#f7f9fb;border-left:3px solid #2FB4EC;border-radius:0 8px 8px 0;font-size:14px;line-height:1.6;color:#2a3648;">{{MESSAGE}}</div>
+  <!-- Message -->
+  <tr><td style="padding:22px 38px 0 38px;">
+    <p style="margin:0 0 12px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,0.42);text-transform:uppercase;">Message</p>
+    <div dir="auto" style="padding:15px 17px;background:rgba(255,255,255,0.03);border-left:2px solid #2FB4EC;border-radius:0 8px 8px 0;font-size:14px;line-height:1.6;color:rgba(255,255,255,0.82);">{{MESSAGE}}</div>
   </td></tr>
 
   <!-- Footer -->
-  <tr><td style="background:#ffffff;border:1px solid #e2e7ee;border-top:1px solid #eef1f5;border-radius:0 0 12px 12px;padding:14px 24px;">
-    <p style="margin:0;font-size:12px;color:#8492a6;">
-      Sent by <span style="color:#1d7fb5;font-weight:600;">Phaza Connect</span> from phaza.io &nbsp;·&nbsp;
-      Hitting reply answers {{NAME_SHORT}} directly.
+  <tr><td style="padding:26px 38px 32px 38px;">
+    <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:18px;"></div>
+    <p style="margin:0;font-size:12px;line-height:1.6;color:rgba(255,255,255,0.42);">
+      Sent by <span style="color:#2FB4EC;">Phaza Connect</span> from
+      <a href="https://phaza.io" style="color:#2FB4EC;text-decoration:none;">phaza.io</a>{{PAGE_SUFFIX}} &nbsp;·&nbsp;
+      Replying answers {{NAME_SHORT}} directly.
     </p>
   </td></tr>
 

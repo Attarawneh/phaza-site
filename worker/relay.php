@@ -129,18 +129,20 @@ function send_mail(array $d, ?array $ai = null): void
             $ai['confidence'] ?: '?',
             $ai['summary'],
         );
-        /* Green for genuine, amber for flagged — readable before reading. */
-        [$bg, $bar, $fg, $label] = $ai['genuine']
-            ? ['#ecfdf5', '#059669', '#065f46', 'Genuine enquiry']
-            : ['#fef3c7', '#d97706', '#92400e', 'Flagged'];
-        $assessBlock = '<tr><td style="background:' . $bg . ';border:1px solid #e2e7ee;border-top:0;'
-            . 'border-left:3px solid ' . $bar . ';padding:12px 24px;">'
+        /* Dark palette to match the card. Green glow for genuine, amber for
+           flagged — the colour reads before the words do. */
+        [$tint, $bar, $label] = $ai['genuine']
+            ? ['rgba(16,185,129,0.09)', '#10b981', 'Genuine enquiry']
+            : ['rgba(217,119,6,0.10)', '#f59e0b', 'Flagged'];
+        $assessBlock = '<tr><td style="padding:22px 38px 0 38px;">'
+            . '<div style="padding:15px 17px;background:' . $tint . ';border:1px solid rgba(255,255,255,0.07);'
+            . 'border-left:2px solid ' . $bar . ';border-radius:0 8px 8px 0;">'
             . '<p style="margin:0;font-family:\'SFMono-Regular\',Consolas,monospace;font-size:9px;'
-            . 'letter-spacing:.2em;color:' . $fg . ';text-transform:uppercase;">Phaza One &middot; '
+            . 'letter-spacing:.16em;color:' . $bar . ';text-transform:uppercase;">Phaza One &middot; '
             . $esc($label) . ' &middot; ' . $esc($ai['category'] ?: 'uncategorised')
             . ' &middot; ' . $esc($ai['language'] ?: '?') . ' (' . $esc($ai['confidence'] ?: '?') . ')</p>'
-            . '<p style="margin:6px 0 0 0;font-size:13px;line-height:1.5;color:' . $fg . ';">'
-            . $esc($ai['summary']) . '</p></td></tr>';
+            . '<p style="margin:8px 0 0 0;font-size:14px;line-height:1.55;color:rgba(255,255,255,0.82);">'
+            . $esc($ai['summary']) . '</p></div></td></tr>';
     }
 
     $tpl = file_get_contents(TEAMMAIL);
@@ -153,7 +155,7 @@ function send_mail(array $d, ?array $ai = null): void
         '{{COUNTRY}}'      => $esc($d['country'] ?? ''),
         '{{EMAIL}}'        => $esc($d['email'] ?? ''),
         '{{SENT_AT}}'      => $esc($d['sent_at'] ?? ''),
-        '{{PAGE}}'         => $esc(($d['page'] ?? '') ?: '/'),
+        '{{PAGE_SUFFIX}}'  => ($d['page'] ?? '') && $d['page'] !== '/' ? $esc($d['page']) : '',
         '{{MESSAGE}}'      => nl2br($esc(trim((string) ($d['message'] ?? '')) ?: '(no message)')),
     ]);
 
