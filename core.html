@@ -57,16 +57,24 @@ const mkf=t=>{const c=document.createElement('canvas');c.width=c.height=64;
   const x=c.getContext('2d'),[r,g2,b]=rgbc(t),
     w=v=>Math.round(v+(255-v)*.5),                 // washed halfway to white
     rg=x.createRadialGradient(32,32,0,32,32,32);
-  rg.addColorStop(0,`rgba(${w(r)},${w(g2)},${w(b)},.5)`);
-  rg.addColorStop(.30,`rgba(${r},${g2},${b},.28)`);
-  rg.addColorStop(.64,`rgba(${r},${g2},${b},.10)`);
-  rg.addColorStop(1,`rgba(${r},${g2},${b},0)`);
+  /* No hot centre. A bright core the size of the gap between points is what
+     the eye reads as grain; a broad, gentle bell overlaps its neighbours and
+     integrates into one surface. */
+  rg.addColorStop(0,  `rgba(${w(r)},${w(g2)},${w(b)},.30)`);
+  rg.addColorStop(.36,`rgba(${r},${g2},${b},.205)`);
+  rg.addColorStop(.70,`rgba(${r},${g2},${b},.075)`);
+  rg.addColorStop(1,  `rgba(${r},${g2},${b},0)`);
   x.fillStyle=rg;x.fillRect(0,0,64,64);return c};
-const SP=[],HI=[],FD=[];for(let i=0;i<16;i++){SP.push(mk(i/15,0));HI.push(mk(i/15,110));FD.push(mkf(i/15))}
+const NS=48;   // ramp samples round the turn -- enough that no step shows
+const SP=[],HI=[],FD=[];
+for(let i=0;i<NS;i++){const t=i/(NS-1);SP.push(mk(t,0));HI.push(mk(t,110));FD.push(mkf(t))}
 
 /* ── population: a soft outer shell, three rings that cross it, an inner
       core shell. Rings get the largest share so they read as structure. ── */
 let COUNT=2600, RINGS=true, SHELL=true, P=[], SX,SY,SA,SB,SS,SD,SG,SF;
+// bit-reversal in base two: every prefix of this sequence is spread evenly
+const vdc=i=>{let b=0,f=.5;while(i>0){b+=f*(i&1);i>>=1;f*=.5}return b};
+
 function build(){
   P=[];
   for(let i=0;i<COUNT;i++){
@@ -85,7 +93,16 @@ function build(){
          chance; the golden ratio walks the circle laying each point in the
          largest gap left by the ones before, so the band comes out evenly
          populated without looking mechanically stepped. */
-      thM:((i*.6180339887)%1)*Math.PI*2,
+      /* A lattice this regular starts to show its own pattern -- the
+         sunflower moire. A jitter of well under one spacing dissolves it and
+         keeps the evenness. */
+      thM:((i*.6180339887)%1)*Math.PI*2+(Math.random()-.5)*.03,
+      /* And its place across the band. Random offsets speckle -- some pockets
+         crowd, others go bare, and the eye reads the difference as grain. The
+         bit-reversal sequence fills the width evenly at every scale, so paired
+         with the golden angle the points land as a smooth lattice rather than
+         a spatter. */
+      rad:Math.max(-1,Math.min(1,vdc(i+1)*2-1+(Math.random()-.5)*.16)),
       band:(Math.random()-.5),          // where it sits across a ring's width
       band2:(Math.random()-.5),         // and how far it stands off its plane
       seed:Math.random(),
@@ -189,8 +206,11 @@ function frame(now){
              there is a clear bright line through the band with a thinning haze
              either side of it -- a defined edge that still dissolves. While
              the sphere exists, the old strand seats hold instead. */
-          u0=p.band+p.band2, spread=u0*Math.abs(u0)*1.35*(1+.22*Math.sin(k*.5+p.seed*6.3)),
-          w  = R0*.125*spread*ds
+          /* Half way between an even spread and a tight core: wide enough to
+             be a halo, weighted enough to have a body. The breath is shared by
+             every point, so the band swells as one instead of shimmering. */
+          u0=p.rad, spread=u0*(.55+.45*Math.abs(u0))*(1+.14*Math.sin(k*.45)),
+          w  = R0*.20*spread*ds
              + (RSTR[p.strand]*R0*.055*fm + p.band *R0*.42*loose)*(1-ds),
           off= R0*.05*(p.seed-.5)*ds
              + (NSTR[p.strand]*R0*.055*fm + p.band2*R0*.40*loose)*(1-ds),
@@ -237,17 +257,17 @@ function frame(now){
        the band itself is richer in some stretches than others -- which is what
        stops it reading as a drawn line and starts it reading as weather. */
     let edge=Math.max(0,1-Math.abs(spread)*.85); edge*=edge;
-    const den=(.72+.28*Math.sin(th2*2.3+k*.19))*(.85+.15*Math.sin(th2*4.1-k*.11));
+    const den=(.84+.16*Math.sin(th2*2.3+k*.19))*(.92+.08*Math.sin(th2*4.1-k*.11));
     let a=(a0+(.52-a0)*ds)*flick*(1-depth*.6)*(1+en*1.15)*(.55+.45*fm)
-          *(1-ds*.05)*(1+ds*(edge*den*1.9-1));
+          *(1-ds*.05)*(1+ds*(edge*den*2.3-1));
     /* Sizes even out, so no point stands proud of the band. Then two things
        soften the outside: points near the fringe swell as they dim, so the
        edge blurs rather than stops; and roughly one in six is drawn far larger
        and far fainter, which lays an atmosphere over the whole form. */
-    const bloom=p.seed>.86?1+2.4*ds:1;
-    let s=(p.sz+(1-p.sz)*ds)*per*(s0+(4.6-s0)*ds)*(1+en*.55)*(1+ds*1.75)
+    const bloom=1+2.2*ds*Math.max(0,(p.seed-.66)/.34);
+    let s=(p.sz+(1-p.sz)*ds)*per*(s0+(4.6-s0)*ds)*(1+en*.55)*(1+ds*2.75)
           *(1+Math.abs(spread)*.95*ds)*bloom;
-    if(bloom>1) a*=.20;
+    a/=1+(bloom-1)*3.1;
     const fade=p.seed<ds;
     SX[i]=sxp;SY[i]=syp;SA[i]=a;SS[i]=s;SD[i]=depth;SG[i]=ang;SF[i]=fade?1:0;
     out.push({sxp,syp,s,a,ang,en,depth,fade});
@@ -257,7 +277,7 @@ function frame(now){
      more of the same glow, so neighbouring points melt into one continuous
      luminous arc. They fill in over the second half of the formation: the
      dots find each other, then the ring becomes solid light. */
-  const join=Math.max(0,(fm-.28)/.72);
+  const join=Math.max(0,(fm-.28)/.72)*(1-ds*.9);
   if(join>.01){
     // A gap is only closed between points genuinely adjacent on screen;
     // anything longer is a chord across the middle, not an arc.
@@ -284,13 +304,29 @@ function frame(now){
   out.sort((m,n)=>n.depth-m.depth);                  // far pixels first
   g.globalCompositeOperation='lighter';               // light adds up
 
+  /* Matured, each point is smeared a little along the ring rather than
+     stamped once. Three draws along the tangent, sharing the light between
+     them, closes the gaps the way motion blur does -- so the band is a
+     surface at any density, instead of a row of beads at low ones. */
+  const smear=DIST>.02;
   for(const o of out){
+    if(smear){
+      const dx0=o.sxp-W/2, dy0=o.syp-H/2, L=Math.hypot(dx0,dy0)||1,
+            e=o.s*.34*DIST, tx=-dy0/L*e, ty=dx0/L*e, nx=dx0/L*e, ny=dy0/L*e,
+            idx2=(Math.pow((o.ang+.5+k*.055)%1,.78)*NS|0)%NS,
+            im=o.en>.5?HI[idx2]:o.fade?FD[idx2]:SP[idx2];
+      g.globalAlpha=Math.min(1,o.a*.34);
+      g.drawImage(im,o.sxp+tx+nx-o.s,o.syp+ty+ny-o.s,o.s*2,o.s*2);
+      g.drawImage(im,o.sxp-tx+nx-o.s,o.syp-ty+ny-o.s,o.s*2,o.s*2);
+      g.drawImage(im,o.sxp+tx-nx-o.s,o.syp+ty-ny-o.s,o.s*2,o.s*2);
+      g.drawImage(im,o.sxp-tx-nx-o.s,o.syp-ty-ny-o.s,o.s*2,o.s*2);
+    }
     g.globalAlpha=Math.min(1,o.a);
     /* The signature ramp spends four of its five stops in cyan and blue, so
        laid flat round a circle the violet end barely appears. Easing the
        lookup gives the far end of the ramp more of the turn without inventing
        a colour the design system does not have. */
-    const idx=(Math.pow((o.ang+.5+k*.055)%1,.78)*16|0)%16;
+    const idx=(Math.pow((o.ang+.5+k*.055)%1,.78)*NS|0)%NS;
     const img=o.en>.5?HI[idx]:o.fade?FD[idx]:SP[idx];
     g.drawImage(img,o.sxp-o.s,o.syp-o.s,o.s*2,o.s*2);
   }
