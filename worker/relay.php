@@ -91,6 +91,86 @@ function mailer(): Symfony\Component\Mailer\Mailer
 }
 
 /**
+ * Send one message through Microsoft Graph over HTTPS.
+ *
+ * DigitalOcean blocks outbound SMTP from this droplet to Office 365, so Graph
+ * (port 443) is the only path to Microsoft. Sending as a real tenant mailbox
+ * means the mail originates INSIDE the tenant — Office 365 no longer tags it
+ * external. Uses the same GRAPH_* app the portal uses; credentials are read
+ * from the environment at runtime and never leave the server.
+ *
+ * Returns true if it sent, false if Graph is not configured (caller falls
+ * back to SMTP), throws on a real send failure so the enquiry is spooled.
+ */
+function graph_configured(): bool
+{
+    return envv('GRAPH_CLIENT_ID') !== '' && envv('GRAPH_TENANT_ID') !== ''
+        && envv('GRAPH_CLIENT_SECRET') !== '';
+}
+
+function graph_token(): string
+{
+    static $tok = null;
+    if ($tok !== null) {
+        return $tok;
+    }
+    $ch = curl_init('https://login.microsoftonline.com/' . rawurlencode(envv('GRAPH_TENANT_ID')) . '/oauth2/v2.0/token');
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_POSTFIELDS     => http_build_query([
+            'client_id'     => envv('GRAPH_CLIENT_ID'),
+            'client_secret' => envv('GRAPH_CLIENT_SECRET'),
+            'scope'         => 'https://graph.microsoft.com/.default',
+            'grant_type'    => 'client_credentials',
+        ]),
+    ]);
+    $res  = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    $tok = json_decode((string) $res, true)['access_token'] ?? '';
+    if ($tok === '') {
+        throw new RuntimeException('graph token failed: HTTP ' . $code . ' ' . mb_substr((string) $res, 0, 200));
+    }
+    return $tok;
+}
+
+function graph_send(Symfony\Component\Mime\Email $email): void
+{
+    $sender = envv('GRAPH_SENDER') ?: (envv('MAIL_FROM_ADDRESS') ?: 'no-reply@phaza.io');
+
+    $addr = fn ($a) => ['emailAddress' => ['address' => $a->getAddress()]];
+    $msg  = [
+        'subject'      => (string) $email->getSubject(),
+        'body'         => ['contentType' => 'HTML', 'content' => (string) ($email->getHtmlBody() ?: nl2br(htmlspecialchars((string) $email->getTextBody())))],
+        'toRecipients' => array_map($addr, $email->getTo()),
+    ];
+    if ($email->getReplyTo()) {
+        $msg['replyTo'] = array_map($addr, $email->getReplyTo());
+    }
+
+    $ch = curl_init('https://graph.microsoft.com/v1.0/users/' . rawurlencode($sender) . '/sendMail');
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 25,
+        CURLOPT_HTTPHEADER     => [
+            'Authorization: Bearer ' . graph_token(),
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS     => json_encode(['message' => $msg, 'saveToSentItems' => false]),
+    ]);
+    $res  = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    /* Graph sendMail returns 202 Accepted with an empty body on success. */
+    if ($code !== 202) {
+        throw new RuntimeException('graph sendMail HTTP ' . $code . ' ' . mb_substr((string) $res, 0, 240));
+    }
+}
+
+/**
  * Send with the envelope on the authenticated mailbox and the visible From on
  * the brand address. The envelope must match the SMTP login or mailcow refuses
  * it; the From is what people see, and rspamd DKIM-signs by the From domain --
@@ -98,6 +178,14 @@ function mailer(): Symfony\Component\Mailer\Mailer
  */
 function deliver(Symfony\Component\Mime\Email $email): void
 {
+    /* Prefer Microsoft Graph when the app is configured: it reaches Office 365
+       over HTTPS (SMTP to O365 is blocked here) and sends from inside the
+       tenant, so the message is not tagged external. SMTP is the fallback. */
+    if (graph_configured()) {
+        graph_send($email);
+        return;
+    }
+
     $bounce = envv('MAIL_ENVELOPE_FROM') ?: envv('MAIL_USERNAME');
     if ($bounce !== '') {
         $rcpts = [];
@@ -569,6 +657,16 @@ if (PHP_SAPI === 'cli') {
         ]);
         echo "autoreply sent to {$to}\n";
         exit(0);
+    }
+    if ($mode === '--test-graph') {
+        $to = $argv[2] ?? 'attarawneh@phaza.io';
+        if (!graph_configured()) { echo "graph not configured (GRAPH_* empty)\n"; exit(1); }
+        $e = (new Symfony\Component\Mime\Email())
+            ->from(envv('GRAPH_SENDER') ?: 'no-reply@phaza.io')
+            ->to($to)->subject('Phaza Connect — Graph path test')
+            ->html('<p>Sent through Microsoft Graph as ' . htmlspecialchars(envv('GRAPH_SENDER')) . '. If this has no EXTERNAL tag, the path works.</p>');
+        try { graph_send($e); echo "graph send OK to {$to}\n"; exit(0); }
+        catch (Throwable $ex) { echo 'FAILED: ' . $ex->getMessage() . "\n"; exit(1); }
     }
     if ($mode === '--replay') {
         $files = glob(SPOOL_DIR . '/*.json') ?: [];
