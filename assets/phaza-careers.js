@@ -22,6 +22,7 @@
     email: { label: 'Email', type: 'email', required: true, autocomplete: 'email' },
     phone: { label: 'Phone', type: 'tel', required: true, autocomplete: 'tel', hint: 'With country code — +962 …' },
     linkedin_url: { label: 'LinkedIn', type: 'text', required: false, autocomplete: 'url', hint: 'linkedin.com/in/you (optional)' },
+    instagram_url: { label: 'Instagram', type: 'text', required: false, autocomplete: 'url', hint: '@yourhandle (optional)' },
   };
 
   let lastFocus = null;
@@ -75,6 +76,26 @@
     .pzc-consent { display: flex; gap: .6rem; align-items: flex-start; margin: 1rem 0 .4rem;
       font-size: .74rem; line-height: 1.5; color: rgba(255,255,255,.75); cursor: pointer; }
     .pzc-consent input { margin-top: .2rem; accent-color: #00CDFF; }
+    .pz-careers .pz-panel, .pz-careers .pz-send, .pz-careers .pzc-decline {
+      font-family: Inter, system-ui, -apple-system, sans-serif; }
+    .pz-careers .pz-send { text-transform: none; letter-spacing: .01em;
+      font-weight: 600; font-size: .92rem; }
+    .pz-careers .pzc-verdict { font-size: .95rem; line-height: 1.6; color: #dfeefb; }
+    .pz-careers .pzc-verdict b { color: #00CDFF; font-weight: 650; }
+    .pz-careers #pzc-title { font-weight: 300; letter-spacing: .01em; }
+    .pzc-orb { width: 3.2rem; height: 3.2rem; border-radius: 999px; flex: none;
+      background: conic-gradient(from 0deg, #00F0FF, #21A0FF, #8A2BE2, #00F0FF);
+      filter: blur(1px) saturate(1.2);
+      animation: pzc-orb-spin 2.4s linear infinite, pzc-orb-breathe 2.8s ease-in-out infinite;
+      box-shadow: 0 0 28px rgba(0, 205, 255, .35), 0 0 60px rgba(138, 43, 226, .2); }
+    .pzc-ai-line { font-size: .86rem; color: #cfeaf5; }
+    .pz-reading { flex-direction: column; gap: 1rem; }
+    .pz-reading::before { content: none; }
+    @keyframes pzc-orb-spin { to { transform: rotate(360deg); } }
+    @keyframes pzc-orb-breathe { 50% { scale: 1.12; filter: blur(2.5px) saturate(1.4); } }
+    @media (prefers-reduced-motion: reduce) {
+      .pzc-orb { animation: none; }
+    }
   `;
   document.head.appendChild(style);
 
@@ -163,6 +184,30 @@
     };
 
     let missing = [];
+    let firstName = '';
+    let aiTimer = null;
+
+    /* The analysis wears its intelligence: a breathing orb and a line that
+       tells the truth about what is happening, phrase by phrase. */
+    const AI_LINES = [
+      'Reading your experience…',
+      'Mapping your skills to Phaza\u2019s functions…',
+      'Weighing the evidence…',
+      'Writing the honest answer…',
+    ];
+    const aiShow = () => {
+      show('reading');
+      const slot = dlg.querySelector('.pz-reading');
+      slot.innerHTML = '<div class="pzc-orb"></div><span class="pzc-ai-line">' + AI_LINES[0] + '</span>';
+      let i = 0;
+      clearInterval(aiTimer);
+      aiTimer = setInterval(() => {
+        i = (i + 1) % AI_LINES.length;
+        const line = dlg.querySelector('.pzc-ai-line');
+        if (line) line.textContent = AI_LINES[i];
+      }, 2600);
+    };
+    const aiStop = () => clearInterval(aiTimer);
 
     const inspect = async (picked) => {
       if (!picked) return;
@@ -182,6 +227,7 @@
           return;
         }
         token = d.token;
+        firstName = String(d.found?.full_name || '').trim().split(/\s+/)[0] || '';
         analyze();
       } catch {
         show('pick');
@@ -193,7 +239,7 @@
        the functions Phaza actually runs on — and the applicant is shown the
        result before being asked for anything more. */
     const analyze = async () => {
-      dlg.querySelector('.pz-reading').textContent = 'Matching you against what Phaza is building…';
+      aiShow();
       try {
         const { r, d } = await post('cv-analyze', { token });
         if (!r.ok || !d.ok) {
@@ -227,6 +273,8 @@
     };
 
     const showResult = (d) => {
+      aiStop();
+      dlg.querySelector('#pzc-title').textContent = firstName ? `Welcome, ${firstName}.` : 'Welcome.';
       const verdict = dlg.querySelector('.pzc-verdict');
       const bars = dlg.querySelector('.pzc-bars');
       if (!d) {
