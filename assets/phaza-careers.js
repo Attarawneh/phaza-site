@@ -79,7 +79,24 @@
     .pz-careers .pz-panel, .pz-careers .pz-send, .pz-careers .pzc-decline {
       font-family: Inter, system-ui, -apple-system, sans-serif; }
     .pz-careers .pz-send { text-transform: none; letter-spacing: .01em;
-      font-weight: 600; font-size: .92rem; }
+      font-weight: 600; font-size: .92rem;
+      transition: transform .18s ease, box-shadow .18s ease; }
+    .pz-careers .pz-send:hover { transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(0, 205, 255, .25); }
+    .pz-careers .pz-panel { animation: pzc-panel-in .38s cubic-bezier(.22,.9,.3,1) both; }
+    .pzc-step.pzc-in { animation: pzc-step-in .34s cubic-bezier(.22,.9,.3,1) both; }
+    .pzc-step.pzc-in > * { animation: pzc-step-in .4s cubic-bezier(.22,.9,.3,1) both; }
+    .pzc-step.pzc-in > *:nth-child(2) { animation-delay: .05s; }
+    .pzc-step.pzc-in > *:nth-child(3) { animation-delay: .1s; }
+    .pzc-step.pzc-in > *:nth-child(4) { animation-delay: .15s; }
+    .pzc-step.pzc-in > *:nth-child(5) { animation-delay: .2s; }
+    .pzc-step.pzc-in > *:nth-child(6) { animation-delay: .25s; }
+    @keyframes pzc-panel-in { from { opacity: 0; transform: translateY(10px) scale(.985); } }
+    @keyframes pzc-step-in { from { opacity: 0; transform: translateY(8px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .pz-careers .pz-panel, .pzc-step.pzc-in, .pzc-step.pzc-in > * { animation: none; }
+      .pz-careers .pz-send { transition: none; }
+    }
     .pz-careers .pzc-verdict { font-size: .95rem; line-height: 1.6; color: #dfeefb; }
     .pz-careers .pzc-verdict b { color: #00CDFF; font-weight: 650; }
     .pz-careers #pzc-title { font-weight: 300; letter-spacing: .01em; }
@@ -162,8 +179,18 @@
         </div>
       </div>`;
 
-    const show = (name) => dlg.querySelectorAll('.pzc-step')
-      .forEach((s) => { s.hidden = s.dataset.step !== name; });
+    const show = (name) => dlg.querySelectorAll('.pzc-step').forEach((s) => {
+      const on = s.dataset.step === name;
+      if (on && s.hidden) {
+        s.hidden = false;
+        s.classList.remove('pzc-in');
+        void s.offsetWidth;               // restart the entrance animation
+        s.classList.add('pzc-in');
+      } else if (!on) {
+        s.hidden = true;
+        s.classList.remove('pzc-in');
+      }
+    });
     const errAt = (step, message) => {
       const slot = dlg.querySelector(`[data-step="${step}"] .pz-err`);
       if (slot) { slot.textContent = message; slot.hidden = false; }
