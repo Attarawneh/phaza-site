@@ -223,15 +223,25 @@ function send_mail(array $d, ?array $ai = null): void
         [$tint, $bar, $label] = $ai['genuine']
             ? ['rgba(16,185,129,0.09)', '#10b981', 'Genuine enquiry']
             : ['rgba(217,119,6,0.10)', '#f59e0b', 'Flagged'];
-        $assessBlock = '<tr><td style="padding:22px 38px 0 38px;">'
-            . '<div style="padding:15px 17px;background:' . $tint . ';border:1px solid rgba(255,255,255,0.07);'
-            . 'border-left:2px solid ' . $bar . ';border-radius:0 8px 8px 0;">'
-            . '<p style="margin:0;font-family:\'SFMono-Regular\',Consolas,monospace;font-size:9px;'
-            . 'letter-spacing:.16em;color:' . $bar . ';text-transform:uppercase;">Phaza One &middot; '
-            . $esc($label) . ' &middot; ' . $esc($ai['category'] ?: 'uncategorised')
-            . ' &middot; ' . $esc($ai['language'] ?: '?') . ' (' . $esc($ai['confidence'] ?: '?') . ')</p>'
-            . '<p style="margin:8px 0 0 0;font-size:14px;line-height:1.55;color:rgba(255,255,255,0.82);">'
-            . $esc($ai['summary']) . '</p></div></td></tr>';
+        $assessBlock = '<tr><td class="pz-pad" style="padding:26px 38px 0 38px;">'
+            . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' . $tint
+            . ';border:1px solid rgba(255,255,255,0.08);border-left:2px solid ' . $bar . ';border-radius:0 12px 12px 0;">'
+            . '<tr><td style="padding:16px 20px;">'
+            . '<table role="presentation" cellpadding="0" cellspacing="0"><tr>'
+            . '<td style="vertical-align:middle;padding-right:11px;">'
+            . '<img src="https://phaza.io/brand/phaza-one.afbd9746.png" width="34" height="34" alt="Phaza One" '
+            . 'style="display:block;border:0;outline:none;border-radius:50%;"></td>'
+            . '<td style="vertical-align:middle;">'
+            . '<p style="margin:0;font-size:13px;font-weight:600;color:#ffffff;line-height:1.3;">Phaza One &middot; '
+            . $esc($label) . '</p>'
+            . '<p style="margin:2px 0 0 0;font-family:\'SFMono-Regular\',Consolas,monospace;font-size:9px;'
+            . 'letter-spacing:.14em;color:' . $bar . ';text-transform:uppercase;">'
+            . $esc($ai['category'] ?: 'uncategorised') . ' &middot; ' . $esc($ai['language'] ?: '?')
+            . ' (' . $esc($ai['confidence'] ?: '?') . ')</p>'
+            . '</td></tr></table>'
+            . '<p style="margin:12px 0 0 0;font-size:14px;line-height:1.65;color:rgba(255,255,255,0.82);">'
+            . $esc($ai['summary']) . '</p>'
+            . '</td></tr></table></td></tr>';
     }
 
     $tpl = file_get_contents(TEAMMAIL);

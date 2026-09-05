@@ -2,167 +2,182 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- Noto Sans Arabic — the brand's Arabic face. Clients that support web fonts
-     (Apple Mail, most mobile) load it; the rest fall back to system Arabic. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;600&display=swap');
   /* Arabic never takes letter-spacing — it breaks glyph joining. */
-  .pz-kick { font-size:10px; color:#2FB4EC; font-weight:600; }
-  .pz-kick-dim { font-size:10px; color:rgba(255,255,255,0.45); font-weight:600; }
+  .pz-kick     { font-size:10px; color:#2FB4EC; font-weight:600; }
+  .pz-kick-dim { font-size:10px; color:rgba(255,255,255,0.42); font-weight:600; }
   @media only screen and (max-width:480px) {
+    .pz-pad  { padding-left:24px !important; padding-right:24px !important; }
+    .pz-h1   { font-size:24px !important; }
     .pz-when, .pz-what { display:block !important; width:100% !important; box-sizing:border-box !important; }
-    .pz-when { padding:12px 0 3px 0 !important; }
-    .pz-what { padding:0 0 13px 0 !important; border-top:0 !important; }
+    .pz-when { padding:14px 0 2px 0 !important; }
+    .pz-what { padding:0 0 14px 0 !important; border-top:0 !important; }
+    .pz-meta { display:block !important; width:100% !important; text-align:right !important; padding:2px 0 10px 0 !important; }
   }
 </style>
 </head>
 <body style="margin:0;padding:0;background:#05080f;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">وصلت رسالتك إلى فريق فازا — إليك ما استلمناه، وما سيحدث تالياً.</div>
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#05080f;padding:32px 16px;" dir="rtl">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" dir="rtl" style="background:#05080f;padding:36px 16px;">
 <tr><td align="center">
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" dir="rtl" style="max-width:600px;background:#0a1018;border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;font-family:'Noto Sans Arabic','Segoe UI',Tahoma,'Geeza Pro',Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" dir="rtl" style="max-width:600px;background:#0b111a;border:1px solid rgba(255,255,255,0.09);border-radius:16px;overflow:hidden;font-family:'Noto Sans Arabic','Segoe UI',Tahoma,'Geeza Pro',Arial,sans-serif;">
 
-  <!-- Masthead -->
-  <tr><td bgcolor="#0a1018" style="padding:34px 38px 0 38px;background:#0a1018;">
-    <img src="https://phaza.io/brand/phaza-wordmark.d3821622.png" width="172" height="36" alt="PHAZA"
-         style="display:block;border:0;outline:none;text-decoration:none;">
+  <!-- Header band -->
+  <tr><td bgcolor="#0d1826" class="pz-pad" style="background:#0d1826;padding:22px 38px;border-bottom:1px solid rgba(47,180,236,0.28);">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:middle;">
+        <img src="https://phaza.io/brand/phaza-wordmark.d3821622.png" width="132" height="28" alt="PHAZA" style="display:block;border:0;outline:none;">
+      </td>
+      <td align="left" style="vertical-align:middle;">
+        <span class="pz-kick">تم استلام رسالتك</span>
+      </td>
+    </tr></table>
   </td></tr>
 
-  <!-- Headline -->
-  <tr><td style="padding:30px 38px 0 38px;">
-    <p class="pz-kick" style="margin:0 0 10px 0;">تم استلام رسالتك</p>
-    <h1 style="margin:0;font-size:27px;line-height:1.35;font-weight:300;color:#ffffff;">شكراً لك، {{NAME}}.</h1>
-    <p style="margin:14px 0 0 0;font-size:15px;line-height:1.8;color:rgba(255,255,255,0.66);">
+  <!-- Opening -->
+  <tr><td class="pz-pad" style="padding:36px 38px 0 38px;">
+    <h1 class="pz-h1" style="margin:0;font-size:30px;line-height:1.35;font-weight:300;color:#ffffff;">شكراً لك، {{NAME}}.</h1>
+    <p style="margin:16px 0 0 0;font-size:15px;line-height:1.9;color:rgba(255,255,255,0.62);">
       رسالتك الآن لدى فريق فازا. سيقرؤها شخص من الفريق — لا رد آلي — ويرد عليك مباشرةً على
-      <span style="color:#ffffff;" dir="ltr">{{EMAIL}}</span>، عادةً خلال يوم عمل واحد.
+      <span style="color:rgba(255,255,255,0.92);" dir="ltr">{{EMAIL}}</span>، عادةً خلال يوم عمل واحد.
     </p>
   </td></tr>
 
-  <!-- Hairline -->
-  <tr><td style="padding:28px 38px 0 38px;">
-    <div style="height:1px;background:linear-gradient(to left,rgba(47,180,236,.5),rgba(255,255,255,0.06));"></div>
-  </td></tr>
-
-  <!-- What we received -->
-  <tr><td style="padding:24px 38px 0 38px;">
-    <p class="pz-kick-dim" style="margin:0 0 14px 0;">ما الذي استلمناه</p>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
-      <tr>
-        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);width:40%;">السبب</td>
-        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:#ffffff;text-align:left;">{{PURPOSE}}</td>
-      </tr>
-      <tr>
-        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);">الجهة</td>
-        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:#ffffff;text-align:left;">{{ORGANISATION}}</td>
-      </tr>
-      <tr>
-        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);">الدولة</td>
-        <td style="padding:9px 0;border-top:1px solid rgba(255,255,255,0.06);color:#ffffff;text-align:left;">{{COUNTRY}}</td>
-      </tr>
+  <!-- Your enquiry -->
+  <tr><td class="pz-pad" style="padding:30px 38px 0 38px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
+      <tr><td style="padding:18px 20px 0 20px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td style="vertical-align:middle;">
+            <span style="display:inline-block;padding:5px 12px;background:rgba(47,180,236,0.14);border:1px solid rgba(47,180,236,0.3);border-radius:20px;font-size:11px;font-weight:600;color:#5CCBF5;">{{PURPOSE}}</span>
+          </td>
+          <td class="pz-meta" align="left" style="vertical-align:middle;font-size:12px;color:rgba(255,255,255,0.42);">
+            {{ORGANISATION}} &nbsp;·&nbsp; {{COUNTRY}}
+          </td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:14px 20px 20px 20px;">
+        <div dir="auto" style="padding-right:14px;border-right:2px solid rgba(47,180,236,0.55);font-size:14px;line-height:1.9;color:rgba(255,255,255,0.78);">{{MESSAGE}}</div>
+      </td></tr>
     </table>
-    <div style="margin-top:16px;padding:15px 17px;background:rgba(255,255,255,0.03);border-right:2px solid #2FB4EC;border-radius:8px 0 0 8px;">
-      <p dir="auto" style="margin:0;font-size:14px;line-height:1.8;color:rgba(255,255,255,0.75);">{{MESSAGE}}</p>
-    </div>
   </td></tr>
 
   <!--AINOTE-->
-  <tr><td style="padding:26px 38px 0 38px;">
-    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 12px 0;"><tr>
-      <td style="vertical-align:middle;padding-left:11px;">
-        <img src="https://phaza.io/brand/phaza-one-avatar.c3c9213b.png" width="34" height="34" alt="Phaza One"
-             style="display:block;border:0;outline:none;border-radius:50%;">
-      </td>
-      <td style="vertical-align:middle;">
-        <p style="margin:0;font-size:14px;font-weight:600;color:#ffffff;" dir="ltr">Phaza One</p>
-        <p class="pz-kick" style="margin:2px 0 0 0;">قراءة أولى</p>
-      </td>
-    </tr></table>
-    <div style="padding:16px 18px;background:rgba(47,180,236,0.05);border:1px solid rgba(47,180,236,0.14);border-radius:10px;">
-      <div dir="auto" style="font-size:14px;line-height:1.85;color:rgba(255,255,255,0.8);">{{AI_NOTE}}</div>
-      <p style="margin:12px 0 0 0;font-size:11px;line-height:1.7;color:rgba(255,255,255,0.38);">
-        كتبتها Phaza One بعد قراءة رسالتك، ويتبعها ردّ الفريق نفسه.
-      </p>
-    </div>
+  <tr><td class="pz-pad" style="padding:26px 38px 0 38px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(200deg,rgba(47,180,236,0.09),rgba(47,180,236,0.02));border:1px solid rgba(47,180,236,0.2);border-radius:12px;">
+      <tr><td style="padding:20px 22px 0 22px;">
+        <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+          <td style="vertical-align:middle;padding-left:13px;">
+            <img src="https://phaza.io/brand/phaza-one.afbd9746.png" width="48" height="48" alt="Phaza One" style="display:block;border:0;outline:none;border-radius:50%;">
+          </td>
+          <td style="vertical-align:middle;">
+            <p style="margin:0;font-size:15px;font-weight:600;color:#ffffff;line-height:1.4;" dir="ltr">Phaza One</p>
+            <p style="margin:3px 0 0 0;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.4;">منسّقة الذكاء</p>
+          </td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:16px 22px 6px 22px;">
+        <div style="height:1px;background:rgba(47,180,236,0.18);"></div>
+      </td></tr>
+      <tr><td style="padding:12px 22px 20px 22px;">
+        <div dir="auto" style="font-size:14px;line-height:1.95;color:rgba(255,255,255,0.86);">{{AI_NOTE}}</div>
+        <p style="margin:14px 0 0 0;font-size:11px;line-height:1.8;color:rgba(255,255,255,0.35);">
+          قراءة أولى من Phaza One، كتبتها بعد قراءة رسالتك، ويتبعها ردّ الفريق نفسه.
+        </p>
+      </td></tr>
+    </table>
   </td></tr>
   <!--/AINOTE-->
 
   <!-- What happens next -->
-  <tr><td style="padding:30px 38px 0 38px;">
-    <p class="pz-kick-dim" style="margin:0 0 16px 0;">ما الذي سيحدث تالياً</p>
+  <tr><td class="pz-pad" style="padding:32px 38px 0 38px;">
+    <p class="pz-kick-dim" style="margin:0 0 4px 0;">ما الذي سيحدث تالياً</p>
     <!--STEPS:tech-->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.8;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.9;">
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;width:118px;"><span class="pz-kick">الآن</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">رسالتك لدى الفريق — وليست في طابور تذاكر. تذهب إلى المهندس القادر على الإجابة.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;width:112px;"><span class="pz-kick">الآن</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">رسالتك لدى الفريق — وليست في طابور تذاكر. تذهب إلى المهندس القادر على الإجابة.</td>
       </tr>
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;"><span class="pz-kick">خلال يوم</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">ردّ مكتوب من أحد بُناة سلام: البنية، والمعاملات، وبيانات التدريب، والنشر، والسيادة. تفاصيل، لا كتيّب تسويقي.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;"><span class="pz-kick">خلال يوم</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">ردّ مكتوب من أحد بُناة سلام: البنية، والمعاملات، وبيانات التدريب، والنشر، والسيادة. تفاصيل، لا كتيّب تسويقي.</td>
       </tr>
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;"><span class="pz-kick">عند الحاجة</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">وحين يكون العرض أوضح من الشرح، سنعرض عليك تشغيل سلام أمامك وشرحه خطوة بخطوة.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;"><span class="pz-kick">عند الحاجة</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">وحين يكون العرض أوضح من الشرح، سنعرض عليك تشغيل سلام أمامك وشرحه خطوة بخطوة.</td>
       </tr>
     </table>
     <!--/STEPS:tech-->
     <!--STEPS:demo-->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.8;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.9;">
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;width:118px;"><span class="pz-kick">الآن</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">طلبك لدى الفريق — وليس في طابور تذاكر. يذهب إلى من سيدير الجلسة.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;width:112px;"><span class="pz-kick">الآن</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">طلبك لدى الفريق — وليس في طابور تذاكر. يذهب إلى من سيدير الجلسة.</td>
       </tr>
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;"><span class="pz-kick">خلال يوم</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">نقترح أوقاتاً تناسب توقيتك، ونؤكد ما تودّ رؤيته، لتُبنى الجلسة حول أسئلتك.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;"><span class="pz-kick">خلال يوم</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">نقترح أوقاتاً تناسب توقيتك، ونؤكد ما تودّ رؤيته، لتُبنى الجلسة حول أسئلتك.</td>
       </tr>
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;"><span class="pz-kick">في الجلسة</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">سلام يجيب من سجلّات مؤسستك نفسها، وبلغتك. نظام يعمل فعلاً، لا عرض مُعدّ مسبقاً.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;"><span class="pz-kick">في الجلسة</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">سلام يجيب من سجلّات مؤسستك نفسها، وبلغتك. نظام يعمل فعلاً، لا عرض مُعدّ مسبقاً.</td>
       </tr>
     </table>
     <!--/STEPS:demo-->
     <!--STEPS:both-->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.8;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.9;">
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;width:118px;"><span class="pz-kick">الآن</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">رسالتك لدى الفريق — وليست في طابور تذاكر. تذهب إلى الشخص القادر على الإجابة.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;width:112px;"><span class="pz-kick">الآن</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">رسالتك لدى الفريق — وليست في طابور تذاكر. تذهب إلى الشخص القادر على الإجابة.</td>
       </tr>
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;"><span class="pz-kick">خلال يوم</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">ردّ مكتوب على أسئلتك التقنية، وأوقات لجلسة تناسب توقيتك.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;"><span class="pz-kick">خلال يوم</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">ردّ مكتوب على أسئلتك التقنية، وأوقات لجلسة تناسب توقيتك.</td>
       </tr>
       <tr>
-        <td class="pz-when" style="padding:11px 0 11px 16px;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;"><span class="pz-kick">في الجلسة</span></td>
-        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">سلام يجيب من سجلّات مؤسستك نفسها، وبلغتك. نظام يعمل فعلاً، لا عرض مُعدّ مسبقاً.</td>
+        <td class="pz-when" style="padding:14px 0 14px 18px;border-top:1px solid rgba(255,255,255,0.07);vertical-align:top;"><span class="pz-kick">في الجلسة</span></td>
+        <td class="pz-what" style="padding:12px 0 14px 0;border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);">سلام يجيب من سجلّات مؤسستك نفسها، وبلغتك. نظام يعمل فعلاً، لا عرض مُعدّ مسبقاً.</td>
       </tr>
     </table>
     <!--/STEPS:both-->
   </td></tr>
 
-  <!-- Sovereign line -->
-  <tr><td style="padding:30px 38px 0 38px;">
-    <div style="padding:18px 20px;background:linear-gradient(225deg,rgba(47,180,236,0.07),rgba(47,180,236,0.02));border:1px solid rgba(47,180,236,0.16);border-radius:10px;">
-      <p style="margin:0;font-size:14px;line-height:1.85;color:rgba(255,255,255,0.78);">
-        <span style="color:#ffffff;font-weight:600;">سلام</span> نموذجٌ لغويٌّ سيادي: مُدرَّبٌ من الصفر باللغات التي تعمل بها دولتك فعلاً،
-        ومملوكٌ بالكامل للمؤسسة التي تنشره. لا مُستأجَر، ولا غلاف.
-      </p>
-    </div>
+  <!-- Salam -->
+  <tr><td class="pz-pad" style="padding:30px 38px 0 38px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid rgba(255,255,255,0.07);">
+      <tr><td style="padding:22px 0 30px 0;">
+        <p class="pz-kick-dim" style="margin:0 0 10px 0;">سيادةٌ بالتصميم</p>
+        <p style="margin:0;font-size:14px;line-height:1.95;color:rgba(255,255,255,0.6);">
+          <span style="color:#ffffff;font-weight:600;">سلام</span> نموذجٌ لغويٌّ سيادي: مُدرَّبٌ من الصفر باللغات التي تعمل بها دولتك فعلاً،
+          ومملوكٌ بالكامل للمؤسسة التي تنشره. <span style="color:rgba(255,255,255,0.85);">لا مُستأجَر، ولا غلاف.</span>
+        </p>
+      </td></tr>
+    </table>
   </td></tr>
 
   <!-- Footer -->
-  <tr><td style="padding:30px 38px 34px 38px;">
-    <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
-    <p class="pz-kick-dim" style="margin:0 0 6px 0;color:rgba(255,255,255,0.5);">الأردن &nbsp;·&nbsp; الإمارات العربية المتحدة</p>
-    <p style="margin:0 0 18px 0;font-size:13px;color:rgba(255,255,255,0.4);">
-      <a href="https://phaza.io" style="color:#2FB4EC;text-decoration:none;" dir="ltr">phaza.io</a>
-      &nbsp;·&nbsp; طبقة الذكاء للحكومات
-    </p>
-    <p style="margin:0;font-size:11px;line-height:1.75;color:rgba(255,255,255,0.28);">
+  <tr><td bgcolor="#080d15" class="pz-pad" style="background:#080d15;padding:26px 38px 28px 38px;border-top:1px solid rgba(255,255,255,0.06);">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:top;">
+        <p class="pz-kick-dim" style="margin:0 0 5px 0;color:rgba(255,255,255,0.45);">الأردن &nbsp;·&nbsp; الإمارات العربية المتحدة</p>
+        <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.42);">
+          <a href="https://phaza.io" style="color:#2FB4EC;text-decoration:none;" dir="ltr">phaza.io</a>
+          &nbsp;·&nbsp; طبقة الذكاء للحكومات
+        </p>
+      </td>
+      <td align="left" style="vertical-align:top;">
+        <a href="https://www.linkedin.com/company/phazanetwork" style="text-decoration:none;">
+          <img src="https://phaza.io/brand/linkedin.520f531e.png" width="22" height="22" alt="LinkedIn" style="display:block;border:0;outline:none;">
+        </a>
+      </td>
+    </tr></table>
+    <p style="margin:18px 0 0 0;font-size:11px;line-height:1.8;color:rgba(255,255,255,0.26);">
       أُرسلت هذه الرسالة تلقائياً من عنوان غير مُراقَب — رجاءً لا تردّ عليها. سيصلك ردٌّ فعليّ من أحد أفراد الفريق.
     </p>
   </td></tr>
