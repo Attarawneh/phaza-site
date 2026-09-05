@@ -24,6 +24,7 @@ const SPOOL_DIR  = __DIR__ . '/spool';
 const SEEN_DIR   = '/tmp/phaza-connect-seen';
 const SEEN_TTL   = 86400;            // remember a message for a day
 const AUTOREPLY  = __DIR__ . '/autoreply.html';
+const TEAMMAIL   = __DIR__ . '/teammail.html';
 
 function envv(string $key): string
 {
@@ -94,15 +95,9 @@ function send_mail(array $d, ?array $ai = null): void
     require_once AUTOLOAD;
 
     $esc  = fn ($s) => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
-    $rows = '';
-    foreach (['purpose', 'name', 'organisation', 'country', 'email', 'page', 'sent_at'] as $k) {
-        if (!empty($d[$k])) {
-            $rows .= '<tr><td style="padding:3px 14px 3px 0;color:#777">' . $esc($k)
-                   . '</td><td>' . $esc($d[$k]) . '</td></tr>';
-        }
-    }
 
     $assess = '';
+    $assessBlock = '';
     if ($ai !== null) {
         $assess = sprintf(
             "Phaza One: %s | %s | %s (%s)\n%s\n",
@@ -112,9 +107,35 @@ function send_mail(array $d, ?array $ai = null): void
             $ai['confidence'] ?: '?',
             $ai['summary'],
         );
+        /* Green for genuine, amber for flagged — readable before reading. */
+        [$bg, $bar, $fg, $label] = $ai['genuine']
+            ? ['#ecfdf5', '#059669', '#065f46', 'Genuine enquiry']
+            : ['#fef3c7', '#d97706', '#92400e', 'Flagged'];
+        $assessBlock = '<tr><td style="background:' . $bg . ';border:1px solid #e2e7ee;border-top:0;'
+            . 'border-left:3px solid ' . $bar . ';padding:12px 24px;">'
+            . '<p style="margin:0;font-family:\'SFMono-Regular\',Consolas,monospace;font-size:9px;'
+            . 'letter-spacing:.2em;color:' . $fg . ';text-transform:uppercase;">Phaza One &middot; '
+            . $esc($label) . ' &middot; ' . $esc($ai['category'] ?: 'uncategorised')
+            . ' &middot; ' . $esc($ai['language'] ?: '?') . ' (' . $esc($ai['confidence'] ?: '?') . ')</p>'
+            . '<p style="margin:6px 0 0 0;font-size:13px;line-height:1.5;color:' . $fg . ';">'
+            . $esc($ai['summary']) . '</p></td></tr>';
     }
 
-    $text = "New enquiry from phaza.io\n\n" . ($assess !== '' ? $assess . "\n" : '');
+    $tpl = file_get_contents(TEAMMAIL);
+    $htmlBody = $tpl === false ? '' : strtr($tpl, [
+        '{{PURPOSE}}'      => $esc(($d['purpose'] ?? '') ?: 'Enquiry'),
+        '{{ASSESS_BLOCK}}' => $assessBlock,
+        '{{NAME}}'         => $esc($d['name'] ?? ''),
+        '{{NAME_SHORT}}'   => $esc(trim(explode(' ', trim((string) ($d['name'] ?? '')))[0]) ?: 'the sender'),
+        '{{ORGANISATION}}' => $esc($d['organisation'] ?? ''),
+        '{{COUNTRY}}'      => $esc($d['country'] ?? ''),
+        '{{EMAIL}}'        => $esc($d['email'] ?? ''),
+        '{{SENT_AT}}'      => $esc($d['sent_at'] ?? ''),
+        '{{PAGE}}'         => $esc(($d['page'] ?? '') ?: '/'),
+        '{{MESSAGE}}'      => nl2br($esc(trim((string) ($d['message'] ?? '')) ?: '(no message)')),
+    ]);
+
+    $text = "WEBSITE ENQUIRY — phaza.io\n\n" . ($assess !== '' ? $assess . "\n" : '');
     foreach (['purpose', 'name', 'organisation', 'country', 'email', 'page', 'sent_at'] as $k) {
         if (!empty($d[$k])) {
             $text .= '  ' . str_pad($k . ':', 15) . $d[$k] . "\n";
@@ -136,14 +157,9 @@ function send_mail(array $d, ?array $ai = null): void
             ->to($to)
             ->replyTo((string) $d['email'])
             ->subject(($ai !== null && !$ai['genuine'] ? '[Flagged] ' : '')
-                . 'Phaza Connect — ' . (($d['purpose'] ?? '') ?: 'Enquiry') . ' — ' . ($d['organisation'] ?? ''))
+                . 'Website enquiry — ' . (($d['purpose'] ?? '') ?: 'Enquiry') . ' — ' . ($d['organisation'] ?? ''))
             ->text($text)
-            ->html(
-                '<h2 style="font:600 15px system-ui">New enquiry from phaza.io</h2>'
-                . ($assess !== '' ? '<p style="font:12px ui-monospace,monospace;color:#1d7fb5;background:#f0f7fc;padding:8px 10px;border-radius:6px;white-space:pre-wrap">' . $esc(trim($assess)) . '</p>' : '')
-                . '<table style="font:14px system-ui;border-collapse:collapse">' . $rows . '</table>'
-                . '<p style="font:14px system-ui;white-space:pre-wrap">' . $esc($d['message'] ?? '') . '</p>'
-            );
+            ->html($htmlBody !== '' ? $htmlBody : '<pre style="font:13px ui-monospace,monospace">' . $esc($text) . '</pre>');
 
         try {
             mailer()->send($email);

@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#eef1f5;">
+<!-- Team notification: light on purpose — this is a triage email read in
+     Outlook, not a brand piece. The banner says where it came from before
+     a single word is read. -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f5;padding:28px 14px;">
+<tr><td align="center">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <!-- Source banner -->
+  <tr><td style="background:#0a1018;border-radius:12px 12px 0 0;padding:16px 24px;border-bottom:3px solid #2FB4EC;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="vertical-align:middle;">
+        <p style="margin:0;font-family:'SFMono-Regular',Consolas,monospace;font-size:10px;letter-spacing:.24em;color:#2FB4EC;text-transform:uppercase;">Website enquiry</p>
+        <p style="margin:4px 0 0 0;font-size:16px;font-weight:600;color:#ffffff;">{{PURPOSE}}</p>
+      </td>
+      <td align="right" style="vertical-align:middle;">
+        <img src="https://phaza.io/brand/phaza-wordmark.d3821622.png" width="96" height="20" alt="PHAZA" style="display:block;border:0;">
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- Phaza One assessment -->
+  {{ASSESS_BLOCK}}
+
+  <!-- Body card -->
+  <tr><td style="background:#ffffff;padding:22px 24px 6px 24px;border:1px solid #e2e7ee;border-top:0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#1a2330;">
+      <tr>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;width:34%;">Name</td>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;font-weight:600;">{{NAME}}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;">Organisation</td>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;font-weight:600;">{{ORGANISATION}}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;">Country</td>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;">{{COUNTRY}}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;color:#8492a6;">Email</td>
+        <td style="padding:8px 0;border-bottom:1px solid #eef1f5;"><a href="mailto:{{EMAIL}}" style="color:#1d7fb5;text-decoration:none;">{{EMAIL}}</a></td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#8492a6;">Received</td>
+        <td style="padding:8px 0;color:#5a6a80;">{{SENT_AT}} &nbsp;·&nbsp; {{PAGE}}</td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- Their message -->
+  <tr><td style="background:#ffffff;padding:12px 24px 22px 24px;border:1px solid #e2e7ee;border-top:0;">
+    <p style="margin:0 0 8px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:#8492a6;text-transform:uppercase;">Message</p>
+    <div dir="auto" style="padding:14px 16px;background:#f7f9fb;border-left:3px solid #2FB4EC;border-radius:0 8px 8px 0;font-size:14px;line-height:1.6;color:#2a3648;">{{MESSAGE}}</div>
+  </td></tr>
+
+  <!-- Footer -->
+  <tr><td style="background:#ffffff;border:1px solid #e2e7ee;border-top:1px solid #eef1f5;border-radius:0 0 12px 12px;padding:14px 24px;">
+    <p style="margin:0;font-size:12px;color:#8492a6;">
+      Sent by <span style="color:#1d7fb5;font-weight:600;">Phaza Connect</span> from phaza.io &nbsp;·&nbsp;
+      Hitting reply answers {{NAME_SHORT}} directly.
+    </p>
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body>
+</html>
