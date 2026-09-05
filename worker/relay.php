@@ -24,6 +24,7 @@ const SPOOL_DIR  = __DIR__ . '/spool';
 const SEEN_DIR   = '/tmp/phaza-connect-seen';
 const SEEN_TTL   = 86400;            // remember a message for a day
 const AUTOREPLY  = __DIR__ . '/autoreply.html';
+const AUTOREPLY_AR = __DIR__ . '/autoreply.ar.html';
 const TEAMMAIL   = __DIR__ . '/teammail.html';
 
 function envv(string $key): string
@@ -556,14 +557,30 @@ function send_autoreply(array $d, ?array $ai = null): void
     require_once AUTOLOAD;
 
     $esc  = fn ($s) => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
-    $html = file_get_contents(AUTOREPLY);
-    if ($html === false) {
-        throw new RuntimeException('autoreply template missing');
-    }
 
     $first   = trim(explode(' ', trim((string) $d['name']))[0]) ?: 'there';
     $message = trim((string) ($d['message'] ?? ''));
     $purpose = (string) (($d['purpose'] ?? '') ?: 'Enquiry');
+
+    /* Match the email to the visitor's language: if the message is written in
+       Arabic script, everything they receive is Arabic and right-to-left.
+       Script detection is more reliable here than the AI's language label,
+       and works even when Phaza One is disabled. */
+    $arabic = (bool) preg_match('/\p{Arabic}/u', $message);
+    $html   = file_get_contents($arabic ? AUTOREPLY_AR : AUTOREPLY);
+    if ($html === false) {
+        throw new RuntimeException('autoreply template missing');
+    }
+
+    if ($arabic) {
+        $purpose = match (strtolower(trim($purpose))) {
+            'technical inquiry' => 'استفسار تقني',
+            'demo request'      => 'طلب عرض توضيحي',
+            'both'              => 'استفسار تقني وعرض توضيحي',
+            default             => 'استفسار',
+        };
+        $first = trim((string) $d['name']) ?: 'مرحباً';   // Arabic greeting uses the full name
+    }
 
     /* The form offers three reasons; anything unrecognised is treated as a
        question, which is the safest thing to promise an answer to. */
@@ -606,7 +623,23 @@ function send_autoreply(array $d, ?array $ai = null): void
         $html = preg_replace('#<div style="margin-top:16px;padding:15px 17px;background:rgba\(255,255,255,0\.03\).*?</div>#s', '', $html, 1);
     }
 
-    $text = "Thank you, {$first}.\n\n"
+    if ($arabic) {
+        $text = "شكراً لك، {$first}.\n\n"
+              . "رسالتك الآن لدى فريق فازا. سيقرؤها شخص من الفريق — لا رد آلي — ويرد عليك مباشرةً على "
+              . "{$d['email']}، عادةً خلال يوم عمل واحد.\n\n"
+              . "ما الذي استلمناه\n"
+              . "  السبب: " . $purpose . "\n"
+              . "  الجهة: {$d['organisation']}\n"
+              . "  الدولة: {$d['country']}\n"
+              . ($message !== '' ? "\n  «{$message}»\n" : '')
+              . ($draft !== '' ? "\nPhaza One — قراءة أولى\n" . $draft . "\n(كتبتها Phaza One بعد قراءة رسالتك، ويتبعها ردّ الفريق نفسه.)\n" : '')
+              . "\nسلام نموذج لغوي سيادي: مُدرَّب من الصفر باللغات التي تعمل بها دولتك فعلاً، "
+              . "ومملوك بالكامل للمؤسسة التي تنشره.\n\n"
+              . "الأردن · الإمارات العربية المتحدة\nhttps://phaza.io\n\n"
+              . "أُرسلت هذه الرسالة تلقائياً من عنوان غير مُراقَب — رجاءً لا تردّ عليها. "
+              . "سيصلك ردّ فعليّ من أحد أفراد الفريق.\n";
+    } else {
+        $text = "Thank you, {$first}.\n\n"
           . "Your message is with the Phaza team. A person — not an autoresponder — will read it "
           . "and reply to you directly at {$d['email']}, usually within one working day.\n\n"
           . "What we received\n"
@@ -621,6 +654,7 @@ function send_autoreply(array $d, ?array $ai = null): void
           . "Jordan · United Arab Emirates\nhttps://phaza.io\n\n"
           . "This confirmation was sent automatically from an unmonitored address — please don't "
           . "reply to it. Your actual reply will come from a member of the team.\n";
+    }
 
     $email = (new Symfony\Component\Mime\Email())
         ->from(new Symfony\Component\Mime\Address(
@@ -628,7 +662,7 @@ function send_autoreply(array $d, ?array $ai = null): void
             'Phaza'
         ))
         ->to(new Symfony\Component\Mime\Address((string) $d['email'], (string) $d['name']))
-        ->subject('We received your message — Phaza')
+        ->subject($arabic ? 'وصلت رسالتك — فازا' : 'We received your message — Phaza')
         ->text($text)
         ->html($html);
     $email->getHeaders()->addTextHeader('Auto-Submitted', 'auto-replied');
