@@ -171,7 +171,7 @@ h1, h2, h3,
     linear-gradient(100deg, transparent 38%, rgba(216,250,255,.92) 50%, transparent 62%),
     var(--phz-gradient-signature);
   background-size: 220% 100%, 100% 100%;
-  background-position: -120% 0, 0 0;  /* band parked off the left edge */
+  background-position: 220% 0, 0 0;   /* band parked off the right edge */
   -webkit-mask-image: radial-gradient(circle, #000 1px, transparent 1px);
           mask-image: radial-gradient(circle, #000 1px, transparent 1px);
   -webkit-mask-size: var(--phz-dot-gap) var(--phz-dot-gap);
@@ -187,8 +187,8 @@ h1, h2, h3,
 button:hover .phz-dots { animation: phz-dot-wave 1.5s linear infinite; }
 
 @keyframes phz-dot-wave {
-  from { background-position: -120% 0, 0 0; }
-  to   { background-position: 220% 0, 0 0; }
+  from { background-position: 220% 0, 0 0; }
+  to   { background-position: -120% 0, 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
