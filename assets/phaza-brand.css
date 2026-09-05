@@ -1,0 +1,99 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Phaza signature gradient over the site's brand blue.
+
+   The gradient is taken verbatim from the design system's generated tokens
+   (design-system/phaza-tokens.css). Its rule is "ONE definition, never hand
+   mix blue and violet in a component", so nothing here invents a stop.
+
+   Where the gradient reads, it is used. Where it cannot — 1px hairlines at
+   20% alpha, ::selection, tiny marks — the mid stop #21A0FF stands in, so
+   those surfaces still belong to the same ramp instead of the old cyan.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --phz-gradient-signature: linear-gradient(135deg, #00F0FF 0%, #00CDFF 25%, #21A0FF 50%, #696CFF 75%, #8A2BE2 100%);
+  --phz-gradient-action:    linear-gradient(135deg, #007A88 0%, #0072AC 25%, #0061CA 50%, #4D48D9 75%, #7F24D1 100%);
+  --phz-grad-mid:  #21A0FF;   /* stop 2 — hairlines, borders, small marks */
+  --phz-grad-head: #00CDFF;   /* stop 1 — where a single bright blue is needed */
+}
+
+/* ── display text ──────────────────────────────────────────────────────
+   The sweep runs across each element's own box, so headlines get the full
+   blue-to-violet travel. */
+.text-brand-cyan,
+.text-brand-cyan\/70,
+.text-brand-cyan\/80,
+.text-brand-cyan\/90 {
+  background-image: var(--phz-gradient-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Monospace labels are 9–11px. A full sweep across 60px of tiny caps turns
+   to mud, so they sample the blue end only — same ramp, legible weight. */
+[class*="font-mono"].text-brand-cyan,
+[class*="font-mono"].text-brand-cyan\/70,
+[class*="font-mono"].text-brand-cyan\/80,
+[class*="font-mono"].text-brand-cyan\/90 {
+  background-size: 340% 100%;
+  background-position: 0 0;
+}
+
+/* Links that turn brand on hover pick up the sweep too. */
+.hover\:text-brand-cyan:hover {
+  background-image: var(--phz-gradient-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── solid fills ───────────────────────────────────────────────────────
+   These carry the black brand-ground label, and the token file notes the
+   bright sweep takes ink text — white is what fails on it. */
+.bg-brand-cyan,
+.hover\:bg-brand-cyan:hover {
+  background-color: transparent;
+  background-image: var(--phz-gradient-signature);
+}
+
+.bg-brand-cyan\/90 { background-color: transparent; background-image: var(--phz-gradient-signature); opacity: .9; }
+
+/* Low-alpha washes: a gradient at 4% is indistinguishable from a flat tint,
+   so these take the mid stop rather than paying for a paint layer. */
+.bg-brand-cyan\/20        { background-color: rgba(33,160,255,.20); }
+.bg-brand-cyan\/\[0\.04\] { background-color: rgba(33,160,255,.05); }
+
+/* ── borders ───────────────────────────────────────────────────────────
+   A gradient border needs a second paint layer and breaks border-radius in
+   older engines; at these alphas the mid stop is visually identical. */
+.border-brand-cyan\/20 { border-color: rgba(33,160,255,.20); }
+.border-brand-cyan\/25 { border-color: rgba(33,160,255,.25); }
+.border-brand-cyan\/30 { border-color: rgba(33,160,255,.30); }
+.border-brand-cyan\/40 { border-color: rgba(33,160,255,.40); }
+.border-brand-cyan\/50 { border-color: rgba(33,160,255,.50); }
+.border-brand-cyan\/60 { border-color: rgba(33,160,255,.60); }
+.hover\:border-brand-cyan\/50:hover { border-color: rgba(33,160,255,.50); }
+.focus-visible\:outline-brand-cyan\/50:focus-visible { outline-color: rgba(33,160,255,.50); }
+
+/* ── selection ─────────────────────────────────────────────────────────
+   ::selection takes a colour, never an image. */
+.selection\:bg-brand-cyan ::selection,
+.selection\:bg-brand-cyan::selection { background-color: var(--phz-grad-mid); }
+
+/* ── agent art ─────────────────────────────────────────────────────────
+   Rim light and soft glow move to the mid stop so the cast reads in the
+   same family as the type. */
+:root {
+  --agent-rim-color: rgba(33,160,255,.35);
+  --agent-glow-soft: rgba(33,160,255,.35);
+}
+.agent-fire { background: radial-gradient(circle, rgba(33,160,255,.06), transparent 70%); }
+
+/* SVG marks inside the layer diagrams. The CSS fill property overrides the
+   presentation attribute, so one rule catches them all. */
+svg .phz-grad-fill,
+svg [fill="#2FB4EC"],
+svg [fill="#2fb4ec"] { fill: url(#phzSignature); }

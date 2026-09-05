@@ -80,9 +80,11 @@ def main():
     pages = ('index.html', '404.html')
     connect_js = rehash('phaza-connect', '.js', pages)
     connect_css = rehash('phaza-connect', '.css', ('index.html',))
+    brand_css   = rehash('phaza-brand', '.css', pages)
 
     print(f'tag {tag}: {entry_old} -> {entry_new}, {map_old} -> {map_new}')
     print(f'form assets: {connect_js}, {connect_css}')
+    print(f'brand css:   {brand_css}')
     print(f'shims refreshed: {len(shims)}')
     print(f'integrity js  {integrity_js[:24]}...')
     print(f'integrity css {integrity_css[:24]}...')
