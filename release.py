@@ -15,9 +15,29 @@ Encodes the rules that took two outages to learn:
 
 Usage: python3 release.py
 """
-import base64, glob, hashlib, os, re, sys
+import base64, glob, hashlib, os, re, shutil, sys
 
 A = 'assets'
+
+def rehash(name, ext, pages):
+    """Republish assets/<name>.<hash><ext> and point the pages at it.
+
+    These files keep a fixed name in source but are served with a four-hour
+    max-age, so editing one in place lets the CDN keep handing out the old
+    copy. Hashing the published name makes every edit a new URL. Previous
+    hashed copies are left in place for browsers holding cached HTML.
+    """
+    src = f'{A}/{name}{ext}'
+    h = hashlib.sha256(open(src, 'rb').read()).hexdigest()[:8]
+    out = f'{name}.{h}{ext}'
+    shutil.copyfile(src, f'{A}/{out}')
+    for f in pages:
+        t = open(f).read()
+        t = re.sub(rf'/assets/{re.escape(name)}(?:\.[a-f0-9]+)?{re.escape(ext)}',
+                   f'/assets/{out}', t)
+        open(f, 'w').write(t)
+    return out
+
 
 def sri(path):
     return 'sha384-' + base64.b64encode(
@@ -57,7 +77,12 @@ def main():
                    rf'\1 crossorigin integrity="{integrity_css}"\2\3', s)
         open(f, 'w').write(s)
 
+    pages = ('index.html', '404.html')
+    connect_js = rehash('phaza-connect', '.js', pages)
+    connect_css = rehash('phaza-connect', '.css', ('index.html',))
+
     print(f'tag {tag}: {entry_old} -> {entry_new}, {map_old} -> {map_new}')
+    print(f'form assets: {connect_js}, {connect_css}')
     print(f'shims refreshed: {len(shims)}')
     print(f'integrity js  {integrity_js[:24]}...')
     print(f'integrity css {integrity_css[:24]}...')

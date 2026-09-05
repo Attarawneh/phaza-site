@@ -19,6 +19,8 @@ const RECIPIENTS = ['attarawneh@phaza.io', 'znasser@phaza.io'];
 const ORIGIN     = 'https://phaza.io';
 const RATE_DIR   = '/tmp/phaza-connect-rate';
 const RATE_MAX   = 20;               // submissions per IP per hour
+const SEEN_DIR   = '/tmp/phaza-connect-seen';
+const SEEN_TTL   = 86400;            // remember a message for a day
 const AUTOREPLY  = __DIR__ . '/autoreply.html';
 
 function envv(string $key): string
@@ -132,6 +134,105 @@ function steps_text(string $variant): string
         $out .= '  ' . str_pad($when, 16) . $body . "\n";
     }
     return $out;
+}
+
+/**
+ * Does this read as something a person wrote?
+ *
+ * Deliberately script-agnostic: the vowel and consonant tests only run on
+ * Latin and Cyrillic, because Arabic does not write short vowels and CJK does
+ * not use spaces, so applying them everywhere would reject perfectly good
+ * Arabic or Chinese. Everything else (character runs, symbol density, code
+ * markers, self-repetition) holds in any script.
+ *
+ * Mirrored in assets/phaza-connect.js so the visitor hears about it before
+ * sending. This copy is the authority.
+ *
+ * Returns a reason key, or null when the text is fine.
+ */
+function sense_reason(string $t, bool $short = false): ?string
+{
+    $t = trim($t);
+    if ($t === '') {
+        return null;                              // emptiness is handled elsewhere
+    }
+
+    /* Code, markup, SQL, shell — things aimed at a machine, not at us. */
+    if (preg_match('#<\?php|</?[a-z][a-z0-9]*[\s/>]|\bfunction\s*[\w$]*\s*\(|=>|\b(?:var|let|const)\s+\w+\s*=|\bimport\s+[\w{]|\bdef\s+\w+\s*\(|\#include|\bSELECT\b.*\bFROM\b|\bDROP\s+TABLE\b|\bUNION\s+SELECT\b|\$_(?:GET|POST|SERVER|REQUEST)|\bcurl\s+-|\brm\s+-rf\b|\{\s*"[^"]+"\s*:#is', $t)) {
+        return 'code';
+    }
+
+    /* The same character six times over: aaaaaaa, ......., ٧٧٧٧٧٧٧. */
+    if (preg_match('/(.)\1{5,}/u', $t)) {
+        return 'gibberish';
+    }
+
+    /* One unbroken run longer than any real word in any language. */
+    if (preg_match('/\S{31,}/u', $t) && !preg_match('/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}\p{Thai}]/u', $t)) {
+        return 'gibberish';
+    }
+
+    /* Mostly punctuation and digits rather than letters. */
+    $letters = preg_match_all('/\p{L}/u', $t);
+    $len     = mb_strlen(preg_replace('/\s+/u', '', $t));
+    if ($len >= 8 && $letters / max($len, 1) < 0.45) {
+        return 'gibberish';
+    }
+
+    /* Latin and Cyrillic only: unpronounceable runs and voweless words. */
+    $latinish = preg_match('/[\p{Latin}\p{Cyrillic}]/u', $t)
+             && !preg_match('/[\p{Arabic}\p{Han}\p{Hebrew}\p{Hangul}\p{Devanagari}\p{Thai}]/u', $t);
+    if ($latinish) {
+        if (preg_match('/[bcdfghjklmnpqrstvwxz]{6,}/i', $t)) {
+            return 'gibberish';
+        }
+        foreach (preg_split('/\s+/u', $t) as $w) {
+            $w = preg_replace('/[^\p{L}]/u', '', $w);
+            if (mb_strlen($w) >= 6 && preg_match('/^[\p{Latin}]+$/u', $w)
+                && !preg_match('/[aeiouyàáâäãåèéêëìíîïòóôöõùúûüæøœыаеиоуэюя]/iu', $w)) {
+                return 'gibberish';
+            }
+        }
+    }
+
+    if ($short) {
+        return null;                              // the rest only makes sense on prose
+    }
+
+    /* Link farms. One link is a reference; several is a pitch. */
+    if (preg_match_all('#https?://|www\.#i', $t) >= 3) {
+        return 'links';
+    }
+
+    /* The same line or sentence pasted over and over. */
+    $units = preg_split('/[\r\n]+|(?<=[.!?؟。])\s+/u', $t, -1, PREG_SPLIT_NO_EMPTY);
+    $units = array_filter(array_map(fn ($u) => mb_strtolower(trim($u)), $units), fn ($u) => $u !== '');
+    if ($units) {
+        $counts = array_count_values($units);
+        if (max($counts) >= 3) {
+            return 'repeat';
+        }
+    }
+
+    /* Padding: many words, almost none of them different. */
+    $words = preg_split('/\s+/u', mb_strtolower($t), -1, PREG_SPLIT_NO_EMPTY);
+    if (count($words) >= 12 && count(array_unique($words)) / count($words) < 0.35) {
+        return 'repeat';
+    }
+
+    return null;
+}
+
+/** What we say back. Salam is the reason the bar exists, so it does the asking. */
+function sense_message(string $reason): string
+{
+    return match ($reason) {
+        'code'      => 'Please write in plain language rather than code. Salam reads every message that reaches us — give it something to read.',
+        'links'     => 'That is a lot of links. Please describe your enquiry in your own words.',
+        'repeat'    => 'This message repeats itself. Please say it once, in your own words — Salam reads it all.',
+        'duplicate' => 'You have already sent this. Salam read it the first time; add only what is new.',
+        default     => 'That does not read as language. Salam reads every message that reaches us — please write a sentence, in whichever language you prefer.',
+    };
 }
 
 /**
@@ -279,11 +380,49 @@ if (!empty($d['company_website'])) {
     exit;
 }
 
-foreach (['name', 'organisation', 'country', 'email'] as $req) {
-    if (trim((string) ($d[$req] ?? '')) === '') { http_response_code(422); exit; }
+/** Refuse with a reason the form can show against the right field. */
+function reject(int $code, string $field, string $message): never
+{
+    http_response_code($code);
+    header('Content-Type: application/json');
+    echo json_encode(['error' => $message, 'field' => $field]);
+    exit;
 }
-if (!filter_var($d['email'], FILTER_VALIDATE_EMAIL)) { http_response_code(422); exit; }
+
+foreach (['name', 'organisation', 'country', 'email'] as $req) {
+    if (trim((string) ($d[$req] ?? '')) === '') {
+        reject(422, $req, 'This field is required.');
+    }
+}
+if (!filter_var($d['email'], FILTER_VALIDATE_EMAIL)) {
+    reject(422, 'email', 'That email address is not valid.');
+}
 foreach ($d as $k => $v) { $d[$k] = mb_substr(trim((string) $v), 0, 2000); }
+
+/* Every free-text field has to read as something a person wrote. The three
+   short fields are checked with the prose rules switched off. */
+foreach (['name' => true, 'organisation' => true, 'country' => true, 'message' => false] as $field => $short) {
+    $reason = sense_reason((string) ($d[$field] ?? ''), $short);
+    if ($reason !== null) {
+        reject(422, $field, sense_message($reason));
+    }
+}
+
+/* The same message sent twice by the same person is not a second enquiry. */
+$norm = mb_strtolower(preg_replace('/\s+/u', ' ', trim((string) ($d['message'] ?? ''))));
+if (mb_strlen($norm) >= 12) {
+    @mkdir(SEEN_DIR, 0700, true);
+    foreach (glob(SEEN_DIR . '/*') ?: [] as $old) {          // prune as we go
+        if (time() - filemtime($old) > SEEN_TTL) { @unlink($old); }
+    }
+    foreach ([mb_strtolower((string) $d['email']), (string) ($_SERVER['REMOTE_ADDR'] ?? '')] as $who) {
+        $mark = SEEN_DIR . '/' . md5($who . '|' . $norm);
+        if (is_file($mark) && time() - filemtime($mark) < SEEN_TTL) {
+            reject(429, 'message', sense_message('duplicate'));
+        }
+        touch($mark);
+    }
+}
 
 try {
     send_mail($d);
