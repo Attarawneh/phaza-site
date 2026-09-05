@@ -1,6 +1,19 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  /* Phones only. Outlook desktop ignores media queries, but it is always wide
+     enough for the two-column form, so it keeps the desktop layout. */
+  @media only screen and (max-width:480px) {
+    .pz-when, .pz-what {
+      display:block !important; width:100% !important; box-sizing:border-box !important;
+    }
+    .pz-when { padding:12px 0 3px 0 !important; }
+    .pz-what { padding:0 0 13px 0 !important; border-top:0 !important; }
+  }
+</style>
+</head>
 <body style="margin:0;padding:0;background:#05080f;">
 <!-- Preheader: shown in the inbox list, hidden in the body -->
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your message reached the Phaza team — here is what we received, and what happens next.</div>
@@ -62,18 +75,32 @@
   <!-- What happens next -->
   <tr><td style="padding:30px 38px 0 38px;">
     <p style="margin:0 0 16px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,0.42);text-transform:uppercase;">What happens next</p>
+    <!-- Time markers rather than 01/02/03: each row is a commitment, and the
+         hairlines echo the spec table above so the two sections read as one. -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;">
       <tr>
-        <td style="width:26px;vertical-align:top;padding-bottom:13px;"><span style="color:#2FB4EC;font-family:monospace;font-size:11px;">01</span></td>
-        <td style="padding-bottom:13px;color:rgba(255,255,255,0.72);">We read your message and match it to the right person on the team.</td>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;width:118px;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">Now</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          Your message is with the team &mdash; not a ticket queue. It goes to the person who can answer it.
+        </td>
       </tr>
       <tr>
-        <td style="width:26px;vertical-align:top;padding-bottom:13px;"><span style="color:#2FB4EC;font-family:monospace;font-size:11px;">02</span></td>
-        <td style="padding-bottom:13px;color:rgba(255,255,255,0.72);">You get a direct reply — technical questions answered by the people who built Salam.</td>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">Within a day</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          A reply from someone who builds Salam. Ask about parameters, tokens, deployment or sovereignty &mdash; you will get specifics, not a brochure.
+        </td>
       </tr>
       <tr>
-        <td style="width:26px;vertical-align:top;"><span style="color:#2FB4EC;font-family:monospace;font-size:11px;">03</span></td>
-        <td style="color:rgba(255,255,255,0.72);">If you asked for a demonstration, we propose times that suit your timezone.</td>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">On request</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          A demonstration on your own records, in your own timezone: Salam answering from your institution&rsquo;s knowledge, not ours.
+        </td>
       </tr>
     </table>
   </td></tr>
