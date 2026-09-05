@@ -693,6 +693,7 @@ if (PHP_SAPI === 'cli') {
         exit(0);
     }
     if ($mode === '--test-graph') {
+        require AUTOLOAD;
         $to = $argv[2] ?? 'attarawneh@phaza.io';
         if (!graph_configured()) { echo "graph not configured (GRAPH_* empty)\n"; exit(1); }
         $e = (new Symfony\Component\Mime\Email())
