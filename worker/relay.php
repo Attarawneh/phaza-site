@@ -105,6 +105,35 @@ function send_mail(array $d): void
     }
 }
 
+/** Plain-text twin of the <!--STEPS:x--> block chosen for the HTML part. */
+function steps_text(string $variant): string
+{
+    $steps = [
+        'tech' => [
+            ['NOW', 'Your question is with the team - not a ticket queue. It goes to the engineer who can answer it.'],
+            ['WITHIN A DAY', 'A written answer from someone who builds Salam: architecture, parameters, training data, deployment, sovereignty. Specifics, not a brochure.'],
+            ['IF IT HELPS', 'Where something is easier shown than written, we will offer to put Salam in front of you and walk through it.'],
+        ],
+        'demo' => [
+            ['NOW', 'Your request is with the team - not a ticket queue. It goes to the person who will run the session.'],
+            ['WITHIN A DAY', 'We propose times that suit your timezone and confirm what you want to see, so the session is built around your questions.'],
+            ['AT THE SESSION', "Salam answering from your institution's own records, in your own language. A working system, not a scripted demo."],
+        ],
+        'both' => [
+            ['NOW', 'Your message is with the team - not a ticket queue. It goes to the person who can answer it.'],
+            ['WITHIN A DAY', 'A written answer to your technical questions, and times for a session that suit your timezone.'],
+            ['AT THE SESSION', "Salam answering from your institution's own records, in your own language. A working system, not a scripted demo."],
+        ],
+    ][$variant];
+
+    $out = '';
+    foreach ($steps as [$when, $what]) {
+        $body = wordwrap($what, 58, "\n" . str_repeat(' ', 18));
+        $out .= '  ' . str_pad($when, 16) . $body . "\n";
+    }
+    return $out;
+}
+
 /**
  * Confirmation sent to the visitor from no-reply@phaza.io.
  *
@@ -123,11 +152,27 @@ function send_autoreply(array $d): void
 
     $first   = trim(explode(' ', trim((string) $d['name']))[0]) ?: 'there';
     $message = trim((string) ($d['message'] ?? ''));
+    $purpose = (string) (($d['purpose'] ?? '') ?: 'Enquiry');
+
+    /* The form offers three reasons; anything unrecognised is treated as a
+       question, which is the safest thing to promise an answer to. */
+    $variant = match (strtolower(trim($purpose))) {
+        'demo request'      => 'demo',
+        'both'              => 'both',
+        default             => 'tech',
+    };
+
+    /* Keep the matching <!--STEPS:x--> block, drop the others. */
+    foreach (['tech', 'demo', 'both'] as $k) {
+        $html = $k === $variant
+            ? str_replace(["<!--STEPS:{$k}-->", "<!--/STEPS:{$k}-->"], '', $html)
+            : preg_replace('#<!--STEPS:' . $k . '-->.*?<!--/STEPS:' . $k . '-->#s', '', $html);
+    }
 
     $html = strtr($html, [
         '{{NAME}}'         => $esc($first),
         '{{EMAIL}}'        => $esc($d['email']),
-        '{{PURPOSE}}'      => $esc(($d['purpose'] ?? '') ?: 'Enquiry'),
+        '{{PURPOSE}}'      => $esc($purpose),
         '{{ORGANISATION}}' => $esc($d['organisation']),
         '{{COUNTRY}}'      => $esc($d['country']),
         '{{MESSAGE}}'      => nl2br($esc($message)),
@@ -146,16 +191,9 @@ function send_autoreply(array $d): void
           . "  Organisation: {$d['organisation']}\n"
           . "  Country:      {$d['country']}\n"
           . ($message !== '' ? "\n  \"{$message}\"\n" : '')
-          . "\nWhat happens next\n"
-          . "  NOW           Your message is with the team — not a ticket queue. It goes to\n"
-          . "                the person who can answer it.\n"
-          . "  WITHIN A DAY  A reply from someone who builds Salam. Ask about parameters,\n"
-          . "                tokens, deployment or sovereignty — you will get specifics,\n"
-          . "                not a brochure.\n"
-          . "  ON REQUEST    A demonstration on your own records, in your own timezone:\n"
-          . "                Salam answering from your institution's knowledge, not ours.\n"
-          . "\nSalam is a sovereign large language model — Arabic-native, trained from scratch, "
-          . "and owned outright by the institution that buys it.\n\n"
+          . "\nWhat happens next\n" . steps_text($variant)
+          . "\nSalam is a sovereign large language model: trained from scratch in the languages "
+          . "your nation actually works in, and owned outright by the institution that deploys it.\n\n"
           . "Jordan · United Arab Emirates\nhttps://phaza.io\n\n"
           . "This confirmation was sent automatically from an unmonitored address — please don't "
           . "reply to it. Your actual reply will come from a member of the team.\n";

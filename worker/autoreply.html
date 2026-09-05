@@ -76,7 +76,66 @@
   <tr><td style="padding:30px 38px 0 38px;">
     <p style="margin:0 0 16px 0;font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,0.42);text-transform:uppercase;">What happens next</p>
     <!-- Time markers rather than 01/02/03: each row is a commitment, and the
-         hairlines echo the spec table above so the two sections read as one. -->
+         hairlines echo the spec table above so the two sections read as one.
+         One block per enquiry type; relay.php keeps the matching one and drops
+         the rest, so all the copy stays here in the template. -->
+    <!--STEPS:tech-->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;">
+      <tr>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;width:118px;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">Now</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          Your question is with the team &mdash; not a ticket queue. It goes to the engineer who can answer it.
+        </td>
+      </tr>
+      <tr>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">Within a day</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          A written answer from someone who builds Salam: architecture, parameters, training data, deployment, sovereignty. Specifics, not a brochure.
+        </td>
+      </tr>
+      <tr>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">If it helps</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          Where something is easier shown than written, we will offer to put Salam in front of you and walk through it.
+        </td>
+      </tr>
+    </table>
+    <!--/STEPS:tech-->
+    <!--STEPS:demo-->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;">
+      <tr>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;width:118px;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">Now</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          Your request is with the team &mdash; not a ticket queue. It goes to the person who will run the session.
+        </td>
+      </tr>
+      <tr>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">Within a day</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          We propose times that suit your timezone and confirm what you want to see, so the session is built around your questions.
+        </td>
+      </tr>
+      <tr>
+        <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;">
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">At the session</span>
+        </td>
+        <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
+          Salam answering from your institution&rsquo;s own records, in your own language. A working system, not a scripted demo.
+        </td>
+      </tr>
+    </table>
+    <!--/STEPS:demo-->
+    <!--STEPS:both-->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;">
       <tr>
         <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;width:118px;">
@@ -91,27 +150,28 @@
           <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">Within a day</span>
         </td>
         <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
-          A reply from someone who builds Salam. Ask about parameters, tokens, deployment or sovereignty &mdash; you will get specifics, not a brochure.
+          A written answer to your technical questions, and times for a session that suit your timezone.
         </td>
       </tr>
       <tr>
         <td class="pz-when" style="padding:11px 16px 11px 0;border-top:1px solid rgba(255,255,255,0.06);vertical-align:top;">
-          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">On request</span>
+          <span style="font-family:'SFMono-Regular',Consolas,monospace;font-size:9px;letter-spacing:.16em;color:#2FB4EC;text-transform:uppercase;">At the session</span>
         </td>
         <td class="pz-what" style="padding:9px 0 11px 0;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.72);">
-          A demonstration on your own records, in your own timezone: Salam answering from your institution&rsquo;s knowledge, not ours.
+          Salam answering from your institution&rsquo;s own records, in your own language. A working system, not a scripted demo.
         </td>
       </tr>
     </table>
+    <!--/STEPS:both-->
   </td></tr>
 
   <!-- Sovereign line -->
   <tr><td style="padding:30px 38px 0 38px;">
     <div style="padding:18px 20px;background:linear-gradient(135deg,rgba(47,180,236,0.07),rgba(47,180,236,0.02));border:1px solid rgba(47,180,236,0.16);border-radius:10px;">
       <p style="margin:0;font-size:14px;line-height:1.6;color:rgba(255,255,255,0.78);">
-        <span style="color:#ffffff;font-weight:600;">Salam</span> is a sovereign large language model —
-        Arabic-native, trained from scratch, and owned outright by the institution that buys it.
-        Not rented. Not a wrapper.
+        <span style="color:#ffffff;font-weight:600;">Salam</span> is a sovereign large language model:
+        trained from scratch in the languages your nation actually works in, and owned outright by the
+        institution that deploys it. Not rented. Not a wrapper.
       </p>
     </div>
   </td></tr>
