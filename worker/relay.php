@@ -21,6 +21,7 @@ const ORIGIN     = 'https://phaza.io';
 const RATE_DIR   = '/tmp/phaza-connect-rate';
 const RATE_MAX   = 20;               // submissions per IP per hour
 const SPOOL_DIR  = __DIR__ . '/spool';
+const ASSET_DIR  = __DIR__ . '/assets';
 const SEEN_DIR   = '/tmp/phaza-connect-seen';
 const SEEN_TTL   = 86400;            // remember a message for a day
 const AUTOREPLY  = __DIR__ . '/autoreply.html';
@@ -137,16 +138,67 @@ function graph_token(): string
     return $tok;
 }
 
+/**
+ * Turn remote brand images into inline attachments.
+ *
+ * Outlook blocks remote images by default, so a hosted <img> shows as a
+ * "some external images were not downloaded" bar and the design collapses.
+ * Attaching them inline (cid:) means they are part of the message and always
+ * render, with no prompt and no request back to phaza.io.
+ *
+ * Rewrites $html in place and returns Graph attachment objects.
+ */
+function inline_brand_images(string &$html): array
+{
+    $attachments = [];
+    if (!preg_match_all('#https://phaza\.io/brand/([A-Za-z0-9._-]+\.png)#', $html, $m)) {
+        return $attachments;
+    }
+
+    foreach (array_unique($m[1]) as $file) {
+        /* Hashed publish names map back to the plain file kept beside us. */
+        $base  = preg_replace('/\.[a-f0-9]{8}\.png$/', '.png', $file);
+        $path  = ASSET_DIR . '/' . basename($base);
+        if (!is_readable($path)) {
+            continue;                       // leave the remote URL in place
+        }
+        $cid   = preg_replace('/[^a-z0-9]/i', '', pathinfo($base, PATHINFO_FILENAME)) . '@phaza.io';
+        $html  = str_replace('https://phaza.io/brand/' . $file, 'cid:' . $cid, $html);
+        $attachments[] = [
+            '@odata.type'  => '#microsoft.graph.fileAttachment',
+            'name'         => basename($base),
+            'contentType'  => 'image/png',
+            'contentBytes' => base64_encode((string) file_get_contents($path)),
+            'contentId'    => $cid,
+            'isInline'     => true,
+        ];
+    }
+    return $attachments;
+}
+
 function graph_send(Symfony\Component\Mime\Email $email): void
 {
     $sender = envv('GRAPH_SENDER') ?: (envv('MAIL_FROM_ADDRESS') ?: 'no-reply@phaza.io');
 
+    /* Graph sends as the mailbox, so without this the recipient sees the
+       mailbox's own display name in Exchange. Name it after the service. */
+    $fromName = '';
+    foreach ($email->getFrom() as $f) { $fromName = $f->getName(); break; }
+    $fromName = $fromName ?: (envv('MAIL_FROM_NAME') ?: 'Phaza Connect');
+
+    $html = (string) ($email->getHtmlBody() ?: nl2br(htmlspecialchars((string) $email->getTextBody())));
+    $attachments = inline_brand_images($html);
+
     $addr = fn ($a) => ['emailAddress' => ['address' => $a->getAddress()]];
     $msg  = [
         'subject'      => (string) $email->getSubject(),
-        'body'         => ['contentType' => 'HTML', 'content' => (string) ($email->getHtmlBody() ?: nl2br(htmlspecialchars((string) $email->getTextBody())))],
+        'from'         => ['emailAddress' => ['address' => $sender, 'name' => $fromName]],
+        'body'         => ['contentType' => 'HTML', 'content' => $html],
         'toRecipients' => array_map($addr, $email->getTo()),
     ];
+    if ($attachments) {
+        $msg['attachments'] = $attachments;
+    }
     if ($email->getReplyTo()) {
         $msg['replyTo'] = array_map($addr, $email->getReplyTo());
     }
@@ -226,22 +278,23 @@ function send_mail(array $d, ?array $ai = null): void
         $assessBlock = '<tr><td class="pz-pad" style="padding:26px 38px 0 38px;">'
             . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:' . $tint
             . ';border:1px solid rgba(255,255,255,0.08);border-left:2px solid ' . $bar . ';border-radius:0 12px 12px 0;">'
-            . '<tr><td style="padding:16px 20px;">'
-            . '<table role="presentation" cellpadding="0" cellspacing="0"><tr>'
-            . '<td style="vertical-align:bottom;padding-right:12px;">'
-            . '<img src="https://phaza.io/brand/phaza-one-figure.172a3d28.png" width="30" height="58" alt="Phaza One" '
-            . 'style="display:block;border:0;outline:none;"></td>'
-            . '<td style="vertical-align:middle;">'
-            . '<p style="margin:0;font-size:13px;font-weight:600;color:#ffffff;line-height:1.3;">Phaza One &middot; '
-            . $esc($label) . '</p>'
-            . '<p style="margin:2px 0 0 0;font-family:\'SFMono-Regular\',Consolas,monospace;font-size:9px;'
-            . 'letter-spacing:.14em;color:' . $bar . ';text-transform:uppercase;">'
-            . $esc($ai['category'] ?: 'uncategorised') . ' &middot; ' . $esc($ai['language'] ?: '?')
-            . ' (' . $esc($ai['confidence'] ?: '?') . ')</p>'
-            . '</td></tr></table>'
-            . '<p style="margin:12px 0 0 0;font-size:14px;line-height:1.65;color:rgba(255,255,255,0.82);">'
+            . '<tr>'
+            . '<td style="vertical-align:top;padding:18px 8px 18px 20px;">'
+            . '<p style="margin:0;font-size:15px;font-weight:600;color:#ffffff;line-height:1.3;">Phaza One</p>'
+            . '<p style="margin:3px 0 0 0;font-family:\'SFMono-Regular\',Consolas,monospace;font-size:9px;'
+            . 'letter-spacing:.14em;color:' . $bar . ';text-transform:uppercase;">' . $esc($label) . '</p>'
+            . '<div style="height:1px;background:rgba(255,255,255,0.1);margin:13px 0 12px 0;"></div>'
+            . '<p style="margin:0;font-size:14px;line-height:1.7;color:rgba(255,255,255,0.86);">'
             . $esc($ai['summary']) . '</p>'
-            . '</td></tr></table></td></tr>';
+            . '<p style="margin:12px 0 0 0;font-family:\'SFMono-Regular\',Consolas,monospace;font-size:9px;'
+            . 'letter-spacing:.12em;color:rgba(255,255,255,0.38);text-transform:uppercase;">'
+            . $esc($ai['category'] ?: 'uncategorised') . ' &middot; ' . $esc($ai['language'] ?: '?')
+            . ' &middot; ' . $esc($ai['confidence'] ?: '?') . ' confidence</p>'
+            . '</td>'
+            . '<td class="pz-fig" width="118" style="width:118px;vertical-align:bottom;padding:0 8px 0 0;">'
+            . '<img src="https://phaza.io/brand/phaza-one-figure.172a3d28.png" width="110" height="211" alt="Phaza One" '
+            . 'style="display:block;border:0;outline:none;"></td>'
+            . '</tr></table></td></tr>';
     }
 
     $tpl = file_get_contents(TEAMMAIL);
@@ -669,7 +722,7 @@ function send_autoreply(array $d, ?array $ai = null): void
     $email = (new Symfony\Component\Mime\Email())
         ->from(new Symfony\Component\Mime\Address(
             envv('MAIL_FROM_ADDRESS') ?: 'no-reply@phaza.io',
-            'Phaza'
+            'Phaza Connect'
         ))
         ->to(new Symfony\Component\Mime\Address((string) $d['email'], (string) $d['name']))
         ->subject($arabic ? 'وصلت رسالتك — فازا' : 'We received your message — Phaza')
