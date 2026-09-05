@@ -61,7 +61,7 @@
     lastFocus?.focus?.();
   };
 
-  function build() {
+  function build(initialFile) {
     const dlg = document.createElement('div');
     dlg.className = 'pz-overlay pz-careers';
     dlg.setAttribute('role', 'dialog');
@@ -223,6 +223,7 @@
     document.body.appendChild(dlg);
     document.body.style.overflow = 'hidden';
     drop.focus();
+    if (initialFile) inspect(initialFile);
 
     /* Some browser extensions (Adobe Acrobat's PDF interception, watched
        doing exactly this) tear foreign dialogs out of the DOM the moment a
@@ -251,9 +252,9 @@
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
   ));
 
-  const open = (from) => {
+  const open = (from, withFile) => {
     lastFocus = from || document.activeElement;
-    if (!document.querySelector('.pz-careers')) build();
+    if (!document.querySelector('.pz-careers')) build(withFile);
   };
 
   /* Doors in, in order of subtlety:
@@ -267,6 +268,30 @@
     e.preventDefault();
     open(t);
   });
+
+  /* The map's old "Drop your CV." zone (data-testid=dropzone-cv) posted to
+     /api/careers/cv — an endpoint that does not exist here; every CV dropped
+     on it died with "Couldn't send". The bundle ships without source, so the
+     zone is commandeered in the capture phase: a click opens the real door,
+     a dropped file walks straight into it. */
+  const OLD_ZONE = '[data-testid="dropzone-cv"]';
+  document.addEventListener('click', (e) => {
+    const zone = e.target.closest(OLD_ZONE);
+    if (!zone) return;
+    e.preventDefault();
+    e.stopPropagation();
+    open(zone);
+  }, true);
+  ['dragenter', 'dragover'].forEach((t) => document.addEventListener(t, (e) => {
+    if (e.target.closest?.(OLD_ZONE)) e.preventDefault();
+  }, true));
+  document.addEventListener('drop', (e) => {
+    const zone = e.target.closest?.(OLD_ZONE);
+    if (!zone) return;
+    e.preventDefault();
+    e.stopPropagation();
+    open(zone, e.dataTransfer?.files?.[0] || undefined);
+  }, true);
 
   const fab = document.createElement('button');
   fab.type = 'button';
