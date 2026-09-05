@@ -36,14 +36,20 @@ addEventListener('resize',size);size();
 const RAMP=[[0,240,255],[0,205,255],[33,160,255],[105,108,255],[138,43,226]];
 const at=t=>{t=t<0?0:t>1?1:t;const q=t*4,i=Math.min(3,q|0),f=q-i,a=RAMP[i],b=RAMP[i+1];
   return`rgb(${a[0]+(b[0]-a[0])*f|0},${a[1]+(b[1]-a[1])*f|0},${a[2]+(b[2]-a[2])*f|0})`};
-const mk=(t,lift)=>{const c=document.createElement('canvas');c.width=c.height=32;
-  const x=c.getContext('2d'),l=x.createLinearGradient(0,0,32,32);
-  l.addColorStop(0,at(t-.14));l.addColorStop(1,at(t+.14));
-  x.fillStyle=l;x.beginPath();x.arc(16,16,15,0,6.2832);x.fill();
-  if(lift){x.globalCompositeOperation='lighter';x.fillStyle=`rgba(255,255,255,${lift})`;
-    x.beginPath();x.arc(16,16,15,0,6.2832);x.fill()}
-  return c};
-const SP=[],HI=[];for(let i=0;i<16;i++){SP.push(mk(i/15,0));HI.push(mk(i/15,.55))}
+const rgbc=t=>{t=t<0?0:t>1?1:t;const q=t*4,i=Math.min(3,q|0),f=q-i,a=RAMP[i],b=RAMP[i+1];
+  return[a[0]+(b[0]-a[0])*f|0,a[1]+(b[1]-a[1])*f|0,a[2]+(b[2]-a[2])*f|0]};
+/* a glow, not a dot: solid core falling to nothing, drawn additively so
+   overlapping points build light instead of stacking edges */
+const mk=(t,boost)=>{const c=document.createElement('canvas');c.width=c.height=64;
+  const x=c.getContext('2d'),[r,g2,b]=rgbc(t),
+    hi=v=>Math.min(255,v+boost),
+    rg=x.createRadialGradient(32,32,0,32,32,32);
+  rg.addColorStop(0,`rgba(${hi(r)},${hi(g2)},${hi(b)},1)`);
+  rg.addColorStop(.22,`rgba(${r},${g2},${b},.66)`);
+  rg.addColorStop(.55,`rgba(${r},${g2},${b},.18)`);
+  rg.addColorStop(1,`rgba(${r},${g2},${b},0)`);
+  x.fillStyle=rg;x.fillRect(0,0,64,64);return c};
+const SP=[],HI=[];for(let i=0;i<16;i++){SP.push(mk(i/15,0));HI.push(mk(i/15,110))}
 
 /* ── population: a soft outer shell, three rings that cross it, an inner
       core shell. Rings get the largest share so they read as structure. ── */
@@ -119,19 +125,20 @@ function frame(now){
     const depth=(rz+R0)/(2*R0);                      // 0 front · 1 back
     const flick=.62+.38*Math.sin(k*.9+p.seed*21);    // assemble / fade / reconnect
 
-    let a=(p.role===0?.34:p.role===4?.5:.85)*flick*(1-depth*.62)*(1+en*1.1);
-    let s=p.sz*per*(p.role===0?1.5:p.role===4?1.3:1.9)*(1+en*.5);
+    let a=(p.role===0?.20:p.role===4?.30:.52)*flick*(1-depth*.6)*(1+en*1.15);
+    let s=p.sz*per*(p.role===0?4.2:p.role===4?3.6:4.6)*(1+en*.55);
     out.push({sxp,syp,s,a,ang,en,depth});
   }
 
   out.sort((m,n)=>n.depth-m.depth);                  // far pixels first
+  g.globalCompositeOperation='lighter';               // light adds up
   for(const o of out){
     g.globalAlpha=Math.min(1,o.a);
     const idx=((o.ang+.5+k*.055)%1*16|0)%16;         // ramp travels with the form
     const img=o.en>.5?HI[idx]:SP[idx];
     g.drawImage(img,o.sxp-o.s,o.syp-o.s,o.s*2,o.s*2);
   }
-  g.globalAlpha=1;
+  g.globalAlpha=1;g.globalCompositeOperation='source-over';
 
   document.getElementById('hud').innerHTML=
     `<b>${out.length}</b> pixels drawn &nbsp;·&nbsp; shell ${SHELL?'on':'off'} &nbsp;·&nbsp; rings ${RINGS?'on':'off'}`;
