@@ -66,7 +66,8 @@
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <script type="module" crossorigin integrity="sha384-bX3brRi3sdLpojV07/a+NGzSg5FF0fIb6QdkfVpxdzR5ag0XnZRaxiT2l8FiSYOb" src="/assets/index-b48.js"></script>
+    <script type="module" src="/assets/phaza-boot.fca65d89.js"></script>
+    <script type="module" crossorigin integrity="sha384-MjjvyO9qDQ/gj+9Z8XfmGq/JFJlOg4w23v8a6PRbfPACvJaGdC9CFAP0pQPofSjd" src="/assets/index-b49.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/cjs-helpers-CqkleIqs.js">
     <link rel="stylesheet" crossorigin integrity="sha384-BeG4Vv0or8HOqlHXcXO08WyNONs/t/+KlHxD7OWUJOtDcB1pC/sqPKmJO2HIzpIo" href="/assets/index-391a40ef.css">
     <link rel="stylesheet" href="/assets/phaza-brand.79990f54.css" />
@@ -93,6 +94,100 @@
         pointer-events: none;
       }
       @keyframes phaza-orb-icon-in { to { opacity: 0.4; } }
+
+      /* ── opening cover ────────────────────────────────────────────────
+         Painted by the document itself so it is on screen before the bundle,
+         the stylesheet or any image has arrived. It hides the static copy in
+         #root -- which exists for crawlers -- until React has replaced it, so
+         the first thing anyone sees is the mark and not a wall of unstyled
+         prose. assets/phaza-boot.js takes it away on mount; the failsafe
+         animation below takes it away if that script never runs. */
+      #phz-boot {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #04070d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(40px, 7vmin, 62px);
+        opacity: 1;
+        transition: opacity .7s ease;
+        animation: phz-boot-failsafe .9s ease 10s forwards;
+      }
+      #phz-boot.phz-boot-out { opacity: 0; pointer-events: none; }
+      @keyframes phz-boot-failsafe { to { opacity: 0; visibility: hidden; } }
+
+      /* The aura the orb will occupy, breathing under the mark. */
+      #phz-boot::before {
+        content: '';
+        position: absolute;
+        width: min(64vmin, 460px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle,
+          rgba(0, 240, 255, .11) 0%,
+          rgba(105, 108, 255, .055) 52%,
+          rgba(138, 43, 226, 0) 72%);
+        animation: phz-boot-breathe 3.6s ease-in-out infinite;
+        pointer-events: none;
+      }
+      @keyframes phz-boot-breathe {
+        0%, 100% { transform: scale(1);    opacity: .85; }
+        50%      { transform: scale(1.06); opacity: 1; }
+      }
+
+      .phz-boot-mark {
+        position: relative;
+        width: clamp(58px, 12vmin, 100px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+      }
+      /* The halo, in the signature ramp: a conic sweep punched hollow, turning
+         once every two and a half seconds. Same language as the core the page
+         opens into. */
+      .phz-boot-mark::after {
+        content: '';
+        position: absolute;
+        inset: -42%;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg,
+          #00F0FF, #00CDFF, #21A0FF, #696CFF, #8A2BE2, #696CFF, #21A0FF, #00CDFF, #00F0FF);
+        -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+                mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+        filter: drop-shadow(0 0 12px rgba(33, 160, 255, .5));
+        animation: phz-boot-spin 2.6s linear infinite;
+      }
+      @keyframes phz-boot-spin { to { transform: rotate(1turn); } }
+      .phz-boot-mark svg { width: 62%; height: 62%; display: block; }
+
+      /* A hairline with the ramp travelling across it. Indeterminate on
+         purpose -- there is no honest percentage to report. */
+      .phz-boot-track {
+        position: relative;
+        width: clamp(118px, 22vmin, 186px);
+        height: 1px;
+        background: rgba(255, 255, 255, .09);
+        overflow: hidden;
+      }
+      .phz-boot-track i {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, #00CDFF 35%, #696CFF 65%, transparent);
+        transform: translateX(-100%);
+        animation: phz-boot-sweep 1.5s cubic-bezier(.4, 0, .2, 1) infinite;
+      }
+      @keyframes phz-boot-sweep { to { transform: translateX(100%); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        #phz-boot::before,
+        .phz-boot-mark::after,
+        .phz-boot-track i { animation: none; }
+        .phz-boot-track i { transform: none; opacity: .5; }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         #opening::after { animation: none; opacity: 0.4; }
       }
@@ -102,6 +197,18 @@
   </head>
   <body>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="phzSignature" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00F0FF"/><stop offset=".25" stop-color="#00CDFF"/><stop offset=".5" stop-color="#21A0FF"/><stop offset=".75" stop-color="#696CFF"/><stop offset="1" stop-color="#8A2BE2"/></linearGradient></defs></svg>
+<div id="phz-boot" aria-hidden="true">
+  <div class="phz-boot-mark">
+    <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <defs><linearGradient id="phzBootRamp" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#00F0FF"/><stop offset=".25" stop-color="#00CDFF"/>
+        <stop offset=".5" stop-color="#21A0FF"/><stop offset=".75" stop-color="#696CFF"/>
+        <stop offset="1" stop-color="#8A2BE2"/></linearGradient></defs>
+      <path d="M48 37 H 89 A 12.5 12.5 0 0 1 89 62 H 56 L 26 91 L 42 43 Q 43 37 48 37 Z" fill="url(#phzBootRamp)" transform="translate(64 64) scale(1.18) translate(-64 -64)"/>
+    </svg>
+  </div>
+  <div class="phz-boot-track"><i></i></div>
+</div>
 <div id="root"><!-- Static content for crawlers and no-JS readers; the application replaces this on mount. -->
 <header><h1>Phaza — Sovereign AI for Governments</h1>
 <p>Phaza builds the intelligence layer for governments: Salam, a sovereign Arabic-first large language model, delivered with knowledge, infrastructure, applications and agents as one owned stack. Built across the UAE and Jordan for nations that plan decades ahead.</p></header>
