@@ -254,6 +254,7 @@
       }
     };
 
+    let pollFaults = 0;
     const poll = async (tries) => {
       if (tries > 40) {            // ~2 minutes: stop spinning, keep the truth
         showResult(null);
@@ -267,7 +268,14 @@
           errAt('pick', 'That file does not read as a CV — send the document that tells your work story.');
           return;
         }
-        if (d.state === 'failed' || !d.ok) { showResult(null); return; }
+        // One sour answer is a hiccup, not a verdict — only three in a row
+        // gives up on showing the score.
+        if (d.state === 'failed' || !d.ok) {
+          pollFaults += 1;
+          if (pollFaults >= 3) { showResult(null); return; }
+        } else {
+          pollFaults = 0;
+        }
       } catch { /* transient; keep polling */ }
       setTimeout(() => poll(tries + 1), 3000);
     };
@@ -280,6 +288,7 @@
       if (!d) {
         verdict.textContent = 'Your CV is in — the deeper read finishes on our side. Complete your file and the team takes it from there.';
         bars.innerHTML = '';
+        if (!missing.length) missing = ['full_name', 'email', 'phone', 'linkedin_url'];
       } else {
         verdict.innerHTML = {
           strong: 'A <b>strong match</b>. Your experience lines up closely with work we are hiring for:',
