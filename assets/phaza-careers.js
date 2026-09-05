@@ -15,7 +15,7 @@
   if (!ENDPOINT) return;
 
   const ACCEPT = '.pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp';
-  const MAX_MB = 15;
+  const MAX_MB = 100;
 
   const ASK = {
     full_name: { label: 'Your name', type: 'text', required: true, autocomplete: 'name' },
@@ -77,7 +77,7 @@
         <div class="pzc-step" data-step="pick">
           <div class="pz-drop" role="button" tabindex="0" aria-label="Upload your CV">
             <b>Choose your CV</b> or drop it here
-            <small>PDF or Word, up to ${MAX_MB}MB</small>
+            <small>PDF or Word — any reasonable size</small>
           </div>
           <input type="file" accept="${ACCEPT}" hidden />
           <p class="pz-err" role="alert" hidden></p>
@@ -128,7 +128,7 @@
         const d = await r.json().catch(() => ({}));
         if (!r.ok || !d.token) {
           show('pick');
-          errAt('pick', d.error || d.message || 'We could not read that file — is it really a CV?');
+          errAt('pick', d.error || d.message || statusWords(r.status));
           return;
         }
         token = d.token;
@@ -154,7 +154,7 @@
         dlg.querySelector('.pzc-fields input')?.focus();
       } catch {
         show('pick');
-        errAt('pick', 'That did not go through. Please try once more, or email careers@phaza.io.');
+        errAt('pick', 'The connection dropped mid-upload — check your network and try again, or email careers@phaza.io.');
       }
     };
 
@@ -175,14 +175,14 @@
         }
         if (!r.ok) {
           show('ask');
-          errAt('ask', d.error || d.message || 'That did not send. Please try once more.');
+          errAt('ask', d.error || d.message || statusWords(r.status));
           return;
         }
         show('done');
         dlg.querySelector('.pz-close2').focus();
       } catch {
         show('ask');
-        errAt('ask', 'That did not send. Please try once more, or email careers@phaza.io.');
+        errAt('ask', 'The connection dropped — your file is still with us for a few minutes, just press send again.');
       }
     };
 
@@ -223,6 +223,16 @@
     document.body.style.overflow = 'hidden';
     drop.focus();
   }
+
+  /* When the server gives no words, the status code still has some. */
+  const statusWords = (status) => ({
+    413: `That file is too large for the network to carry — the ceiling is ${MAX_MB}MB.`,
+    403: 'This form only works from phaza.io itself — open the live site and try there.',
+    422: 'That file type is not one we can read — send a PDF or Word document.',
+    429: 'A lot of tries in a short time — give it a minute and try again.',
+  })[status] || (status >= 500
+    ? 'The careers desk hit a snag on our side — try again in a minute, or email careers@phaza.io.'
+    : `That did not go through (HTTP ${status || 'network error'}). Try once more, or email careers@phaza.io.`);
 
   const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
