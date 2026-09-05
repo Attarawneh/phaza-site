@@ -90,6 +90,28 @@ function mailer(): Symfony\Component\Mailer\Mailer
     return $m;
 }
 
+/**
+ * Send with the envelope on the authenticated mailbox and the visible From on
+ * the brand address. The envelope must match the SMTP login or mailcow refuses
+ * it; the From is what people see, and rspamd DKIM-signs by the From domain --
+ * mailcow still holds phaza.io's key, so the signature is valid and aligned.
+ */
+function deliver(Symfony\Component\Mime\Email $email): void
+{
+    $bounce = envv('MAIL_ENVELOPE_FROM') ?: envv('MAIL_USERNAME');
+    if ($bounce !== '') {
+        $rcpts = [];
+        foreach (['getTo', 'getCc', 'getBcc'] as $m) {
+            foreach ($email->$m() as $a) { $rcpts[] = $a; }
+        }
+        mailer()->send($email, new Symfony\Component\Mailer\Envelope(
+            new Symfony\Component\Mime\Address($bounce), $rcpts
+        ));
+        return;
+    }
+    mailer()->send($email);
+}
+
 function send_mail(array $d, ?array $ai = null): void
 {
     require_once AUTOLOAD;
@@ -162,7 +184,7 @@ function send_mail(array $d, ?array $ai = null): void
             ->html($htmlBody !== '' ? $htmlBody : '<pre style="font:13px ui-monospace,monospace">' . $esc($text) . '</pre>');
 
         try {
-            mailer()->send($email);
+            deliver($email);
             $sentAny = true;
         } catch (Throwable $e) {
             $failed[] = $to . ': ' . $e->getMessage();
@@ -522,7 +544,7 @@ function send_autoreply(array $d, ?array $ai = null): void
     $email->getHeaders()->addTextHeader('Auto-Submitted', 'auto-replied');
     $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'All');
 
-    mailer()->send($email);
+    deliver($email);
 }
 
 /* ---- CLI self-test ----------------------------------------------------- */
