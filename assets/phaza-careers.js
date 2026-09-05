@@ -51,6 +51,11 @@
       transition: border-color .18s ease, color .18s ease; }
     .pz-careers-fab:hover { border-color: #00CDFF; color: #fff; }
     @media (max-width: 640px) { .pz-careers-fab { left: .7rem; bottom: .7rem; } }
+    .pz-drop-inline { max-width: 34rem; margin: 0 auto; color: #cfeaf5;
+      font: 400 .95rem/1.5 Inter, system-ui, sans-serif;
+      background: rgba(10, 16, 24, .55); backdrop-filter: blur(6px); }
+    .pz-drop-inline small { font-family: ui-monospace, monospace; font-size: .62rem;
+      letter-spacing: .14em; text-transform: uppercase; }
   `;
   document.head.appendChild(style);
 
@@ -275,6 +280,41 @@
      zone is commandeered in the capture phase: a click opens the real door,
      a dropped file walks straight into it. */
   const OLD_ZONE = '[data-testid="dropzone-cv"]';
+
+  /* The map section's own box is REPLACED, not just intercepted: the old
+     button is hidden and a working drop zone — same one the dialog uses —
+     takes its exact place. React re-renders re-run this via the observer
+     below, so the swap survives the scene unmounting and mounting again. */
+  const replaceOldZone = () => {
+    document.querySelectorAll(OLD_ZONE).forEach((zone) => {
+      if (zone.dataset.pzcReplaced) return;
+      zone.dataset.pzcReplaced = '1';
+      zone.style.display = 'none';
+
+      const box = document.createElement('div');
+      box.className = 'pz-drop pz-drop-inline';
+      box.setAttribute('role', 'button');
+      box.setAttribute('tabindex', '0');
+      box.setAttribute('aria-label', 'Upload your CV');
+      box.innerHTML = '<b>Choose your CV</b> or drop it here<small>PDF or Word — read the moment it arrives</small>';
+
+      box.addEventListener('click', () => open(box));
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(box); }
+      });
+      ['dragenter', 'dragover'].forEach((t) => box.addEventListener(t, (e) => {
+        e.preventDefault(); box.classList.add('is-over');
+      }));
+      ['dragleave', 'drop'].forEach((t) => box.addEventListener(t, (e) => {
+        e.preventDefault(); box.classList.remove('is-over');
+        if (t === 'drop') open(box, e.dataTransfer?.files?.[0] || undefined);
+      }));
+
+      zone.parentNode?.insertBefore(box, zone);
+    });
+  };
+  replaceOldZone();
+  new MutationObserver(replaceOldZone).observe(document.body, { childList: true, subtree: true });
   document.addEventListener('click', (e) => {
     const zone = e.target.closest(OLD_ZONE);
     if (!zone) return;
