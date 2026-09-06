@@ -6,71 +6,233 @@
     <meta name="phaza-contact-endpoint" content="https://portal.phaza.io/phaza-connect" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Phaza — Sovereign AI for Governments · Salam Arabic-first LLM</title>
+    <title>Phaza — Sovereign AI for Governments</title>
     <meta name="description" content="Phaza builds the intelligence layer for governments — live models of cities, infrastructure, and resources across the MENA region." />
     <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="Phaza — The Intelligence Layer for Governments" />
+    <meta property="og:title" content="Phaza — Sovereign AI for Governments" />
     <meta property="og:description" content="Phaza builds the intelligence layer for governments — live models of cities, infrastructure, and resources across the MENA region." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://phaza.io/brand/share-card.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Phaza — The Intelligence Layer for Governments" />
+    <meta name="twitter:title" content="Phaza — Sovereign AI for Governments" />
     <meta name="twitter:description" content="Phaza builds the intelligence layer for governments — live models of cities, infrastructure, and resources across the MENA region." />
     <link rel="canonical" href="https://phaza.io/" />
     <meta property="og:url" content="https://phaza.io/" />
     <script type="application/ld+json">
-    {
+{
       "@context": "https://schema.org",
       "@graph": [
-        {
-          "@type": "Organization",
-          "@id": "https://phaza.io/#org",
-          "name": "Phaza",
-          "url": "https://phaza.io/",
-          "logo": "https://phaza.io/brand/share-card.png",
-          "description": "Phaza builds sovereign AI for governments: Salam, an Arabic-first large language model trained from scratch with no open-source base, delivered with knowledge, infrastructure, applications and agents as one owned stack.",
-          "sameAs": ["https://www.linkedin.com/company/phaza"],
-          "location": [
-            {"@type": "Place", "address": {"@type": "PostalAddress", "addressLocality": "Abu Dhabi", "addressCountry": "AE"}},
-            {"@type": "Place", "address": {"@type": "PostalAddress", "addressLocality": "Amman", "addressCountry": "JO"}}
-          ]
-        },
-        {
-          "@type": "Product",
-          "@id": "https://phaza.io/#salam",
-          "name": "Salam",
-          "brand": {"@id": "https://phaza.io/#org"},
-          "description": "Salam is a sovereign Arabic-first large language model for governments. Sparse mixture-of-experts, trained from scratch on 125B to 1T rights-cleared tokens with no open-source base. The weights transfer to the buying institution: owned outright, air-gapped or in-country cloud, nothing calls home.",
-          "offers": [
-            {"@type": "Offer", "name": "Salam Nano (v1)", "description": "48 experts, 7.8B parameters, 125B training tokens. Drafting, translation and everyday language work."},
-            {"@type": "Offer", "name": "Salam Core (v2)", "description": "96 experts, 14.4B parameters, 250B training tokens. Answers grounded in national records and law."},
-            {"@type": "Offer", "name": "Salam Pro (v4)", "description": "192 experts, 27.6B parameters, 500B training tokens. Multi-step analysis across ministries and data."},
-            {"@type": "Offer", "name": "Salam Max (v8)", "description": "384 experts, 54B parameters, 1T training tokens. Whole-of-government work at professional depth."}
-          ]
-        },
-        {
-          "@type": "FAQPage",
-          "mainEntity": [
-            {"@type": "Question", "name": "What is Salam?",
-             "acceptedAnswer": {"@type": "Answer", "text": "Salam (peace in Arabic) is Phaza's sovereign large language model for governments: Arabic-first, sparse mixture-of-experts, trained from scratch with no open-source base on rights-cleared data. It is sold with its weights, so the nation owns the model outright."}},
-            {"@type": "Question", "name": "How is Salam different from other sovereign AI offers?",
-             "acceptedAnswer": {"@type": "Answer", "text": "Most sovereign-AI offers are a rented model running in a local data centre. Salam is trained from zero and the weights transfer with the deal: air-gapped or in-country cloud, no external inference, nothing calls home."}},
-            {"@type": "Question", "name": "What does a government receive with Salam?",
-             "acceptedAnswer": {"@type": "Answer", "text": "Five layers as one stack: the Salam LLM, national knowledge packages, air-gapped or sovereign-cloud infrastructure, the application layer, and ready-to-deploy AI agents for planning, mobility, energy, environment, services, economy and safety."}},
-            {"@type": "Question", "name": "Where does Phaza operate?",
-             "acceptedAnswer": {"@type": "Answer", "text": "Phaza operates across the UAE and Jordan, with teams in Abu Dhabi and Amman, serving governments in the MENA region and beyond."}}
-          ]
-        }
+            {
+                  "@type": "Organization",
+                  "@id": "https://phaza.io/#org",
+                  "name": "Phaza",
+                  "url": "https://phaza.io/",
+                  "logo": {
+                        "@type": "ImageObject",
+                        "@id": "https://phaza.io/#logo",
+                        "url": "https://phaza.io/brand/phaza-logo-square.png",
+                        "contentUrl": "https://phaza.io/brand/phaza-logo-square.png",
+                        "width": 256,
+                        "height": 256,
+                        "caption": "Phaza"
+                  },
+                  "image": {
+                        "@id": "https://phaza.io/#logo"
+                  },
+                  "slogan": "The intelligence layer for governments.",
+                  "description": "Phaza builds sovereign AI for governments: Salam, an Arabic-first large language model trained from scratch with no open-source base, delivered with knowledge, infrastructure, applications and agents as one owned stack.",
+                  "email": "support@phaza.io",
+                  "sameAs": [
+                        "https://www.linkedin.com/company/phazanetwork"
+                  ],
+                  "knowsAbout": [
+                        "Sovereign artificial intelligence",
+                        "Arabic large language models",
+                        "Government technology",
+                        "Air-gapped AI infrastructure",
+                        "Geospatial intelligence",
+                        "AI agents for public administration",
+                        "Digital twins of cities"
+                  ],
+                  "areaServed": [
+                        {
+                              "@type": "Country",
+                              "name": "United Arab Emirates"
+                        },
+                        {
+                              "@type": "Country",
+                              "name": "Jordan"
+                        },
+                        {
+                              "@type": "Place",
+                              "name": "Middle East and North Africa"
+                        }
+                  ],
+                  "contactPoint": [
+                        {
+                              "@type": "ContactPoint",
+                              "contactType": "sales",
+                              "email": "support@phaza.io",
+                              "availableLanguage": [
+                                    "English",
+                                    "Arabic"
+                              ],
+                              "areaServed": [
+                                    "AE",
+                                    "JO"
+                              ]
+                        },
+                        {
+                              "@type": "ContactPoint",
+                              "contactType": "human resources",
+                              "email": "careers@phaza.io",
+                              "availableLanguage": [
+                                    "English",
+                                    "Arabic"
+                              ]
+                        }
+                  ],
+                  "location": [
+                        {
+                              "@type": "Place",
+                              "address": {
+                                    "@type": "PostalAddress",
+                                    "addressLocality": "Abu Dhabi",
+                                    "addressCountry": "AE"
+                              }
+                        },
+                        {
+                              "@type": "Place",
+                              "address": {
+                                    "@type": "PostalAddress",
+                                    "addressLocality": "Amman",
+                                    "addressCountry": "JO"
+                              }
+                        }
+                  ],
+                  "makesOffer": {
+                        "@type": "Offer",
+                        "itemOffered": {
+                              "@id": "https://phaza.io/#salam"
+                        }
+                  }
+            },
+            {
+                  "@type": "WebSite",
+                  "@id": "https://phaza.io/#website",
+                  "url": "https://phaza.io/",
+                  "name": "Phaza",
+                  "description": "Phaza builds sovereign AI for governments: Salam, an Arabic-first large language model trained from scratch with no open-source base, delivered with knowledge, infrastructure, applications and agents as one owned stack.",
+                  "publisher": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "inLanguage": "en"
+            },
+            {
+                  "@type": "WebPage",
+                  "@id": "https://phaza.io/#webpage",
+                  "url": "https://phaza.io/",
+                  "name": "Phaza — Sovereign AI for Governments",
+                  "isPartOf": {
+                        "@id": "https://phaza.io/#website"
+                  },
+                  "about": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "primaryImageOfPage": {
+                        "@id": "https://phaza.io/#logo"
+                  },
+                  "inLanguage": "en"
+            },
+            {
+                  "@type": "Product",
+                  "@id": "https://phaza.io/#salam",
+                  "name": "Salam",
+                  "brand": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "description": "Salam is a sovereign Arabic-first large language model for governments. Sparse mixture-of-experts, trained from scratch on 125B to 1T rights-cleared tokens with no open-source base. The weights transfer to the buying institution: owned outright, air-gapped or in-country cloud, nothing calls home.",
+                  "offers": [
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Nano (v1)",
+                              "description": "48 experts, 7.8B parameters, 125B training tokens. Drafting, translation and everyday language work."
+                        },
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Core (v2)",
+                              "description": "96 experts, 14.4B parameters, 250B training tokens. Answers grounded in national records and law."
+                        },
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Pro (v4)",
+                              "description": "192 experts, 27.6B parameters, 500B training tokens. Multi-step analysis across ministries and data."
+                        },
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Max (v8)",
+                              "description": "384 experts, 54B parameters, 1T training tokens. Whole-of-government work at professional depth."
+                        }
+                  ],
+                  "manufacturer": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "category": "Large language model"
+            },
+            {
+                  "@type": "FAQPage",
+                  "mainEntity": [
+                        {
+                              "@type": "Question",
+                              "name": "What is Salam?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Salam (peace in Arabic) is Phaza's sovereign large language model for governments: Arabic-first, sparse mixture-of-experts, trained from scratch with no open-source base on rights-cleared data. It is sold with its weights, so the nation owns the model outright."
+                              }
+                        },
+                        {
+                              "@type": "Question",
+                              "name": "How is Salam different from other sovereign AI offers?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Most sovereign-AI offers are a rented model running in a local data centre. Salam is trained from zero and the weights transfer with the deal: air-gapped or in-country cloud, no external inference, nothing calls home."
+                              }
+                        },
+                        {
+                              "@type": "Question",
+                              "name": "What does a government receive with Salam?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Five layers as one stack: the Salam LLM, national knowledge packages, air-gapped or sovereign-cloud infrastructure, the application layer, and ready-to-deploy AI agents for planning, mobility, energy, environment, services, economy and safety."
+                              }
+                        },
+                        {
+                              "@type": "Question",
+                              "name": "Where does Phaza operate?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Phaza operates across the UAE and Jordan, with teams in Abu Dhabi and Amman, serving governments in the MENA region and beyond."
+                              }
+                        }
+                  ],
+                  "@id": "https://phaza.io/#faq",
+                  "isPartOf": {
+                        "@id": "https://phaza.io/#webpage"
+                  },
+                  "about": {
+                        "@id": "https://phaza.io/#org"
+                  }
+            }
       ]
-    }
+}
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <script type="module" src="/assets/phaza-boot.fca65d89.js"></script>
-    <script type="module" crossorigin integrity="sha384-My/jhV7oxxml6p+GJ75AECfuBl8HsZr4UIYU1ZiKfRpKEjKOL47rMlpphODgBq8S" src="/assets/index-b54.js"></script>
+    <script type="module" crossorigin integrity="sha384-hyxRcddCpmH+zpizChizNS2nIu1bN8RqZNwwSFFZXH/xCpRIId1maOCbKj79cp3K" src="/assets/index-b55.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/cjs-helpers-CqkleIqs.js">
     <link rel="stylesheet" crossorigin integrity="sha384-BeG4Vv0or8HOqlHXcXO08WyNONs/t/+KlHxD7OWUJOtDcB1pC/sqPKmJO2HIzpIo" href="/assets/index-391a40ef.css">
-    <link rel="stylesheet" href="/assets/phaza-brand.17e5f4b1.css" />
+    <link rel="stylesheet" href="/assets/phaza-brand.c3d07905.css" />
     <style>
       /* Phaza mark inside the hero orb: fades in once the orb's genesis
          reveal has finished (intro: brand out ~3.9s, orb 4.8–9.8s), so it
