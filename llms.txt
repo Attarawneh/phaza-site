@@ -34,4 +34,4 @@ external inference, nothing calls home.
 
 - Website: https://phaza.io
 - Email: support@phaza.io
-- Offices: Abu Dhabi, United Arab Emirates · Amman, Jordan
+- Offices: United Arab Emirates · Jordan
