@@ -5,7 +5,7 @@
 (async () => {
   if (window.__phazaEntryLoaded) return;
   window.__phazaEntryLoaded = 1;
-  const IS_SHIM = /(index\-0aee01be|index\-5d0fad8c|index\-72401566|index\-DtPEwAVO|index\-b1|index\-b10|index\-b11|index\-b12|index\-b13|index\-b14|index\-b15|index\-b16|index\-b17|index\-b18|index\-b19|index\-b2|index\-b20|index\-b21|index\-b22|index\-b23|index\-b24|index\-b25|index\-b26|index\-b27|index\-b28|index\-b29|index\-b3|index\-b30|index\-b31|index\-b32|index\-b33|index\-b34|index\-b35|index\-b36|index\-b37|index\-b38|index\-b39|index\-b4|index\-b40|index\-b41|index\-b42|index\-b43|index\-b44|index\-b45|index\-b46|index\-b47|index\-b48|index\-b49|index\-b5|index\-b50|index\-b51|index\-b52|index\-b53|index\-b54|index\-b6|index\-b7|index\-b8|index\-b9|index\-bf8941ff|index\-ce5f0c84)\.js$/;
+  const IS_SHIM = /(index\-0aee01be|index\-5d0fad8c|index\-72401566|index\-DtPEwAVO|index\-b1|index\-b10|index\-b11|index\-b12|index\-b13|index\-b14|index\-b15|index\-b16|index\-b17|index\-b18|index\-b19|index\-b2|index\-b20|index\-b21|index\-b22|index\-b23|index\-b24|index\-b25|index\-b26|index\-b27|index\-b28|index\-b29|index\-b3|index\-b30|index\-b31|index\-b32|index\-b33|index\-b34|index\-b35|index\-b36|index\-b37|index\-b38|index\-b39|index\-b4|index\-b40|index\-b41|index\-b42|index\-b43|index\-b44|index\-b45|index\-b46|index\-b47|index\-b48|index\-b49|index\-b5|index\-b50|index\-b51|index\-b52|index\-b53|index\-b54|index\-b55|index\-b6|index\-b7|index\-b8|index\-b9|index\-bf8941ff|index\-ce5f0c84)\.js$/;
   try {
     const html = await fetch('/?_cb=' + Date.now(), { cache: 'no-store' }).then((r) => r.text());
     const css = html.match(/\/assets\/index-[A-Za-z0-9]+\.css/);
@@ -20,5 +20,5 @@
     const js = html.match(/\/assets\/index-[A-Za-z0-9]+\.js/);
     if (js && !IS_SHIM.test(js[0])) { await import(js[0]); return; }
   } catch {}
-  await import('/assets/index-b55.js');
+  await import('/assets/index-b56.js');
 })();
