@@ -11,10 +11,11 @@
 Salam (peace in Arabic) is a sparse mixture-of-experts LLM, Arabic and
 English as equals, trained on 125B to 1T rights-cleared tokens:
 
-- Salam Nano (v1) — 48 experts · 7.8B parameters · 125B tokens
-- Salam Core (v2) — 96 experts · 14.4B parameters · 250B tokens
-- Salam Pro (v4) — 192 experts · 27.6B parameters · 500B tokens
-- Salam Max (v8) — 384 experts · 54B parameters · 1T tokens
+- Salam Nano (v1) — 48 experts · 1.4B active of 7.8B parameters · 125B tokens
+- Salam Core (v2) — 96 experts · 1.4B active of 14.4B parameters · 250B tokens
+- Salam Pro (v4) — 192 experts · 1.7B active of 27.6B parameters · 500B tokens
+- Salam Max (v8) — 384 experts · 1.7B active of 54B parameters · 1T tokens
+- Salam National (v16) — 224 experts, each twice as deep · 10B active of 150B parameters · 20T+ tokens
 
 The weights transfer with the deal. Air-gapped or sovereign cloud, no
 external inference, nothing calls home.
