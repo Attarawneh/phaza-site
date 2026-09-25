@@ -566,9 +566,3 @@ body.phz-data-open .phz-journey-root {
   pointer-events: none;
 }
 .phz-data { position: relative; z-index: 1; }
-
-/* On a phone the reading column sits over the middle of the sphere, so it
-   steps back rather than competing with the words on top of it. */
-@media (max-width: 720px) {
-  .phz-data-sphere { opacity: .55; }
-}
