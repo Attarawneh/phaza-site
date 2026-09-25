@@ -537,10 +537,9 @@ body.phz-data-open .phz-journey-root {
    Icons are stroked with the signature ramp through a paint server the
    page carries itself (#phzDataGrad in the content file): the panel is
    portalled to <body>, so it cannot rely on a gradient defined inside the
-   journey. The sphere behind the page is the journey's own orb component,
-   mounted again in the pose the corpus section hands over — the same object
-   the reader was just looking at, not a lookalike. The canvas named here is
-   only the layer that throws Arabic letters and words off it. */
+   journey. The sphere is the same object as the journey's orb, painted by
+   a small canvas of its own — fixed behind the reading column, throwing
+   Arabic letters and words outward as it turns. */
 .phz-data-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 .phz-data-icon { display: block; margin-bottom: 13px; }
@@ -572,7 +571,6 @@ body.phz-data-open .phz-journey-root {
    steps back rather than competing with the words on top of it. */
 @media (max-width: 720px) {
   .phz-data-sphere { opacity: .55; }
-  .phz-data-orb { opacity: .6; }
 }
 
 /* The sphere on this page is the journey's own orb component, re-rendered in
