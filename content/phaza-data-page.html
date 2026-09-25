@@ -1,0 +1,276 @@
+<!-- The data library panel that slides in from the journey's corpus section.
+     This file is the SOURCE. It is injected into the bundle by
+     inject-data-page.py, which is the only way it reaches the site: edit here,
+     run the injector, then release.py. Styles live in assets/phaza-brand.css
+     under the .phz-data prefix. Buttons carry data-phz-go so the React shell
+     can close the panel and move the journey to that section. -->
+
+<header class="phz-data-hero">
+  <p class="phz-data-kicker">The data · Salam pipeline</p>
+  <h1>Arabic data your model will actually meet.</h1>
+  <p class="phz-data-lede">
+    Rights-cleared Arabic text, speech and multimodal data — sourced, cleaned, labelled and
+    validated inside the same pipeline that trains Salam. Modern Standard Arabic, and the
+    varieties the people you serve actually speak.
+  </p>
+  <p class="phz-data-sub">
+    Licence what already exists. Commission what your model is missing. Evaluate against the
+    Arabic of the market you are deploying into.
+  </p>
+  <div class="phz-data-cta">
+    <button type="button" class="phz-data-btn" data-phz-go="closing">Request availability</button>
+    <a class="phz-data-btn phz-data-btn-ghost" href="#phz-data-modalities">See what is inside</a>
+  </div>
+  <ul class="phz-data-chips">
+    <li>Modern Standard</li><li>Gulf</li><li>Levantine</li><li>Maghrebi</li>
+    <li>Egyptian</li><li>Code-switching</li><li>Evaluation sets</li>
+  </ul>
+</header>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">How you acquire it</p>
+  <h2>Four routes into the corpus</h2>
+  <p class="phz-data-intro">
+    Start with what is already cleared, or define a collection around the language, domain and
+    conditions your system has to survive in production.
+  </p>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card">
+      <span class="phz-data-num">01</span>
+      <h3>Ready to licence</h3>
+      <p>Arabic text, speech, parallel and multimodal assets already cleared for training, subject to current inventory and terms.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">02</span>
+      <h3>Bespoke collection</h3>
+      <p>Country, dialect, demographic, domain and acoustic programmes collected to a written specification, in-region.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">03</span>
+      <h3>Evaluation sets</h3>
+      <p>Human-reviewed gold sets for dialect, domain, code-switching, safety and production readiness.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">04</span>
+      <h3>Delivery on your terms</h3>
+      <p>Samples first, agreed formats, documented usage rights, and transfer into your own environment — not ours.</p>
+    </article>
+  </div>
+</section>
+
+<section class="phz-data-band" id="phz-data-modalities">
+  <p class="phz-data-kicker">Modalities</p>
+  <h2>Data built around the task, not the language label</h2>
+  <p class="phz-data-intro">
+    What the dataset must contain depends on what the system has to do. Text, speech, video and
+    vision are prepared through the same governed workflow.
+  </p>
+  <div class="phz-data-grid phz-data-grid-2">
+    <article class="phz-data-card phz-data-card-lg">
+      <span class="phz-data-tag">Text</span>
+      <h3>Arabic text &amp; LLM data</h3>
+      <p>Curated Arabic for pre-training, fine-tuning, retrieval, classification, entity extraction and domain adaptation.</p>
+      <p class="phz-data-note">Provenance and permitted use recorded per source, so the corpus stays defensible after the model ships.</p>
+    </article>
+    <article class="phz-data-card phz-data-card-lg">
+      <span class="phz-data-tag">Speech</span>
+      <h3>Speech, ASR &amp; voice</h3>
+      <p>Conversational, prompted and domain-specific audio for speech recognition, voice agents and call analytics.</p>
+      <p class="phz-data-note">Delivered with transcription, speaker attributes, dialect labels and the acoustic conditions of the real channel.</p>
+    </article>
+    <article class="phz-data-card phz-data-card-lg">
+      <span class="phz-data-tag">Multimodal</span>
+      <h3>Video &amp; multimodal</h3>
+      <p>Video paired with speech, text and structured annotation for multimodal models and video intelligence.</p>
+      <p class="phz-data-note">Transcription, temporal alignment, speaker turns, action labels and scenario metadata.</p>
+    </article>
+    <article class="phz-data-card phz-data-card-lg">
+      <span class="phz-data-tag">Vision</span>
+      <h3>Image &amp; document data</h3>
+      <p>Arabic signage, forms, records and environments for OCR, document understanding and scene recognition.</p>
+      <p class="phz-data-note">Collected where the system will run: the handwriting, layouts and street furniture of the market itself.</p>
+    </article>
+  </div>
+</section>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">For engineering teams</p>
+  <h2>Match the dataset to the production task</h2>
+  <div class="phz-data-tablewrap">
+    <table class="phz-data-table">
+      <thead>
+        <tr><th>AI task</th><th>What the data has to carry</th><th>Typical delivery</th><th>Regional dimension</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LLM training &amp; fine-tuning</td>
+          <td>Curated monolingual, instruction and domain text with controlled cleaning and metadata.</td>
+          <td>JSONL, Parquet or the format your trainer already reads.</td>
+          <td>MSA plus the dialect, register and domain evidence your users bring.</td>
+        </tr>
+        <tr>
+          <td>Evaluation</td>
+          <td>Human-reviewed prompts, documents and conversations with expected outcomes and scoring criteria.</td>
+          <td>Gold sets, scorecards, adjudicated labels, regression suites.</td>
+          <td>Country, dialect, register, domain, channel and risk.</td>
+        </tr>
+        <tr>
+          <td>ASR &amp; voice AI</td>
+          <td>Natural or prompted speech with transcription, acoustic and speaker metadata.</td>
+          <td>Audio, transcripts and structured metadata.</td>
+          <td>Gulf, Levantine, Egyptian, Maghrebi and defined local varieties.</td>
+        </tr>
+        <tr>
+          <td>Conversational AI</td>
+          <td>Multi-turn interactions with intent, entities, escalation events and real user language.</td>
+          <td>Dialogue structures, JSONL and task-specific labels.</td>
+          <td>Informal Arabic, local terminology, and code-switching where it is real.</td>
+        </tr>
+        <tr>
+          <td>Retrieval &amp; enterprise search</td>
+          <td>Institutional and professional content prepared for grounding and citation.</td>
+          <td>Clean documents, chunks, metadata and source references.</td>
+          <td>Formal Arabic, technical terminology, local institutional usage.</td>
+        </tr>
+        <tr>
+          <td>Vision &amp; multimodal</td>
+          <td>Arabic visual environments, documents, video and synchronised annotation.</td>
+          <td>Images or video with text, events, objects and segments.</td>
+          <td>Region-specific signage, forms, environments and usage contexts.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">Specification</p>
+  <h2>One Arabic label hides several different problems</h2>
+  <p class="phz-data-intro">
+    Modern Standard Arabic carries government, media and institutional writing. Production systems
+    also meet regional speech, informal text, local terminology and two languages in one sentence.
+    A dataset is only as useful as the Arabic it names.
+  </p>
+  <div class="phz-data-grid phz-data-grid-5 phz-data-spec">
+    <article class="phz-data-card">
+      <h3>Variety</h3>
+      <p>MSA, country variety, regional dialect and the local variation inside it.</p>
+    </article>
+    <article class="phz-data-card">
+      <h3>Register</h3>
+      <p>Formal, professional, conversational, informal or user-generated.</p>
+    </article>
+    <article class="phz-data-card">
+      <h3>Domain</h3>
+      <p>Government, finance, health, energy, logistics, legal, retail or industrial.</p>
+    </article>
+    <article class="phz-data-card">
+      <h3>Channel</h3>
+      <p>Document, chat, voice, search, form, image or multimodal interaction.</p>
+    </article>
+    <article class="phz-data-card">
+      <h3>Language interaction</h3>
+      <p>Arabic only, Arabic and English, Arabic and French, or the mix your users actually use.</p>
+    </article>
+  </div>
+</section>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">Coverage</p>
+  <h2>The Arab world, by country — not one bucket</h2>
+  <p class="phz-data-intro">
+    Deployments benefit from country-level specifications rather than a single undifferentiated
+    “Arabic”. Collection and evaluation are structured around the places the system will serve.
+  </p>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card">
+      <span class="phz-data-tag">Gulf · Khaleeji</span>
+      <h3>Saudi · Emirati · Omani · Qatari · Kuwaiti · Bahraini</h3>
+      <p>Speech, text and evaluation for government service, enterprise assistants, voice systems and Arabic–English interaction.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-tag">Levant</span>
+      <h3>Jordanian · Lebanese · Syrian · Palestinian</h3>
+      <p>Voice, conversational AI, entity extraction and regional language applications.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-tag">Maghreb</span>
+      <h3>Moroccan · Algerian · Tunisian</h3>
+      <p>Speech, media and conversational systems, including Arabic–French environments.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-tag">Nile &amp; beyond</span>
+      <h3>Egyptian · Sudanese · Iraqi · Yemeni</h3>
+      <p>Coverage where Modern Standard Arabic alone cannot represent how people write or speak.</p>
+    </article>
+  </div>
+  <div class="phz-data-callout">
+    <p class="phz-data-kicker">Code-switching</p>
+    <p>
+      A Gulf service conversation can move between Arabic and English inside one sentence; in North
+      Africa the same is true of Arabic and French. That behaviour is captured and labelled, not
+      filtered away as noise — because the model will meet it on day one.
+    </p>
+  </div>
+</section>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">Quality &amp; governance</p>
+  <h2>Volume is easy. Provenance, rights and fitness are the work.</h2>
+  <p class="phz-data-intro">
+    Arabic data can look complete while hiding weak dialect labels, unusable rights, poor
+    transcription or conditions nothing like the deployment.
+  </p>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card">
+      <span class="phz-data-num">01</span>
+      <h3>Provenance</h3>
+      <p>Where every asset came from, how it was acquired, and what was done to it before it reached the pipeline.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">02</span>
+      <h3>Usage rights</h3>
+      <p>Training, evaluation, adaptation, derivative and commercial use settled before procurement, not after.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">03</span>
+      <h3>Metadata</h3>
+      <p>Dialect, geography, speaker attributes, domain, acoustic conditions and annotation status kept with the data.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">04</span>
+      <h3>Human validation</h3>
+      <p>Native and domain reviewers judge regional usage, ambiguity and the edge cases automation cannot settle.</p>
+    </article>
+  </div>
+</section>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">The pipeline</p>
+  <h2>From raw Arabic to model evidence</h2>
+  <ol class="phz-data-steps">
+    <li><span>01</span><h3>Define</h3><p>Country, dialect, domain, task, population, channel and acceptance criteria — written down before anything is collected.</p></li>
+    <li><span>02</span><h3>Source or collect</h3><p>Licensable assets, trusted institutional sources, or a collection programme run by teams in the region.</p></li>
+    <li><span>03</span><h3>Prepare &amp; annotate</h3><p>Transcription, labels, cleaning, alignment, de-duplication and task-specific enrichment.</p></li>
+    <li><span>04</span><h3>Validate</h3><p>Automated checks paired with native and specialist human review before anything enters training.</p></li>
+    <li><span>05</span><h3>Evaluate &amp; iterate</h3><p>Model failures become the brief for the next collection round. The corpus improves because the model was measured.</p></li>
+  </ol>
+  <p class="phz-data-foot">
+    This is the pipeline behind Salam — trained from scratch on rights-cleared Arabic and English,
+    with Arabic treated as a first language rather than a translation target.
+  </p>
+</section>
+
+<section class="phz-data-band phz-data-close">
+  <p class="phz-data-kicker">Sovereign by construction</p>
+  <h2>Tell us which Arabic your model needs to understand.</h2>
+  <p class="phz-data-intro">
+    Share the countries, dialects, modality, domain, volume and model stage. We will review what is
+    already cleared, name the gaps honestly, and design the shortest route to the data your system
+    is missing — delivered into your environment, under your terms.
+  </p>
+  <div class="phz-data-cta">
+    <button type="button" class="phz-data-btn" data-phz-go="closing">Start a data conversation</button>
+    <button type="button" class="phz-data-btn phz-data-btn-ghost" data-phz-close>Back to the journey</button>
+  </div>
+</section>
