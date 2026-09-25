@@ -31,6 +31,13 @@ external inference, nothing calls home.
    (environment), Civic (services), Prosper (economy), Sentinel (safety),
    Phaza One (the orchestrator)
 
+## Arabic data
+
+The pipeline that trains Salam also supplies Arabic data to others: rights-cleared text,
+speech, video and document data, collected and labelled in-region, plus human-reviewed
+evaluation sets. Coverage runs country by country from Jordan across the Levant, Gulf,
+Nile and Maghreb, including code-switching. https://phaza.io/arabic-data-for-ai/
+
 ## Contact
 
 - Website: https://phaza.io

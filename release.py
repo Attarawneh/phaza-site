@@ -18,6 +18,8 @@ Usage: python3 release.py
 import base64, glob, hashlib, os, re, shutil, sys
 
 A = 'assets'
+# every page that carries the bundle and the hashed assets
+PAGES = ('index.html', '404.html', 'arabic-data-for-ai/index.html')
 
 def rehash(name, ext, pages):
     """Republish assets/<name>.<hash><ext> and point the pages at it.
@@ -69,7 +71,7 @@ def main():
         open(f'{A}/{s}', 'w').write(SHIM % (guard, entry_new))
 
     integrity_js, integrity_css = sri(f'{A}/{entry_new}'), sri(f'{A}/{css}')
-    for f in ('index.html', '404.html'):
+    for f in PAGES:
         s = open(f).read().replace(entry_old, entry_new)
         s = re.sub(r'(<script type="module")[^>]*?( src="/assets/index-[A-Za-z0-9]+\.js")[^>]*(></script>)',
                    rf'\1 crossorigin integrity="{integrity_js}"\2\3', s)
@@ -77,7 +79,7 @@ def main():
                    rf'\1 crossorigin integrity="{integrity_css}"\2\3', s)
         open(f, 'w').write(s)
 
-    pages = ('index.html', '404.html')
+    pages = PAGES
     connect_js = rehash('phaza-connect', '.js', pages)
     connect_css = rehash('phaza-connect', '.css', ('index.html',))
     brand_css   = rehash('phaza-brand', '.css', pages)
