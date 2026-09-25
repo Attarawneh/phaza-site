@@ -694,6 +694,7 @@ body.phz-data-open .phz-journey-root {
   font-weight: 400;
   line-height: 1.9;
   color: rgba(255, 255, 255, .5);
+  margin-inline-start: 10px;
 }
 
 /* English on the left, Arabic on the right, across the whole line. */
