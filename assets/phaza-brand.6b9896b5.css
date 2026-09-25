@@ -572,6 +572,7 @@ body.phz-data-open .phz-journey-root {
    steps back rather than competing with the words on top of it. */
 @media (max-width: 720px) {
   .phz-data-sphere { opacity: .5; }
+  .phz-data-orb { transform: translate(0, -28%) scale(.66); opacity: .45; }
 }
 
 /* The sphere on this page is the journey's own orb component, re-rendered in
@@ -658,10 +659,4 @@ body.phz-data-open .phz-journey-root {
   padding: 5px 9px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, .09);
-}
-
-/* Phones last, so this wins over the tablet placement above: the sphere
-   sits above the opening lines rather than under them. */
-@media (max-width: 720px) {
-  .phz-data-orb { transform: translate(0, -30%) scale(.64); opacity: .45; }
 }

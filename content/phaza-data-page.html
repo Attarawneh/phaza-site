@@ -3,9 +3,14 @@
      inject-data-page.py, which is the only way it reaches the site: edit here,
      run the injector, then release.py. Styles live in assets/phaza-brand.css
      under the .phz-data prefix. Buttons carry data-phz-go so the React shell
-     can close the panel and move the journey to that section. -->
+     can close the panel and move the journey to that section.
+
+     Coverage runs Jordan first -- the pipeline was built in Amman and the
+     Jordanian corpus is the one every later country was measured against --
+     then outward through the Levant, the Gulf, the Nile and the Maghreb. -->
 
 <svg class="phz-data-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs><linearGradient id="phzDataGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00F0FF"/><stop offset="25%" stop-color="#00CDFF"/><stop offset="50%" stop-color="#21A0FF"/><stop offset="75%" stop-color="#696CFF"/><stop offset="100%" stop-color="#8A2BE2"/></linearGradient></defs></svg>
+
 <header class="phz-data-hero">
   <p class="phz-data-kicker">The data · Salam pipeline</p>
   <h1>Arabic data your model will actually meet.</h1>
@@ -20,11 +25,11 @@
   </p>
   <div class="phz-data-cta">
     <button type="button" class="phz-data-btn" data-phz-go="closing">Request availability</button>
-    <a class="phz-data-btn phz-data-btn-ghost" href="#phz-data-modalities">See what is inside</a>
+    <a class="phz-data-btn phz-data-btn-ghost" href="#phz-data-coverage">See the coverage</a>
   </div>
   <ul class="phz-data-chips">
-    <li>Modern Standard</li><li>Gulf</li><li>Levantine</li><li>Maghrebi</li>
-    <li>Egyptian</li><li>Code-switching</li><li>Evaluation sets</li>
+    <li>Jordanian</li><li>Levantine</li><li>Gulf</li><li>Egyptian</li><li>Maghrebi</li>
+    <li>Modern Standard</li><li>Code-switching</li><li>Evaluation sets</li>
   </ul>
 </header>
 
@@ -33,7 +38,7 @@
   <h2>Four routes into the corpus</h2>
   <p class="phz-data-intro">
     Start with what is already cleared, or define a collection around the language, domain and
-    conditions your system has to survive in production.
+    conditions your system has to survive in production. Most programmes use more than one route.
   </p>
   <div class="phz-data-grid phz-data-grid-4">
     <article class="phz-data-card">
@@ -46,13 +51,13 @@
       <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.4"/><path d="M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6"/></svg></span>
       <span class="phz-data-num">02</span>
       <h3>Bespoke collection</h3>
-      <p>Country, dialect, demographic, domain and acoustic programmes collected to a written specification, in-region.</p>
+      <p>Country, dialect, demographic, domain and acoustic programmes collected to a written specification, by teams inside the region.</p>
     </article>
     <article class="phz-data-card">
       <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9.5 4.5h5v2.6h-5z"/><path d="M9 11.6h6M9 15.4h4"/></svg></span>
       <span class="phz-data-num">03</span>
       <h3>Evaluation sets</h3>
-      <p>Human-reviewed gold sets for dialect, domain, code-switching, safety and production readiness.</p>
+      <p>Human-reviewed gold sets for dialect, domain, code-switching, safety and production readiness — the part most teams discover late.</p>
     </article>
     <article class="phz-data-card">
       <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8.2l8-4 8 4v7.6l-8 4-8-4z"/><path d="M4 8.2l8 4 8-4M12 12.2v7.6"/></svg></span>
@@ -102,6 +107,175 @@
   </div>
 </section>
 
+<section class="phz-data-band" id="phz-data-coverage">
+  <p class="phz-data-kicker">Coverage · من عمّان إلى المحيط</p>
+  <h2>Country by country, starting where we stand</h2>
+  <p class="phz-data-intro">
+    “Arabic” is not one dataset. Twenty-two countries, and inside each of them regional speech,
+    registers and terminology a national system meets on day one. The pipeline was built in Amman
+    on Jordanian Arabic, and every country added since is measured against that first corpus.
+  </p>
+
+  <p class="phz-data-subhead">Home ground</p>
+  <article class="phz-data-card phz-data-card-lg phz-data-home">
+    <span class="phz-data-flag">Jordan</span>
+    <h3>Jordanian Arabic <span class="phz-data-ar">اللهجة الأردنية</span></h3>
+    <p>
+      The pipeline's first language and its reference corpus: urban Ammani speech, Irbid and the
+      north, Karak and the south, Bedouin varieties, and the Levantine–Gulf mixing heard in Amman's
+      service and business calls. Collected, transcribed and adjudicated by teams at our Amman
+      headquarters — the same people who defined the annotation standard the other countries follow.
+    </p>
+    <ul class="phz-data-tags"><li>Speech</li><li>Text</li><li>Documents</li><li>Evaluation</li><li>Code-switching</li><li>Government &amp; banking domains</li></ul>
+  </article>
+
+  <p class="phz-data-subhead">The Levant · بلاد الشام والعراق</p>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Palestine</span>
+      <h3>Palestinian <span class="phz-data-ar">الفلسطينية</span></h3>
+      <p>Urban, rural and diaspora varieties for conversational systems, service delivery and record digitisation.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Text</li><li>Evaluation</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Lebanon</span>
+      <h3>Lebanese <span class="phz-data-ar">اللبنانية</span></h3>
+      <p>Heavy Arabic–English–French mixing, media language and banking terminology.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Code-switching</li><li>Media</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Syria</span>
+      <h3>Syrian <span class="phz-data-ar">السورية</span></h3>
+      <p>Damascene, Aleppine and coastal speech for voice, humanitarian and institutional systems.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Text</li><li>Institutional</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Iraq</span>
+      <h3>Iraqi <span class="phz-data-ar">العراقية</span></h3>
+      <p>Baghdadi, southern and Mosul varieties, plus energy and public-sector terminology.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Text</li><li>Energy domain</li></ul>
+    </article>
+  </div>
+
+  <p class="phz-data-subhead">The Gulf · الخليج</p>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Saudi Arabia</span>
+      <h3>Saudi <span class="phz-data-ar">النجدية · الحجازية</span></h3>
+      <p>Najdi, Hijazi, Eastern and southern varieties kept apart rather than flattened into one label.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Voice AI</li><li>Evaluation</li><li>Government</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">United Arab Emirates</span>
+      <h3>Emirati <span class="phz-data-ar">الإماراتية</span></h3>
+      <p>Local speech alongside the Arabic–English switching of Emirati enterprise and service desks.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Code-switching</li><li>Enterprise AI</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Qatar</span>
+      <h3>Qatari <span class="phz-data-ar">القطرية</span></h3>
+      <p>Conversational AI, digital government services and assistant evaluation.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Conversational AI</li><li>Evaluation</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Kuwait</span>
+      <h3>Kuwaiti <span class="phz-data-ar">الكويتية</span></h3>
+      <p>Customer service, financial services and media language.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Finance</li><li>Customer service</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Bahrain</span>
+      <h3>Bahraini <span class="phz-data-ar">البحرينية</span></h3>
+      <p>Project-specific collection with the metadata and evaluation design the deployment needs.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Custom collection</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Oman</span>
+      <h3>Omani <span class="phz-data-ar">العُمانية</span></h3>
+      <p>Interior and coastal varieties, institutional terminology and domain-specific programmes.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Institutional</li><li>Evaluation</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Yemen</span>
+      <h3>Yemeni <span class="phz-data-ar">اليمنية</span></h3>
+      <p>Sanaani and southern speech for humanitarian, telecom and public-record work.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Text</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Cross-Gulf</span>
+      <h3>Khaleeji at large <span class="phz-data-ar">الخليجية</span></h3>
+      <p>Shared Gulf registers for systems serving several markets from one deployment, with country labels kept intact underneath.</p>
+      <ul class="phz-data-tags"><li>Multi-market</li><li>Evaluation</li></ul>
+    </article>
+  </div>
+
+  <p class="phz-data-subhead">The Nile · وادي النيل</p>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Egypt</span>
+      <h3>Egyptian <span class="phz-data-ar">المصرية</span></h3>
+      <p>The most widely understood spoken variety: Cairene and Delta speech, media, drama and service conversation.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Media</li><li>Conversational AI</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Sudan</span>
+      <h3>Sudanese <span class="phz-data-ar">السودانية</span></h3>
+      <p>Khartoum and regional speech where Modern Standard Arabic cannot represent how people talk.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Text</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Libya</span>
+      <h3>Libyan <span class="phz-data-ar">الليبية</span></h3>
+      <p>Tripolitanian and eastern varieties, with energy-sector and municipal terminology.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Energy domain</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Also collected</span>
+      <h3>Djibouti · Somalia · Comoros</h3>
+      <p>Arabic as it is used alongside national languages, on request and to specification.</p>
+      <ul class="phz-data-tags"><li>On request</li></ul>
+    </article>
+  </div>
+
+  <p class="phz-data-subhead">The Maghreb · المغرب العربي</p>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Morocco</span>
+      <h3>Moroccan <span class="phz-data-ar">الدارجة المغربية</span></h3>
+      <p>Darija with its Amazigh and French contact, for voice, retail and public service systems.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Arabic–French</li><li>Evaluation</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Algeria</span>
+      <h3>Algerian <span class="phz-data-ar">الدارجة الجزائرية</span></h3>
+      <p>Capital and regional speech with sustained French mixing in professional settings.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Arabic–French</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Tunisia</span>
+      <h3>Tunisian <span class="phz-data-ar">التونسية</span></h3>
+      <p>Everyday speech and written Tunisian for conversational and media applications.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Text</li><li>Media</li></ul>
+    </article>
+    <article class="phz-data-card phz-data-country">
+      <span class="phz-data-flag">Mauritania</span>
+      <h3>Hassaniya <span class="phz-data-ar">الحسّانية</span></h3>
+      <p>A variety most Arabic models have never been shown, collected where its speakers are.</p>
+      <ul class="phz-data-tags"><li>Speech</li><li>Custom collection</li></ul>
+    </article>
+  </div>
+
+  <div class="phz-data-callout">
+    <p class="phz-data-kicker">Code-switching</p>
+    <p>
+      A Gulf service call moves between Arabic and English inside one sentence; a Casablanca one
+      moves between Arabic and French; an Amman one does both in an afternoon. That behaviour is
+      captured and labelled rather than filtered away as noise — because the model will meet it on
+      day one, and a dataset that has never seen it will fail in the first week.
+    </p>
+  </div>
+</section>
+
 <section class="phz-data-band">
   <p class="phz-data-kicker">For engineering teams</p>
   <h2>Match the dataset to the production task</h2>
@@ -118,6 +292,12 @@
           <td>MSA plus the dialect, register and domain evidence your users bring.</td>
         </tr>
         <tr>
+          <td>Instruction &amp; preference tuning</td>
+          <td>Arabic instructions, model responses and human preference judgements written by native speakers.</td>
+          <td>Instruction sets, ranked pairs, rationales.</td>
+          <td>Politeness, formality and address conventions that differ by country.</td>
+        </tr>
+        <tr>
           <td>Evaluation</td>
           <td>Human-reviewed prompts, documents and conversations with expected outcomes and scoring criteria.</td>
           <td>Gold sets, scorecards, adjudicated labels, regression suites.</td>
@@ -127,7 +307,7 @@
           <td>ASR &amp; voice AI</td>
           <td>Natural or prompted speech with transcription, acoustic and speaker metadata.</td>
           <td>Audio, transcripts and structured metadata.</td>
-          <td>Gulf, Levantine, Egyptian, Maghrebi and defined local varieties.</td>
+          <td>Every variety above, labelled by country rather than by region alone.</td>
         </tr>
         <tr>
           <td>Conversational AI</td>
@@ -190,45 +370,34 @@
 </section>
 
 <section class="phz-data-band">
-  <p class="phz-data-kicker">Coverage</p>
-  <h2>The Arab world, by country — not one bucket</h2>
+  <p class="phz-data-kicker">Linguistic services</p>
+  <h2>The labelling is the product</h2>
   <p class="phz-data-intro">
-    Deployments benefit from country-level specifications rather than a single undifferentiated
-    “Arabic”. Collection and evaluation are structured around the places the system will serve.
+    Raw Arabic is cheap and nearly useless. What makes a corpus trainable is what native linguists
+    put on top of it — and that work is done in-region, by people who speak the variety being
+    labelled.
   </p>
   <div class="phz-data-grid phz-data-grid-4">
     <article class="phz-data-card">
-      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 6.4l2.2 3.4 3.4 2.2-3.4 2.2L12 17.6l-2.2-3.4L6.4 12l3.4-2.2z"/></svg></span>
-      <span class="phz-data-tag">Gulf · Khaleeji</span>
-      <h3>Saudi · Emirati · Omani · Qatari · Kuwaiti · Bahraini</h3>
-      <p>Speech, text and evaluation for government service, enterprise assistants, voice systems and Arabic–English interaction.</p>
+      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 6.4h14M5 10.4h14M5 14.4h9"/><path d="M14.6 17.4l2 2 4-4"/></svg></span>
+      <h3>Transcription &amp; diacritisation</h3>
+      <p>Verbatim or normalised transcription, dialect-faithful spelling, and vowelling where the task needs it.</p>
     </article>
     <article class="phz-data-card">
-      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17.6l5.2-7.2 3.6 4.6 3-3.8 6.2 6.4z"/><circle cx="8" cy="6.4" r="1.8"/></svg></span>
-      <span class="phz-data-tag">Levant</span>
-      <h3>Jordanian · Lebanese · Syrian · Palestinian</h3>
-      <p>Voice, conversational AI, entity extraction and regional language applications.</p>
+      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.2V4.6h7.4l8 8-7.4 7.4z"/><circle cx="8.2" cy="8.8" r="1.3"/></svg></span>
+      <h3>Entities, intents &amp; terminology</h3>
+      <p>Names, places, institutions, amounts and dates as they are actually written locally, plus intent and slot labels.</p>
     </article>
     <article class="phz-data-card">
-      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="9.2" r="3.4"/><path d="M12 2.6v1.8M12 14v1.6M5.4 9.2H3.6M20.4 9.2h-1.8M7.3 4.5L6 3.2M16.7 4.5L18 3.2"/><path d="M3 19.4h18"/></svg></span>
-      <span class="phz-data-tag">Maghreb</span>
-      <h3>Moroccan · Algerian · Tunisian</h3>
-      <p>Speech, media and conversational systems, including Arabic–French environments.</p>
+      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6v5l3 2"/></svg></span>
+      <h3>Dialect &amp; register identification</h3>
+      <p>Country and variety tagged at segment level, so a model can be trained — and tested — on the Arabic you mean.</p>
     </article>
     <article class="phz-data-card">
-      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 8c2.6-2.4 5.8 2.4 8.4 0S17 5.6 21 8"/><path d="M3 13c2.6-2.4 5.8 2.4 8.4 0S17 10.6 21 13"/><path d="M3 18c2.6-2.4 5.8 2.4 8.4 0S17 15.6 21 18"/></svg></span>
-      <span class="phz-data-tag">Nile &amp; beyond</span>
-      <h3>Egyptian · Sudanese · Iraqi · Yemeni</h3>
-      <p>Coverage where Modern Standard Arabic alone cannot represent how people write or speak.</p>
+      <span class="phz-data-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2l7 2.8v5.6c0 4.4-2.9 7.4-7 9.2-4.1-1.8-7-4.8-7-9.2V6z"/><path d="M9.6 12.4h4.8M12 10v4.8"/></svg></span>
+      <h3>Safety &amp; sensitivity review</h3>
+      <p>Harmful, sensitive and culturally inappropriate content judged by regional reviewers, not by a translated policy.</p>
     </article>
-  </div>
-  <div class="phz-data-callout">
-    <p class="phz-data-kicker">Code-switching</p>
-    <p>
-      A Gulf service conversation can move between Arabic and English inside one sentence; in North
-      Africa the same is true of Arabic and French. That behaviour is captured and labelled, not
-      filtered away as noise — because the model will meet it on day one.
-    </p>
   </div>
 </section>
 
@@ -265,6 +434,16 @@
       <p>Native and domain reviewers judge regional usage, ambiguity and the edge cases automation cannot settle.</p>
     </article>
   </div>
+  <div class="phz-data-callout">
+    <p class="phz-data-kicker">Consent and the people behind the data</p>
+    <p>
+      Speech and imagery come from people. Contributors are recruited openly, told what the
+      recording is for, consent to that use in their own language, and are paid regional
+      professional rates for their time. Personal data is minimised at collection and handled
+      under the same sovereignty rules as everything else Phaza builds: it stays where the law
+      that governs it says it should stay.
+    </p>
+  </div>
 </section>
 
 <section class="phz-data-band">
@@ -283,12 +462,74 @@
   </p>
 </section>
 
+<section class="phz-data-band">
+  <p class="phz-data-kicker">Working together</p>
+  <h2>How a data programme runs</h2>
+  <ol class="phz-data-steps">
+    <li><span>A</span><h3>The brief</h3><p>You describe the system, the markets it serves and where it currently fails. We say plainly what exists, what has to be collected, and what we would not bother collecting.</p></li>
+    <li><span>B</span><h3>Sample before commitment</h3><p>A small, real sample in the agreed format — with its metadata and rights documentation — so the decision is made on evidence rather than a specification document.</p></li>
+    <li><span>C</span><h3>Collection &amp; annotation</h3><p>Fieldwork and labelling run against acceptance criteria, with progress visible and quality measured as the work proceeds, not at the end.</p></li>
+    <li><span>D</span><h3>Delivery</h3><p>The dataset, its datasheet, its metadata schema and its licence terms, transferred into your environment.</p></li>
+    <li><span>E</span><h3>Measure, then extend</h3><p>Evaluate the model on it, find where it still breaks, and turn that into the next round's brief. Most programmes continue this way.</p></li>
+  </ol>
+</section>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">Who this is for</p>
+  <h2>Teams that cannot ship on scraped Arabic</h2>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card">
+      <h3>Governments &amp; national AI programmes</h3>
+      <p>Building sovereign models and needing a corpus that belongs to the nation, with rights and provenance that survive scrutiny.</p>
+    </article>
+    <article class="phz-data-card">
+      <h3>Banks, telecoms &amp; insurers</h3>
+      <p>Voice and chat systems that meet dialect and code-switching on every call, in regulated conditions.</p>
+    </article>
+    <article class="phz-data-card">
+      <h3>Health, energy &amp; public services</h3>
+      <p>Domain Arabic — terminology, forms, records — where a general model's guesswork is unacceptable.</p>
+    </article>
+    <article class="phz-data-card">
+      <h3>Model builders &amp; research teams</h3>
+      <p>Training or adapting Arabic models and needing evaluation evidence that separates real capability from benchmark luck.</p>
+    </article>
+  </div>
+</section>
+
+<section class="phz-data-band">
+  <p class="phz-data-kicker">What arrives</p>
+  <h2>A delivery, not a download link</h2>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card">
+      <span class="phz-data-num">01</span>
+      <h3>The data</h3>
+      <p>In the format your pipeline reads — JSONL, Parquet, audio with transcripts, images with annotation — transferred into your environment.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">02</span>
+      <h3>The datasheet</h3>
+      <p>What it contains, how it was collected, who it represents, what it is fit for, and what it is not.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">03</span>
+      <h3>The metadata schema</h3>
+      <p>Every field defined: dialect, geography, speaker attributes, domain, channel, annotation status.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">04</span>
+      <h3>The rights</h3>
+      <p>Written terms covering training, evaluation, adaptation, derivatives and commercial use — before the transfer, not after.</p>
+    </article>
+  </div>
+</section>
+
 <section class="phz-data-band phz-data-close">
   <p class="phz-data-kicker">Sovereign by construction</p>
   <h2>Tell us which Arabic your model needs to understand.</h2>
   <p class="phz-data-intro">
-    Share the countries, dialects, modality, domain, volume and model stage. We will review what is
-    already cleared, name the gaps honestly, and design the shortest route to the data your system
+    Name the countries, the dialects, the modality, the domain and the model stage. We will tell you
+    what already exists, where the gaps are, and the shortest honest route to the data your system
     is missing — delivered into your environment, under your terms.
   </p>
   <div class="phz-data-cta">
