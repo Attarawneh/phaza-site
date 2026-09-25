@@ -311,7 +311,7 @@ body.phz-data-open .phz-journey-root {
   padding: clamp(84px, 11vh, 132px) clamp(20px, 5vw, 56px) 140px;
 }
 
-.phz-data .phz-data-kicker {
+.phz-data-kicker {
   font-family: var(--phz-font-mono), ui-monospace, monospace;
   font-size: 10.5px;
   letter-spacing: .18em;
@@ -601,7 +601,7 @@ body.phz-data-open .phz-journey-root {
    Jordan is the reference corpus, so it gets a card of its own above the
    regions; everything after it is one country per card, because "Arabic"
    as a single bucket is the thing this section exists to argue against. */
-.phz-data .phz-data-subhead {
+.phz-data-subhead {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -778,4 +778,3 @@ body.phz-data-open .phz-journey-root {
 #phz-data-coverage .phz-data-grid { gap: 20px; }
 #phz-data-coverage .phz-data-callout { margin-top: 56px; }
 #phz-data-coverage .phz-data-intro { margin-bottom: 10px !important; }
-#phz-data-coverage .phz-data-splithead { margin-bottom: 26px; }
