@@ -19,7 +19,7 @@ import base64, glob, hashlib, os, re, shutil, sys
 
 A = 'assets'
 # every page that carries the bundle and the hashed assets
-PAGES = ('index.html', '404.html', 'arabic-data-for-ai/index.html')
+PAGES = ('index.html', '404.html', 'arabic-data-for-ai/index.html', 'privacy/index.html')
 
 def rehash(name, ext, pages):
     """Republish assets/<name>.<hash><ext> and point the pages at it.
