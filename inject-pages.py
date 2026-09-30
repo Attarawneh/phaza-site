@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Put content/phaza-data-page.html into the live bundle.
+"""Put the content files into the live bundle.
 
 The data library is a long, ordinary document, so it is authored as HTML
 rather than as hand-minified JSX: the panel component renders it verbatim.
@@ -16,10 +16,11 @@ import re
 import sys
 
 HERE = pathlib.Path(__file__).parent
-SRC = HERE / 'content' / 'phaza-data-page.html'
-
-MARK_OPEN = 'PHZDATAHTML=`'
-MARK_END = '`/*PHZDATAHTML-END*/'
+# slot name -> source file
+SLOTS = {
+    'PHZDATAHTML': HERE / 'content' / 'phaza-data-page.html',
+    'PHZPRIVHTML': HERE / 'content' / 'phaza-privacy-page.html',
+}
 
 
 def bundle_path() -> pathlib.Path:
@@ -31,8 +32,8 @@ def bundle_path() -> pathlib.Path:
     return HERE / 'assets' / entry.group(1)
 
 
-def payload() -> str:
-    html = SRC.read_text()
+def payload(src: pathlib.Path) -> str:
+    html = src.read_text()
     # Strip the authoring comment: it explains the file to whoever edits it,
     # not to the browser.
     html = re.sub(r'^<!--.*?-->\s*', '', html, flags=re.S)
@@ -44,18 +45,18 @@ def payload() -> str:
 def main() -> None:
     target = bundle_path()
     js = target.read_text()
-    block = MARK_OPEN + payload() + MARK_END
 
-    if MARK_OPEN in js:
-        start = js.index(MARK_OPEN)
-        end = js.index(MARK_END, start) + len(MARK_END)
+    for slot, src in SLOTS.items():
+        mark_open, mark_end = slot + '=`', '`/*' + slot + '-END*/'
+        if mark_open not in js:
+            sys.exit('no ' + slot + ' slot in ' + target.name + ' -- that panel is not wired in yet')
+        block = mark_open + payload(src) + mark_end
+        start = js.index(mark_open)
+        end = js.index(mark_end, start) + len(mark_end)
         js = js[:start] + block + js[end:]
-        how = 'replaced'
-    else:
-        sys.exit('no PHZDATAHTML slot in ' + target.name + ' -- the panel is not wired in yet')
+        print(f'{slot}: {len(block):,} chars from {src.name}')
 
     target.write_text(js)
-    print(f'{how} the data page in {target.name}: {len(block):,} chars')
 
 
 if __name__ == '__main__':
