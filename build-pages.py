@@ -43,7 +43,18 @@ PRIVACY = {
              'fonts, and nothing used to train models — what the forms collect, how long it is kept, '
              'and how to exercise your rights.'),
 }
-PAGES = (DATA, PRIVACY)
+NOTE01 = {
+    'src': HERE / 'content' / 'phaza-eval-page.html',
+    'out': HERE / 'arabic-ai-evaluation' / 'index.html',
+    'path': '/arabic-ai-evaluation/',
+    'doc': True,
+    'title': 'Evaluating Arabic Language Models — Phaza Technical Note 01',
+    'desc': ('How Phaza evaluates Arabic models: testing by country, variety, register, domain and '
+             'channel rather than one aggregate score — held-out sets, blind adjudication, '
+             'contamination control, and what we will and will not publish.'),
+    'scholarly': True,
+}
+PAGES = (DATA, PRIVACY, NOTE01)
 
 
 def content(page: dict) -> str:
@@ -98,6 +109,13 @@ def graph(page: dict) -> str:
             ],
         },
     ]
+    if page.get('scholarly'):
+        g[0]['@type'] = ['WebPage', 'ScholarlyArticle']
+        g[0]['headline'] = 'Evaluating Arabic language models'
+        g[0]['datePublished'] = '2026-10-08'
+        g[0]['version'] = '1.0'
+        g[0]['author'] = {'@id': 'https://phaza.io/#org'}
+        g[0]['about'] = ['Arabic natural language processing', 'Large language model evaluation']
     if not page['doc']:
         g[0]['about'] = {'@id': url + '#service'}
         g.append({

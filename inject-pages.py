@@ -20,6 +20,7 @@ HERE = pathlib.Path(__file__).parent
 SLOTS = {
     'PHZDATAHTML': HERE / 'content' / 'phaza-data-page.html',
     'PHZPRIVHTML': HERE / 'content' / 'phaza-privacy-page.html',
+    'PHZEVALHTML': HERE / 'content' / 'phaza-eval-page.html',
 }
 
 

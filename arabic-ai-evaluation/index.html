@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-src 'none'; manifest-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://tiles.openfreemap.org https://server.arcgisonline.com; connect-src 'self' blob: data: https://portal.phaza.io https://tiles.openfreemap.org https://server.arcgisonline.com https://cloudflareinsights.com; worker-src 'self' blob:; child-src 'self' blob:; upgrade-insecure-requests" />
+    <meta name="phaza-contact-endpoint" content="https://portal.phaza.io/phaza-connect" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Evaluating Arabic Language Models — Phaza Technical Note 01</title>
+    <meta name="description" content="How Phaza evaluates Arabic models: testing by country, variety, register, domain and channel rather than one aggregate score — held-out sets, blind adjudication, contamination control, and what we will and will not publish." />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Evaluating Arabic Language Models — Phaza Technical Note 01" />
+    <meta property="og:description" content="How Phaza evaluates Arabic models: testing by country, variety, register, domain and channel rather than one aggregate score — held-out sets, blind adjudication, contamination control, and what we will and will not publish." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://phaza.io/brand/share-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Evaluating Arabic Language Models — Phaza Technical Note 01" />
+    <meta name="twitter:description" content="How Phaza evaluates Arabic models: testing by country, variety, register, domain and channel rather than one aggregate score — held-out sets, blind adjudication, contamination control, and what we will and will not publish." />
+    <link rel="canonical" href="https://phaza.io/arabic-ai-evaluation/" />
+    <meta property="og:url" content="https://phaza.io/arabic-ai-evaluation/" />
+    <script type="application/ld+json">
+{
+      "@context": "https://schema.org",
+      "@graph": [
+            {
+                  "@type": [
+                        "WebPage",
+                        "ScholarlyArticle"
+                  ],
+                  "@id": "https://phaza.io/arabic-ai-evaluation/#page",
+                  "url": "https://phaza.io/arabic-ai-evaluation/",
+                  "name": "Evaluating Arabic Language Models — Phaza Technical Note 01",
+                  "description": "How Phaza evaluates Arabic models: testing by country, variety, register, domain and channel rather than one aggregate score — held-out sets, blind adjudication, contamination control, and what we will and will not publish.",
+                  "isPartOf": {
+                        "@id": "https://phaza.io/#website"
+                  },
+                  "publisher": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "inLanguage": "en",
+                  "primaryImageOfPage": {
+                        "@id": "https://phaza.io/#logo"
+                  },
+                  "breadcrumb": {
+                        "@id": "https://phaza.io/arabic-ai-evaluation/#breadcrumb"
+                  },
+                  "headline": "Evaluating Arabic language models",
+                  "datePublished": "2026-10-08",
+                  "version": "1.0",
+                  "author": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "about": [
+                        "Arabic natural language processing",
+                        "Large language model evaluation"
+                  ]
+            },
+            {
+                  "@type": "BreadcrumbList",
+                  "@id": "https://phaza.io/arabic-ai-evaluation/#breadcrumb",
+                  "itemListElement": [
+                        {
+                              "@type": "ListItem",
+                              "position": 1,
+                              "name": "Phaza",
+                              "item": "https://phaza.io/"
+                        },
+                        {
+                              "@type": "ListItem",
+                              "position": 2,
+                              "name": "Evaluating Arabic Language Models"
+                        }
+                  ]
+            }
+      ]
+}
+</script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <script type="module" src="/assets/phaza-boot.fca65d89.js"></script>
+    <script type="module" crossorigin integrity="sha384-z5VQVFaVQGus0DVKQRYg0Odc0CgXsMumeS4dQuDZrELA0rHZS48x9j3zOeGdX0KG" src="/assets/index-b124.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/cjs-helpers-CqkleIqs.js">
+    <link rel="stylesheet" crossorigin integrity="sha384-BeG4Vv0or8HOqlHXcXO08WyNONs/t/+KlHxD7OWUJOtDcB1pC/sqPKmJO2HIzpIo" href="/assets/index-391a40ef.css">
+    <link rel="stylesheet" href="/assets/phaza-brand.d75dd1ae.css" />
+    <style>
+      /* Phaza mark inside the hero orb: fades in once the orb's genesis
+         reveal has finished (intro: brand out ~3.9s, orb 4.8–9.8s), so it
+         never fights the opening logo lockup. Pseudo-element on the section
+         keeps it outside React's tree and scrolls away with the hero. */
+      #opening::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: clamp(44px, 9vmin, 76px);
+        height: clamp(44px, 9vmin, 76px);
+        transform: translate(-50%, -50%);
+        background: url('/brand/phaza-icon.svg') center / contain no-repeat;
+        opacity: 0;
+        /* Translucent: the mark sits INSIDE the orb, so the particles must
+           read through it rather than being masked by a solid glyph. */
+        mix-blend-mode: screen;
+        filter: drop-shadow(0 0 18px rgba(120, 180, 255, 0.35));
+        animation: phaza-orb-icon-in 1.6s ease-out 3.6s forwards;
+        pointer-events: none;
+      }
+      @keyframes phaza-orb-icon-in { to { opacity: 0.4; } }
+
+      /* ── opening cover ────────────────────────────────────────────────
+         Painted by the document itself so it is on screen before the bundle,
+         the stylesheet or any image has arrived. It hides the static copy in
+         #root -- which exists for crawlers -- until React has replaced it, so
+         the first thing anyone sees is the mark and not a wall of unstyled
+         prose. assets/phaza-boot.js takes it away on mount; the failsafe
+         animation below takes it away if that script never runs. */
+      #phz-boot {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #04070d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(40px, 7vmin, 62px);
+        opacity: 1;
+        transition: opacity .7s ease;
+        animation: phz-boot-failsafe .9s ease 10s forwards;
+      }
+      #phz-boot.phz-boot-out { opacity: 0; pointer-events: none; }
+      @keyframes phz-boot-failsafe { to { opacity: 0; visibility: hidden; } }
+
+      /* The aura the orb will occupy, breathing under the mark. */
+      #phz-boot::before {
+        content: '';
+        position: absolute;
+        width: min(64vmin, 460px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle,
+          rgba(0, 240, 255, .11) 0%,
+          rgba(105, 108, 255, .055) 52%,
+          rgba(138, 43, 226, 0) 72%);
+        animation: phz-boot-breathe 3.6s ease-in-out infinite;
+        pointer-events: none;
+      }
+      @keyframes phz-boot-breathe {
+        0%, 100% { transform: scale(1);    opacity: .85; }
+        50%      { transform: scale(1.06); opacity: 1; }
+      }
+
+      .phz-boot-mark {
+        position: relative;
+        width: clamp(58px, 12vmin, 100px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+      }
+      /* The halo, in the signature ramp: a conic sweep punched hollow, turning
+         once every two and a half seconds. Same language as the core the page
+         opens into. */
+      .phz-boot-mark::after {
+        content: '';
+        position: absolute;
+        inset: -42%;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg,
+          #00F0FF, #00CDFF, #21A0FF, #696CFF, #8A2BE2, #696CFF, #21A0FF, #00CDFF, #00F0FF);
+        -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+                mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+        filter: drop-shadow(0 0 12px rgba(33, 160, 255, .5));
+        animation: phz-boot-spin 2.6s linear infinite;
+      }
+      @keyframes phz-boot-spin { to { transform: rotate(1turn); } }
+      .phz-boot-mark svg { width: 62%; height: 62%; display: block; }
+
+      /* A hairline with the ramp travelling across it. Indeterminate on
+         purpose -- there is no honest percentage to report. */
+      .phz-boot-track {
+        position: relative;
+        width: clamp(118px, 22vmin, 186px);
+        height: 1px;
+        background: rgba(255, 255, 255, .09);
+        overflow: hidden;
+      }
+      .phz-boot-track i {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, #00CDFF 35%, #696CFF 65%, transparent);
+        transform: translateX(-100%);
+        animation: phz-boot-sweep 1.5s cubic-bezier(.4, 0, .2, 1) infinite;
+      }
+      @keyframes phz-boot-sweep { to { transform: translateX(100%); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        #phz-boot::before,
+        .phz-boot-mark::after,
+        .phz-boot-track i { animation: none; }
+        .phz-boot-track i { transform: none; opacity: .5; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #opening::after { animation: none; opacity: 0.4; }
+      }
+    </style>
+    <link rel="stylesheet" href="/assets/phaza-connect.7a14684b.css" />
+    <script type="module" src="/assets/phaza-connect.302373e6.js"></script>
+    <script type="module" src="/assets/phaza-careers.js?v=8"></script>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="phzSignature" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00F0FF"/><stop offset=".25" stop-color="#00CDFF"/><stop offset=".5" stop-color="#21A0FF"/><stop offset=".75" stop-color="#696CFF"/><stop offset="1" stop-color="#8A2BE2"/></linearGradient></defs></svg>
+<div id="phz-boot" aria-hidden="true">
+  <div class="phz-boot-mark">
+    <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <defs><linearGradient id="phzBootRamp" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#00F0FF"/><stop offset=".25" stop-color="#00CDFF"/>
+        <stop offset=".5" stop-color="#21A0FF"/><stop offset=".75" stop-color="#696CFF"/>
+        <stop offset="1" stop-color="#8A2BE2"/></linearGradient></defs>
+      <path d="M48 37 H 89 A 12.5 12.5 0 0 1 89 62 H 56 L 26 91 L 42 43 Q 43 37 48 37 Z" fill="url(#phzBootRamp)" transform="translate(64 64) scale(1.18) translate(-64 -64)"/>
+    </svg>
+  </div>
+  <div class="phz-boot-track"><i></i></div>
+</div>
+<div id="root"><!-- Served as HTML so it exists without JavaScript. The application replaces this on mount and shows the same content as the panel. -->
+<main class="phz-data phz-doc">
+<header class="phz-data-hero">
+  <p class="phz-data-kicker">Phaza Technical Note 01 · v1.0</p>
+  <h1>Evaluating Arabic language models</h1>
+  <p class="phz-data-lede">
+    A single number on an Arabic benchmark tells you almost nothing about whether a system will
+    work in Amman, Riyadh or Casablanca. This note sets out how Phaza measures Arabic models:
+    what we test, how the tests are built, who judges the answers, and what we will and will not
+    publish.
+  </p>
+  <p class="phz-doc-updated">Published 8 October 2026 · Version 1.0</p>
+</header>
+
+<section class="phz-data-band">
+  <h2>Summary</h2>
+  <p>
+    Arabic is not one language problem. It is a formal written standard used across twenty-two
+    countries, a family of spoken varieties that differ enough to break a model trained on the
+    standard alone, and a habit of switching into English or French mid-sentence. A model can score
+    well on an aggregate Arabic benchmark and still fail the first week of a deployment, because
+    the benchmark averaged away the exact conditions that deployment runs in.
+  </p>
+  <p>
+    Phaza therefore evaluates by <strong>country, variety, register, domain and channel</strong>,
+    reports results per cell rather than as a headline, and treats any score produced without a
+    stated protocol as an unverified claim — including our own.
+  </p>
+</section>
+
+<section class="phz-data-band">
+  <h2>What an aggregate score hides</h2>
+  <p>
+    Four properties of Arabic break the assumption that one score describes capability:
+  </p>
+  <ul>
+    <li>
+      <strong>Diglossia.</strong> The written standard and the spoken variety coexist in the same
+      institution, often in the same conversation. A model fluent in one may be unreliable in the
+      other, and an averaged score cannot show it.
+    </li>
+    <li>
+      <strong>Distance between varieties.</strong> Maghrebi and Gulf speech differ more than some
+      pairs of European languages that nobody would evaluate as one. Collapsing them into
+      “dialect” measures nothing a buyer can act on.
+    </li>
+    <li>
+      <strong>Morphology and orthography.</strong> Rich inflection, a root-and-pattern system, absent
+      short vowels, and inconsistent spelling of dialect and of borrowed terms mean that surface
+      string matching misjudges answers that are correct, and accepts answers that are not.
+    </li>
+    <li>
+      <strong>Code-switching.</strong> In Gulf enterprise and North African service interactions,
+      switching is not noise — it is the register. Filtering it out of evaluation produces a system
+      that scores well and fails live.
+    </li>
+  </ul>
+</section>
+
+<section class="phz-data-band">
+  <h2>The evaluation matrix</h2>
+  <p>
+    Every Phaza evaluation is specified along the same five axes used to specify a dataset, so a
+    result can be traced back to the evidence it was trained on:
+  </p>
+  <ul>
+    <li><strong>Variety</strong> — Modern Standard Arabic, country variety, and regional variation inside a country.</li>
+    <li><strong>Register</strong> — formal, professional, conversational, informal, user-generated.</li>
+    <li><strong>Domain</strong> — government, finance, health, energy, logistics, legal, retail, industrial.</li>
+    <li><strong>Channel</strong> — document, chat, voice, search, form, image, multimodal.</li>
+    <li><strong>Language interaction</strong> — Arabic only, Arabic–English, Arabic–French, and the mixing patterns of the market in question.</li>
+  </ul>
+  <p>
+    A result is reported per cell of that matrix. A model that is strong in MSA government
+    correspondence and weak in Moroccan voice is described that way, because that is the sentence a
+    deployment decision actually depends on.
+  </p>
+</section>
+
+<section class="phz-data-band">
+  <h2>Task families</h2>
+  <ul>
+    <li><strong>Comprehension and reasoning</strong> — questions whose answers are verifiable, in the variety and domain being tested.</li>
+    <li><strong>Instruction following</strong> — whether the system does what was asked, in the register it was asked in, including politeness and address conventions that differ by country.</li>
+    <li><strong>Grounded answering</strong> — retrieval over institutional documents, scored on whether the answer is supported by the cited source rather than merely plausible.</li>
+    <li><strong>Extraction</strong> — names, places, institutions, amounts and dates as they are actually written locally.</li>
+    <li><strong>Speech</strong> — recognition and understanding under the acoustic conditions of the real channel, not studio audio.</li>
+    <li><strong>Documents and vision</strong> — regional forms, layouts, handwriting and signage.</li>
+    <li><strong>Safety and cultural judgement</strong> — refusals, sensitive subjects and local appropriateness, judged in-region rather than against a translated policy.</li>
+  </ul>
+</section>
+
+<section class="phz-data-band">
+  <h2>How test sets are built</h2>
+  <h3>Held out, and kept out</h3>
+  <p>
+    Evaluation data is created and held separately from training data, under separate access. It is
+    never used for training, fine-tuning or model selection. A set that has been trained on is no
+    longer an evaluation set, and we retire it rather than quietly reuse it.
+  </p>
+  <h3>Written by people who speak the variety</h3>
+  <p>
+    Items are authored and reviewed by native speakers of the specific variety under test, working
+    in-region, under the consent and compensation rules described in our
+    <a href="/privacy/">privacy policy</a>. Translated test items are marked as translated, because
+    a translated question measures translation as much as it measures the model.
+  </p>
+  <h3>Gold answers and adjudication</h3>
+  <p>
+    Each item carries an expected outcome and a scoring rubric written before any model is run.
+    Items are scored independently by more than one reviewer; disagreements are adjudicated by a
+    third, and the rate of disagreement is recorded and reported. An item that reviewers cannot
+    agree on is a defective item, not a hard one, and it is rewritten or removed.
+  </p>
+  <h3>Contamination control</h3>
+  <p>
+    Before a set is used, it is checked against the training corpus for overlap, and newly written
+    items are preferred over material that has circulated publicly. Where a public benchmark is used
+    for comparability, we say so, and we treat its numbers as indicative rather than decisive,
+    because we cannot prove what any model has seen.
+  </p>
+</section>
+
+<section class="phz-data-band">
+  <h2>How runs are conducted</h2>
+  <ul>
+    <li><strong>One protocol per comparison.</strong> Every model in a comparison is run by us, under the same prompts, the same decoding settings, the same context limits and the same scoring code. We do not place our numbers next to numbers published by someone else under unknown conditions.</li>
+    <li><strong>Fixed and recorded.</strong> Prompts, settings, seeds, dates, checkpoint identifiers and hardware are recorded with the result. A result without them is not a result.</li>
+    <li><strong>Repeated.</strong> Generative tasks are run multiple times; we report the spread, not only the best pass.</li>
+    <li><strong>Blind where judgement is involved.</strong> Human reviewers do not know which system produced an answer, including when one of them is ours.</li>
+    <li><strong>Failures kept.</strong> Cases where our own model loses are retained and used as the brief for the next data collection round. That loop is the reason the evaluation exists.</li>
+  </ul>
+</section>
+
+<section class="phz-data-band">
+  <h2>What we publish, and what we will not</h2>
+  <p>
+    When Phaza publishes a result for Salam or for any other system, it will carry: the checkpoint
+    and its configuration, the date, the full protocol, the per-cell results including the weak
+    cells, the disagreement rate between reviewers, and the limitations we know of. Enough for a
+    competent team to argue with us.
+  </p>
+  <p>We will not publish:</p>
+  <ul>
+    <li>a score without the protocol that produced it;</li>
+    <li>a comparison against a model we did not run ourselves under the same conditions;</li>
+    <li>a projected, extrapolated or partial-checkpoint number presented as a measurement;</li>
+    <li>a headline average that conceals the cells where the system is weak.</li>
+  </ul>
+  <p>
+    This note exists before any Salam results are published on purpose. The method should be
+    inspectable before the numbers arrive, so that the numbers can be judged against a standard we
+    committed to in advance rather than one assembled afterwards to fit them.
+  </p>
+</section>
+
+<section class="phz-data-band">
+  <h2>Limitations of this note</h2>
+  <ul>
+    <li>It describes Phaza's own practice. It is not a standard, and we do not claim it as one.</li>
+    <li>Human judgement remains judgement. Adjudication and blind review reduce bias; they do not remove it.</li>
+    <li>Coverage is uneven. Varieties with less available material are harder to test well, and we would rather say so than imply parity we have not earned.</li>
+    <li>Evaluation measures what it was built to measure. A system can pass every cell here and still meet something nobody specified.</li>
+  </ul>
+</section>
+
+<section class="phz-data-band">
+  <h2>Citation and versions</h2>
+  <p>
+    Cite as: <em>Phaza (2026). Evaluating Arabic language models. Phaza Technical Note 01,
+    version 1.0.</em> <a href="https://phaza.io/arabic-ai-evaluation/">https://phaza.io/arabic-ai-evaluation/</a>
+  </p>
+  <p>
+    Versions are numbered and dated. Substantive changes raise the version and are listed here;
+    the previous text is not silently replaced.
+  </p>
+  <ul>
+    <li><strong>1.0</strong> — 8 October 2026 — first publication.</li>
+  </ul>
+  <div class="phz-doc-foot">
+    <a href="/">Phaza home</a>
+    <a href="/arabic-data-for-ai/">Arabic data</a>
+    <a href="/privacy/">Privacy</a>
+    <a href="mailto:support@phaza.io">support@phaza.io</a>
+  </div>
+</section>
+</main></div>
+  </body>
+</html>
