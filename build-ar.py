@@ -22,6 +22,13 @@ HERE = pathlib.Path(__file__).parent
 A = HERE / 'assets'
 STRINGS = HERE / 'content' / 'ar' / 'journey-strings.json'
 UI = HERE / 'content' / 'ar' / 'ui-strings.json'
+# the panels carry whole documents, not strings: the Arabic build swaps the
+# slot contents for their Arabic source files
+DOCS = {
+    'PHZDATAHTML': HERE / 'content' / 'ar' / 'phaza-data-page.html',
+    'PHZPRIVHTML': HERE / 'content' / 'ar' / 'phaza-privacy-page.html',
+    'PHZEVALHTML': HERE / 'content' / 'ar' / 'phaza-eval-page.html',
+}
 OUT = HERE / 'ar' / 'index.html'
 
 TITLE = 'فازا — ذكاء اصطناعي سيادي للحكومات والمؤسسات'
@@ -72,6 +79,23 @@ def build_bundle(src_name: str) -> str:
                 break
         else:
             missed.append(en)
+
+    import re as _re
+    for slot, src in DOCS.items():
+        doc = _re.sub(r'^<!--.*?-->\s*', '', src.read_text(), flags=_re.S).strip()
+        doc = doc.replace('\\', '\\\\').replace('`', '\\`').replace('${', '\\${')
+        open_m, end_m = slot + '=`', '`/*' + slot + '-END*/'
+        a = js.index(open_m)
+        b = js.index(end_m, a) + len(end_m)
+        js = js[:a] + open_m + esc(doc) + end_m + js[b:]
+        print(f'  {slot}: {len(doc):,} chars of Arabic')
+
+    # the deep links live under /ar/ in this build, and land back on the
+    # Arabic root rather than the English one
+    for seg in ('arabic-data-for-ai', 'privacy', 'arabic-ai-evaluation'):
+        js = js.replace('location.pathname.indexOf("/%s")===0' % seg,
+                        'location.pathname.indexOf("/ar/%s")===0' % seg)
+    js = js.replace('history.replaceState(null,"","/")', 'history.replaceState(null,"","/ar/")')
 
     js = js.replace('const PHZAR=false;', 'const PHZAR=true;', 1)
     # the router owns "/" only; under /ar/ it would answer with its 404 page,
@@ -225,7 +249,64 @@ def redirect_snippet() -> None:
     print('language redirect written')
 
 
+# Each Arabic document also gets its own URL, so a link, a search result or a
+# shared message lands on the Arabic page rather than the English one.
+AR_DOCS = [
+    {'slug': 'arabic-data-for-ai', 'src': DOCS['PHZDATAHTML'], 'doc': False,
+     'title': 'مجموعات بيانات عربية لتدريب الذكاء الاصطناعي وتقييمه | فازا',
+     'desc': ('بيانات عربية مُخلَّصة الحقوق — نصوص وأصوات ووسائط متعددة — لتدريب النماذج اللغوية '
+              'وتقييمها والتعرّف على الكلام، بالفصحى وبلهجات الدول من الأردن إلى الشام والخليج '
+              'ووادي النيل والمغرب العربي، من المسار الذي يدرّب سلام.')},
+    {'slug': 'arabic-ai-evaluation', 'src': DOCS['PHZEVALHTML'], 'doc': True,
+     'title': 'تقييم النماذج اللغوية العربية — مذكّرة فازا التقنية 01',
+     'desc': ('كيف تقيس فازا النماذج العربية: اختبار بحسب الدولة والنمط والسجل والمجال والقناة بدل '
+              'نتيجة مجمَّعة واحدة — مجموعات محجوزة، وفصل معمّى في الخلاف، وضبط للتسرّب، وما ننشره وما لن ننشره.')},
+    {'slug': 'privacy', 'src': DOCS['PHZPRIVHTML'], 'doc': True,
+     'title': 'سياسة الخصوصية — فازا',
+     'desc': ('كيف تتعامل فازا مع البيانات الشخصية على phaza.io: لا ملفات تعريف ارتباط، ولا متتبّعات، '
+              'ولا خطوط من طرف ثالث، ولا استخدام للبيانات في تدريب النماذج.')},
+]
+
+
+def build_doc_pages(bundle: str) -> None:
+    import re as _re
+    shell_src = (HERE / 'ar' / 'index.html').read_text()
+    for d in AR_DOCS:
+        url = 'https://phaza.io/ar/' + d['slug'] + '/'
+        s = shell_src
+        s = _re.sub(r'<title>.*?</title>', '<title>' + d['title'] + '</title>', s, flags=_re.S)
+        for pat in (r'(<meta name="description" content=")[^"]*(")',
+                    r'(<meta property="og:description" content=")[^"]*(")',
+                    r'(<meta name="twitter:description" content=")[^"]*(")'):
+            s = _re.sub(pat, r'\1' + d['desc'] + r'\2', s)
+        for pat in (r'(<meta property="og:title" content=")[^"]*(")',
+                    r'(<meta name="twitter:title" content=")[^"]*(")'):
+            s = _re.sub(pat, r'\1' + d['title'] + r'\2', s)
+        s = s.replace('<link rel="canonical" href="https://phaza.io/ar/" />',
+                      '<link rel="canonical" href="' + url + '" />')
+        s = s.replace('<meta property="og:url" content="https://phaza.io/ar/" />',
+                      '<meta property="og:url" content="' + url + '" />')
+        s = _re.sub(r'\n? *<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', '', s)
+        s = s.replace('    <link rel="canonical"',
+                      '    <link rel="alternate" hreflang="en" href="https://phaza.io/' + d['slug'] + '/" />\n'
+                      '    <link rel="alternate" hreflang="ar" href="' + url + '" />\n'
+                      '    <link rel="canonical"', 1)
+        body = _re.sub(r'^<!--.*?-->\s*', '', d['src'].read_text(), flags=_re.S).strip()
+        cls = 'phz-data phz-doc' if d['doc'] else 'phz-data'
+        start = s.index('<div id="root">')
+        end = s.index('</body>', start)
+        tail = s[s.rindex('</div>', start, end):end]
+        s = (s[:start] + '<div id="root"><!-- نسخة ثابتة للزواحف وللقراءة بلا جافاسكربت. -->\n'
+             + '<main class="' + cls + '">\n' + body + '\n</main>' + tail + s[end:])
+        out = HERE / 'ar' / d['slug'] / 'index.html'
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(s)
+        print(f"ar/{d['slug']}/index.html written ({len(s):,} bytes)")
+
+
 if __name__ == '__main__':
     redirect_snippet()
-    build_page(build_bundle(entry_name()))
+    bundle = build_bundle(entry_name())
+    build_page(bundle)
+    build_doc_pages(bundle)
     alternates()
