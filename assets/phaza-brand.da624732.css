@@ -1146,23 +1146,3 @@ body.phz-doc-open .phz-journey-root {
 [dir="rtl"] .phz-data-table td,
 [dir="rtl"] .journey-section [class*="font-mono"] { unicode-bidi: isolate; }
 [dir="rtl"] .phz-data-table th { text-align: right; }
-
-/* ── the mirror, part three: the drawings ──────────────────────────────
-   The little diagrams in the knowledge and industry cards are drawn to be
-   read left to right: lines start at the left margin, arrows point right,
-   the eye travels the way the text does. In Arabic they are flipped, so the
-   drawing leads the eye the same way the sentence under it does. Flipping
-   the glyph-bearing marks is avoided -- only these 120x40 panels turn. */
-[dir="rtl"] svg[viewBox="0 0 120 40"] { transform: scaleX(-1); }
-
-/* Anything laid out as a row of label + value reads start-to-end, which the
-   RTL container already reverses; these are the ones that also carried a
-   one-sided margin. */
-[dir="rtl"] .phz-data-steps li { direction: rtl; }
-[dir="rtl"] .phz-data-steps span { text-align: right; }
-
-/* Figures keep their own internal order (7.8, 125, 20T+) while the sentence
-   around them runs right to left. */
-[dir="rtl"] .journey-section [class*="font-medium"],
-[dir="rtl"] .journey-section [class*="text-[13px]"],
-[dir="rtl"] .phz-data-tags li { unicode-bidi: isolate; }
