@@ -1,0 +1,1047 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Phaza signature gradient over the site's brand blue.
+
+   The gradient is taken verbatim from the design system's generated tokens
+   (design-system/phaza-tokens.css). Its rule is "ONE definition, never hand
+   mix blue and violet in a component", so nothing here invents a stop.
+
+   Every brand-blue surface carries it: display type, fills, SVG paints, the
+   tier dots and the borders, which are painted as a masked ring so the
+   radius survives. Only ::selection and the focus outline keep a flat value,
+   because the UA paints those and they take a colour, never an image.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --phz-gradient-signature: linear-gradient(135deg, #00F0FF 0%, #00CDFF 25%, #21A0FF 50%, #696CFF 75%, #8A2BE2 100%);
+  --phz-gradient-action:    linear-gradient(135deg, #007A88 0%, #0072AC 25%, #0061CA 50%, #4D48D9 75%, #7F24D1 100%);
+  --phz-grad-mid:  #21A0FF;   /* stop 2 — hairlines, borders, small marks */
+  --phz-grad-head: #00CDFF;   /* stop 1 — where a single bright blue is needed */
+}
+
+/* ── display text ──────────────────────────────────────────────────────
+   The sweep runs across each element's own box, so headlines get the full
+   blue-to-violet travel. */
+.text-brand-cyan,
+.text-brand-cyan\/70,
+.text-brand-cyan\/80,
+.text-brand-cyan\/90 {
+  background-image: var(--phz-gradient-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* The sweep runs across the element's BOX, and is then clipped to the glyphs.
+   Every other gradient heading on the site is an inline span, so its box is
+   exactly its text and the words get the whole ramp, cyan through violet.
+   A block-level h2 is as wide as its container -- "Sovereign by design." is
+   475px of text in a 1024px box -- so the words only ever sample the middle
+   of the ramp and come out flat blue, missing both ends.
+   Shrinking the box to the text is what makes them match. margin-inline keeps
+   them centred without disturbing the vertical rhythm they already carry. */
+h2.text-brand-cyan,
+h2[class*="text-brand-cyan/"] {
+  width: fit-content;
+  margin-inline: auto;
+}
+
+/* Monospace labels are 9–11px. A full sweep across 60px of tiny caps turns
+   to mud, so they sample the blue end only — same ramp, legible weight. */
+[class*="font-mono"].text-brand-cyan,
+[class*="font-mono"].text-brand-cyan\/70,
+[class*="font-mono"].text-brand-cyan\/80,
+[class*="font-mono"].text-brand-cyan\/90 {
+  background-size: 340% 100%;
+  background-position: 0 0;
+}
+
+/* Links that turn brand on hover pick up the sweep too. */
+.hover\:text-brand-cyan:hover {
+  background-image: var(--phz-gradient-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── solid fills ───────────────────────────────────────────────────────
+   These carry the black brand-ground label, and the token file notes the
+   bright sweep takes ink text — white is what fails on it. */
+.bg-brand-cyan,
+.hover\:bg-brand-cyan:hover {
+  background-color: transparent;
+  background-image: var(--phz-gradient-signature);
+}
+
+.bg-brand-cyan\/90 { background-color: transparent; background-image: var(--phz-gradient-signature); opacity: .9; }
+
+/* Low-alpha washes: a gradient at 4% is indistinguishable from a flat tint,
+   so these take the mid stop rather than paying for a paint layer. */
+.bg-brand-cyan\/20        { background-color: rgba(33,160,255,.20); }
+.bg-brand-cyan\/\[0\.04\] { background-color: rgba(33,160,255,.05); }
+
+/* Outline is drawn by the UA and takes a colour, not an image. */
+.focus-visible\:outline-brand-cyan\/50:focus-visible { outline-color: rgba(33,160,255,.50); }
+
+/* ── selection ─────────────────────────────────────────────────────────
+   ::selection takes a colour, never an image. */
+.selection\:bg-brand-cyan ::selection,
+.selection\:bg-brand-cyan::selection { background-color: var(--phz-grad-mid); }
+
+/* ── agent art ─────────────────────────────────────────────────────────
+   Rim light and soft glow move to the mid stop so the cast reads in the
+   same family as the type. */
+:root {
+  --agent-rim-color: rgba(33,160,255,.35);
+  --agent-glow-soft: rgba(33,160,255,.35);
+}
+.agent-fire { background: radial-gradient(circle, rgba(33,160,255,.06), transparent 70%); }
+
+/* SVG marks inside the layer diagrams. The CSS fill property overrides the
+   presentation attribute, so one rule catches them all. */
+svg .phz-grad-fill,
+svg [fill="#2FB4EC"],
+svg [fill="#2fb4ec"] { fill: url(#phzSignature); }
+
+/* ── type ──────────────────────────────────────────────────────────────
+   The design system names Poppins for display, Inter for UI and JetBrains
+   Mono for code. Inter was already self-hosted; Poppins was missing entirely
+   and JetBrains Mono was declared with no @font-face, so every mono label was
+   falling back to whatever monospace the machine happened to have. Both are
+   now served from our own origin — the CSP is font-src 'self', and a
+   sovereign site should not fetch its typefaces from Google on every visit. */
+@font-face { font-family: 'Poppins'; src: url(/assets/poppins-300.woff2) format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Poppins'; src: url(/assets/poppins-400.woff2) format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Poppins'; src: url(/assets/poppins-500.woff2) format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Poppins'; src: url(/assets/poppins-600.woff2) format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'JetBrains Mono'; src: url(/assets/jetbrains-mono-var.woff2) format('woff2'); font-weight: 100 800; font-style: normal; font-display: swap; }
+
+:root {
+  --phz-font-display: 'Poppins', 'Inter', system-ui, sans-serif;
+  --phz-font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --phz-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Display face on headings and the large display spans. */
+h1:not([class*="font-mono"]), h2:not([class*="font-mono"]), h3:not([class*="font-mono"]),
+.text-4xl:not([class*="font-mono"]), .text-5xl:not([class*="font-mono"]),
+.text-3xl:not([class*="font-mono"]), .text-2xl:not([class*="font-mono"]),
+[class*="md\:text-5xl"]:not([class*="font-mono"]),
+[class*="md\:text-4xl"]:not([class*="font-mono"]) {
+  font-family: var(--phz-font-display);
+  letter-spacing: -0.015em;
+}
+
+/* The page's heading. The hero line cannot carry it: the intro fades the whole
+   brand block back out at 2.2s with autoAlpha, which sets visibility:hidden, so
+   an H1 there is hidden for all but the first second of a visit -- and hidden
+   headings are discounted. This one is the page title verbatim, matching the
+   title tag, positioned out of view by the standard clip technique rather than
+   hidden, so it is read by crawlers and by screen readers, which had no
+   heading at all once the intro finished. */
+.phz-page-title {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── casing ────────────────────────────────────────────────────────────
+   The wide all-caps treatment is dropped: labels read as sentences, at
+   normal spacing. The source strings are already sentence case, so lifting
+   text-transform reveals them as written. */
+.uppercase { text-transform: none !important; }
+
+/* Sentence case wants far less tracking than wide caps did, but not none:
+   these labels are 9-11px and go cramped at zero. */
+[class*="tracking-"] { letter-spacing: 0.02em !important; }
+[class*="font-mono"][class*="tracking-"] { letter-spacing: 0.05em !important; }
+
+/* ── gradient borders ──────────────────────────────────────────────────
+   Painted as a masked ring on ::after so border-radius survives and the
+   element's own background is left untouched. There are no other ::after
+   rules in the compiled stylesheet, so nothing is displaced. */
+.border-brand-cyan\/20,
+.border-brand-cyan\/25,
+.border-brand-cyan\/30,
+.border-brand-cyan\/40,
+.border-brand-cyan\/50,
+.border-brand-cyan\/60 { border-color: transparent !important; position: relative; }
+
+.border-brand-cyan\/20::after,
+.border-brand-cyan\/25::after,
+.border-brand-cyan\/30::after,
+.border-brand-cyan\/40::after,
+.border-brand-cyan\/50::after,
+.border-brand-cyan\/60::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--phz-gradient-signature);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+.border-brand-cyan\/20::after { opacity: .35; }
+.border-brand-cyan\/25::after { opacity: .45; }
+.border-brand-cyan\/30::after { opacity: .55; }
+.border-brand-cyan\/40::after { opacity: .7; }
+.border-brand-cyan\/50::after { opacity: .85; }
+.border-brand-cyan\/60::after { opacity: 1; }
+.hover\:border-brand-cyan\/50:hover { border-color: transparent !important; }
+
+/* ── social marks ──────────────────────────────────────────────────────
+   Three icons from one set, so they read as siblings rather than three
+   drawings at three different weights, and the signature ramp on hover.
+
+   They cannot use the Tailwind hover class the rest of the site uses: that
+   rule paints gradient TEXT by setting color to transparent, and an SVG
+   filled with currentColor resolves that to transparent too -- the marks
+   disappeared on hover. CSS fill takes a paint server directly, which is how
+   an SVG picks up the ramp the way text does with background-clip. */
+.phz-social {
+  display: inline-flex;
+  color: rgba(255, 255, 255, .62);
+  transition: transform .25s ease, opacity .25s ease;
+}
+.phz-social svg { display: block; fill: currentColor; }
+.phz-social:hover svg { fill: url(#phzSignature); }
+.phz-social:hover { transform: translateY(-1px); }
+.phz-social:focus-visible { outline: 1px solid rgba(33,160,255,.5); outline-offset: 4px; border-radius: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .phz-social:hover { transform: none; }
+}
+
+/* ── tier dots ─────────────────────────────────────────────────────────
+   "Choose your weight" draws its density pattern as dots. They are now the
+   gradient itself, punched through by a dot mask. */
+.phz-dots {
+  /* Two layers: a highlight band on top of the ramp. Both are punched by the
+     same dot mask, so the band lights the dots rather than the panel. */
+  background-image:
+    linear-gradient(100deg, transparent 38%, rgba(216,250,255,.92) 50%, transparent 62%),
+    var(--phz-gradient-signature);
+  background-size: 220% 100%, 100% 100%;
+  background-position: -120% 0, 0 0;  /* band parked off the left edge */
+  -webkit-mask-image: radial-gradient(circle, #000 1px, transparent 1px);
+          mask-image: radial-gradient(circle, #000 1px, transparent 1px);
+  -webkit-mask-size: var(--phz-dot-gap) var(--phz-dot-gap);
+          mask-size: var(--phz-dot-gap) var(--phz-dot-gap);
+  -webkit-mask-position: center;
+          mask-position: center;
+  opacity: .5;
+}
+.phz-dots-on { opacity: 1; }
+
+/* Hovering a tier sends the wave across its dots. The card also selects on
+   hover, so the dots come up to full strength at the same time. */
+button:hover .phz-dots { animation: phz-dot-wave 1.5s linear infinite; }
+
+@keyframes phz-dot-wave {
+  from { background-position: -120% 0, 0 0; }
+  to   { background-position: 220% 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:hover .phz-dots { animation: none; }
+}
+
+/* ── phones ────────────────────────────────────────────────────────────
+   Mono micro-labels drawn at 9px read as noise on a phone screen, and the
+   footer's links and social marks were 14-20px targets. Lift both below the
+   tablet break without touching the desktop composition. */
+@media (max-width: 640px) {
+  .text-\[9px\] { font-size: 10.5px !important; }
+  .text-\[10px\] { font-size: 11px !important; }
+  .phz-social { padding: 12px; margin: -12px; }
+  .phz-foot-link { display: inline-flex; align-items: center; min-height: 36px; }
+  footer ul.space-y-2\.5 > :not([hidden]) ~ :not([hidden]) { margin-top: 0 !important; }
+  .intro-cta { padding: 14px 18px; font-size: 11px !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   The data library — the panel that slides in from the corpus section.
+
+   The journey is one dark page with GSAP driving it; this is the opposite
+   kind of surface: a long, quiet, ordinary document you read top to bottom.
+   It gets its own prefix so nothing here can reach the journey, and it sets
+   its own scroll container so the body underneath stays exactly where the
+   reader left it. Content lives in content/phaza-data-page.html.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.phz-data-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  background: #04070d;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  transform: translateX(100%);
+  transition: transform 760ms cubic-bezier(.72, 0, .16, 1);
+  will-change: transform;
+}
+.phz-data-shell.phz-data-in { transform: translateX(0); }
+
+/* The journey slides out under it, so the reader sees one page replace
+   another rather than a card appear on top of it. */
+.phz-journey-root {
+  transition: transform 760ms cubic-bezier(.72, 0, .16, 1), opacity 760ms ease, filter 760ms ease;
+}
+body.phz-data-open .phz-journey-root {
+  transform: translateX(-14vw);
+  opacity: .35;
+  filter: blur(3px);
+}
+
+.phz-data {
+  font-family: var(--phz-font-ui), system-ui, sans-serif;
+  color: rgba(255, 255, 255, .78);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(84px, 11vh, 132px) clamp(20px, 5vw, 56px) 140px;
+}
+
+.phz-data .phz-data-kicker {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  background-image: var(--phz-gradient-signature);
+  background-size: 340% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 18px;
+}
+
+.phz-data h1 {
+  font-family: var(--phz-font-display), var(--phz-font-ui), sans-serif;
+  font-size: clamp(30px, 5.4vw, 56px);
+  line-height: 1.08;
+  font-weight: 300;
+  color: rgba(255, 255, 255, .94);
+  margin: 0 0 26px;
+  max-width: 17ch;
+}
+.phz-data h2 {
+  font-family: var(--phz-font-display), var(--phz-font-ui), sans-serif;
+  font-size: clamp(22px, 3.1vw, 34px);
+  line-height: 1.2;
+  font-weight: 300;
+  color: rgba(255, 255, 255, .92);
+  margin: 0 0 18px;
+  max-width: 24ch;
+}
+.phz-data h3 {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, .9);
+  margin: 0 0 10px;
+}
+.phz-data p { font-size: 14.5px; line-height: 1.75; font-weight: 300; margin: 0; }
+
+.phz-data-lede { font-size: 17px !important; line-height: 1.7 !important; max-width: 62ch; color: rgba(255, 255, 255, .72); }
+.phz-data-sub  { margin-top: 16px !important; max-width: 58ch; color: rgba(255, 255, 255, .5); }
+.phz-data-intro { max-width: 64ch; color: rgba(255, 255, 255, .55); margin-bottom: 38px !important; }
+.phz-data-note { margin-top: 12px !important; font-size: 13px !important; color: rgba(255, 255, 255, .42); }
+
+.phz-data-hero { padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, .07); }
+.phz-data-band { padding: clamp(56px, 8vh, 92px) 0; border-bottom: 1px solid rgba(255, 255, 255, .07); }
+.phz-data-band:last-child { border-bottom: 0; }
+
+.phz-data-cta { display: flex; flex-wrap: wrap; gap: 14px; margin: 34px 0 30px; }
+.phz-data-btn {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  background: var(--phz-gradient-signature);
+  color: #04070d;
+  padding: 14px 30px;
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-decoration: none;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.phz-data-btn:hover { transform: translateY(-1px); }
+.phz-data-btn-ghost {
+  background: transparent;
+  color: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
+}
+.phz-data-btn-ghost:hover { color: #fff; box-shadow: inset 0 0 0 1px rgba(47, 180, 236, .5); }
+
+.phz-data-chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0 0 8px; }
+.phz-data-chips li {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .5);
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+
+.phz-data-grid { display: grid; gap: 16px; align-items: stretch; }
+.phz-data-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.phz-data-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.phz-data-grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+/* Four across needs ~260px a card before the type starts breaking badly,
+   so the ladder steps 4 -> 3 -> 2 -> 1 rather than dropping straight to two. */
+@media (max-width: 1179px) {
+  .phz-data-grid-4,
+  .phz-data-grid-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.phz-data-card {
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .012);
+  padding: 22px 20px 24px;
+  transition: border-color .3s ease, background .3s ease;
+}
+.phz-data-card:hover { border-color: rgba(47, 180, 236, .32); background: rgba(47, 180, 236, .035); }
+.phz-data-card p { font-size: 13.5px; color: rgba(255, 255, 255, .5); }
+.phz-data-card-lg { padding: 28px 26px 30px; }
+.phz-data-card-lg p { font-size: 14px; }
+
+.phz-data-num {
+  display: block;
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  background-image: var(--phz-gradient-signature);
+  background-size: 340% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 14px;
+}
+.phz-data-tag {
+  display: inline-block;
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .38);
+  margin-bottom: 14px;
+}
+.phz-data-spec h3 { font-size: 13.5px; }
+
+.phz-data-tablewrap { overflow-x: auto; border: 1px solid rgba(255, 255, 255, .08); border-radius: 10px; }
+.phz-data-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+.phz-data-table th,
+.phz-data-table td { text-align: left; padding: 16px 18px; vertical-align: top; border-bottom: 1px solid rgba(255, 255, 255, .06); }
+.phz-data-table th {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .45);
+  font-weight: 400;
+  background: rgba(255, 255, 255, .02);
+}
+.phz-data-table td { font-size: 13px; line-height: 1.65; font-weight: 300; color: rgba(255, 255, 255, .5); }
+.phz-data-table td:first-child { color: rgba(255, 255, 255, .85); }
+.phz-data-table tr:last-child td { border-bottom: 0; }
+
+.phz-data-callout {
+  margin-top: 26px;
+  padding: 26px 26px 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(47, 180, 236, .18);
+  background: linear-gradient(135deg, rgba(0, 205, 255, .045), rgba(138, 43, 226, .045));
+}
+.phz-data-callout p:last-child { max-width: 74ch; color: rgba(255, 255, 255, .62); }
+
+.phz-data-steps { list-style: none; counter-reset: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.phz-data-steps li {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 0 24px;
+  padding: 22px 0;
+  border-top: 1px solid rgba(255, 255, 255, .07);
+}
+.phz-data-steps li:last-child { border-bottom: 1px solid rgba(255, 255, 255, .07); }
+.phz-data-steps span {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  background-image: var(--phz-gradient-signature);
+  background-size: 340% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-top: 3px;
+}
+.phz-data-steps h3 { grid-column: 2; margin-bottom: 6px; }
+.phz-data-steps p { grid-column: 2; font-size: 13.5px; color: rgba(255, 255, 255, .5); max-width: 70ch; }
+.phz-data-foot { margin-top: 26px !important; max-width: 66ch; font-size: 13.5px !important; color: rgba(255, 255, 255, .45); }
+
+.phz-data-close h2 { max-width: 20ch; }
+
+/* The way out. Fixed to the panel, not the document, so it survives the
+   scroll of a long read. */
+.phz-data-back {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  background: rgba(4, 7, 13, .82);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, .72);
+  padding: 11px 18px;
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  transition: color .25s ease, border-color .25s ease;
+}
+.phz-data-back:hover { color: #fff; border-color: rgba(47, 180, 236, .5); }
+
+@media (max-width: 900px) {
+  .phz-data-grid-2,
+  .phz-data-grid-4,
+  .phz-data-grid-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .phz-data-grid-2,
+  .phz-data-grid-4,
+  .phz-data-grid-5 { grid-template-columns: minmax(0, 1fr); }
+  .phz-data h1 { max-width: none; }
+  .phz-data-steps li { grid-template-columns: 1fr; gap: 6px; }
+  .phz-data-steps h3,
+  .phz-data-steps p { grid-column: 1; }
+  body.phz-data-open .phz-journey-root { transform: translateX(-8vw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .phz-data-shell,
+  .phz-journey-root { transition: none; }
+  .phz-data-btn:hover { transform: none; }
+}
+
+/* ── the data page's marks and its sphere ──────────────────────────────
+   Icons are stroked with the signature ramp through a paint server the
+   page carries itself (#phzDataGrad in the content file): the panel is
+   portalled to <body>, so it cannot rely on a gradient defined inside the
+   journey. The sphere behind the page is the journey's own orb component,
+   mounted again in the pose the corpus section hands over — the same object
+   the reader was just looking at, not a lookalike. The canvas named here is
+   only the layer that throws Arabic letters and words off it. */
+.phz-data-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.phz-data-icon { display: block; margin-bottom: 13px; }
+.phz-data-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: url(#phzDataGrad);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .9;
+}
+.phz-data-icon + .phz-data-num,
+.phz-data-icon + .phz-data-tag { margin-bottom: 11px; }
+.phz-data-card:hover .phz-data-icon svg { opacity: 1; }
+
+.phz-data-sphere {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.phz-data { position: relative; z-index: 1; }
+
+/* On a phone the reading column sits over the middle of the sphere, so it
+   steps back rather than competing with the words on top of it. */
+@media (max-width: 720px) {
+  .phz-data-sphere { opacity: .5; }
+}
+
+/* The sphere on this page is the journey's own orb component, re-rendered in
+   the pose the corpus section hands over -- not a copy of it. Its canvas is
+   z-10 by its own class, so the wrapper opens a stacking context beneath the
+   reading column to keep it behind the words. */
+.phz-data-orb {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity .5s ease;
+  will-change: transform;
+}
+
+
+
+/* ── coverage: a country at a time ─────────────────────────────────────
+   Jordan is the reference corpus, so it gets a card of its own above the
+   regions; everything after it is one country per card, because "Arabic"
+   as a single bucket is the thing this section exists to argue against. */
+.phz-data .phz-data-subhead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .42);
+  margin: 64px 0 22px;
+}
+
+.phz-data-flag {
+  display: block;
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .34);
+  margin-bottom: 10px;
+}
+.phz-data-ar {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, .42);
+  margin-inline-start: 6px;
+  unicode-bidi: isolate;
+}
+.phz-data-country h3 { font-size: 14px; }
+.phz-data-country { padding: 26px 24px 28px; }
+.phz-data-country p { font-size: 13px; }
+.phz-data-home {
+  border-color: rgba(47, 180, 236, .3);
+  background: linear-gradient(135deg, rgba(0, 205, 255, .05), rgba(138, 43, 226, .04));
+}
+.phz-data-home h3 { font-size: 17px; }
+.phz-data-home { padding: 34px 32px 36px; }
+.phz-data-home .phz-data-flag { color: var(--phz-grad-head); }
+.phz-data-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+}
+.phz-data-tags li {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .44);
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .09);
+}
+
+/* Phones last, so this wins over the tablet placement above: the sphere
+   sits above the opening lines rather than under them. */
+
+
+/* ── Arabic ────────────────────────────────────────────────────────────
+   Tajawal (SIL OFL), Arabic subset only, self-hosted beside
+   Inter and Poppins -- font-src is 'self', and it is the Arabic companion
+   to the Latin faces the site already uses. Every Arabic run is marked
+   lang="ar" dir="rtl" and sits at the right of its line, which is where
+   Arabic belongs even inside an English sentence. */
+@font-face {
+  font-family: "Phaza Arabic";
+  src: url(/assets/tajawal-400.woff2) format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Phaza Arabic";
+  src: url(/assets/tajawal-500.woff2) format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Phaza Arabic";
+  src: url(/assets/tajawal-700.woff2) format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+[lang="ar"],
+.phz-data-ar {
+  font-family: "Phaza Arabic", "Noto Naskh Arabic", "Geeza Pro", system-ui, sans-serif;
+  unicode-bidi: isolate;
+  direction: rtl;
+  text-align: right;
+}
+.phz-data-ar {
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, .5);
+}
+
+/* English on the left, Arabic on the right, across the whole line. */
+.phz-data-country h3,
+.phz-data-home h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.phz-data-country h3 > span:first-child,
+.phz-data-home h3 > span:first-child { flex: 0 1 auto; }
+
+.phz-data-subhead i {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(47, 180, 236, .28), rgba(255, 255, 255, 0));
+}
+.phz-data-subhead .phz-data-ar {
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgba(255, 255, 255, .38);
+}
+.phz-data-kicker-split {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.phz-data-kicker-split .phz-data-ar {
+  font-size: 12.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  -webkit-text-fill-color: rgba(255, 255, 255, .42);
+  background: none;
+}
+
+/* ── the section's own Arabic line ─────────────────────────────────────
+   "From Amman to the ocean" is the argument of the coverage section, not a
+   caption for it, so it is set as display type opposite the English
+   heading and given the signature ramp. */
+.phz-data-splithead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(20px, 4vw, 56px);
+  margin-bottom: 20px;
+}
+.phz-data-splithead > div { flex: 1 1 26ch; min-width: 0; }
+.phz-data-splithead h2 { margin-bottom: 0; }
+.phz-data-display {
+  flex: 0 1 auto;
+  font-family: "Phaza Arabic", "Noto Naskh Arabic", system-ui, sans-serif;
+  font-weight: 500 !important;
+  font-size: clamp(32px, 4.8vw, 58px) !important;
+  line-height: 1.5 !important;
+  direction: rtl;
+  text-align: right;
+  white-space: nowrap;
+  background-image: var(--phz-gradient-signature);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+@media (max-width: 860px) {
+  .phz-data-splithead { flex-direction: column; align-items: stretch; }
+  .phz-data-display { text-align: right; }
+}
+
+/* Coverage carries twenty cards in five groups; it needs more air between
+   them than a four-card band does. */
+#phz-data-coverage .phz-data-grid { gap: 20px; }
+#phz-data-coverage .phz-data-callout { margin-top: 56px; }
+#phz-data-coverage .phz-data-intro { margin-bottom: 10px !important; }
+#phz-data-coverage .phz-data-splithead { margin-bottom: 26px; }
+
+/* ── questions ─────────────────────────────────────────────────────────
+   Plain disclosure widgets: open on click without script, and readable to
+   a crawler whether open or shut. */
+.phz-data-faq details {
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+.phz-data-faq details:last-child { border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.phz-data-faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 20px 34px 20px 0;
+  position: relative;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, .86);
+  transition: color .25s ease;
+}
+.phz-data-faq summary::-webkit-details-marker { display: none; }
+.phz-data-faq summary:hover { color: #fff; }
+.phz-data-faq summary::after {
+  content: "+";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 16px;
+  color: var(--phz-grad-mid);
+}
+.phz-data-faq details[open] summary::after { content: "\2212"; }
+.phz-data-faq details p {
+  padding: 0 40px 24px 0;
+  max-width: 78ch;
+  color: rgba(255, 255, 255, .52);
+}
+
+/* The panel covers the journey's own header, so it carries the mark itself:
+   opened from the journey it steps back to it, opened at its own URL it goes
+   home like any wordmark. */
+.phz-data-brand {
+  position: fixed;
+  top: 22px;
+  left: clamp(20px, 5vw, 56px);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  opacity: .92;
+  transition: opacity .25s ease;
+}
+.phz-data-brand img { height: 22px; width: auto; mix-blend-mode: screen; display: block; }
+.phz-data-brand:hover { opacity: 1; }
+.phz-data-brand:focus-visible { outline: 1px solid rgba(33,160,255,.5); outline-offset: 6px; border-radius: 3px; }
+
+/* and the reading column starts below both marks */
+.phz-data { padding-top: clamp(96px, 12vh, 140px); }
+
+@media (max-width: 720px) {
+  .phz-data-brand { top: 18px; }
+  .phz-data-brand img { height: 18px; }
+}
+
+/* ── documents ─────────────────────────────────────────────────────────
+   The privacy policy and anything else that is mostly prose: a narrower
+   measure than the data page, and links that look like links. */
+.phz-doc { max-width: 780px; }
+.phz-doc h2 { font-size: clamp(19px, 2.4vw, 26px); margin-top: 8px; }
+.phz-doc h3 { margin-top: 28px; }
+.phz-doc p, .phz-doc li { font-size: 15px; line-height: 1.8; font-weight: 300; color: rgba(255, 255, 255, .66); }
+.phz-doc ul { padding-left: 20px; margin: 14px 0 0; }
+.phz-doc li { margin-bottom: 9px; }
+.phz-doc li strong { color: rgba(255, 255, 255, .88); font-weight: 400; }
+.phz-doc a { color: #6fc6f5; text-decoration: none; border-bottom: 1px solid rgba(111, 198, 245, .3); }
+.phz-doc a:hover { color: #fff; }
+.phz-doc .phz-data-band { padding: 36px 0; }
+.phz-doc-updated {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .38);
+}
+.phz-doc-foot {
+  border-top: 1px solid rgba(255, 255, 255, .08);
+  margin-top: 20px;
+  padding-top: 26px;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.phz-doc-foot a {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: 0;
+}
+
+/* A document arrives from above and pushes the journey down, where the data
+   library comes in from the side: two doors, so you can feel which one you
+   went through. */
+.phz-data-shell-down { transform: translateY(-100%); }
+.phz-data-shell-down.phz-data-in { transform: translateY(0); }
+body.phz-doc-open .phz-journey-root {
+  transform: translateY(16vh);
+  opacity: .35;
+  filter: blur(3px);
+}
+
+/* ── moving between the pages ──────────────────────────────────────────
+   The panels are the site's other rooms, so each one carries the doors to
+   the rest rather than making the reader go back out through the journey. */
+.phz-data-nav {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.phz-data-nav a {
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .45);
+  text-decoration: none;
+  border: 0;
+  padding: 4px 0;
+  transition: color .25s ease;
+}
+.phz-data-nav a:hover { color: rgba(255, 255, 255, .9); }
+.phz-data-nav a.phz-data-nav-on {
+  background-image: var(--phz-gradient-signature);
+  background-size: 340% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Below the wordmark on narrow screens, where the three cannot share a row. */
+@media (max-width: 860px) {
+  .phz-data-nav { top: 62px; gap: 16px; left: clamp(20px, 5vw, 56px); transform: none; justify-content: flex-start; }
+  .phz-data { padding-top: 132px; }
+}
+
+/* ── two directions ────────────────────────────────────────────────────
+   The site reads left-to-right in English and right-to-left in Arabic, so
+   anything anchored to an edge is written in logical properties and mirrors
+   itself. Only the places that cannot use them get a [dir="rtl"] rule. */
+.phz-edge {
+  align-items: flex-start;
+  text-align: start;
+  padding-inline: clamp(20px, 8vw, 140px);
+}
+.phz-edge > div:not([class*="bg-gradient"]) { align-self: flex-start; }
+
+/* The language switch lives in the far corner of the second screen: the
+   corner you are NOT reading towards, so it never sits under the eye. */
+.phz-lang {
+  position: absolute;
+  top: clamp(20px, 4vh, 40px);
+  inset-inline-end: clamp(20px, 5vw, 56px);
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(4, 7, 13, .5);
+  backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, .72);
+  font-family: var(--phz-font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-decoration: none;
+  pointer-events: auto;
+  transition: color .25s ease, border-color .25s ease, transform .25s ease;
+}
+.phz-lang[lang="ar"] { font-family: "Phaza Arabic", var(--phz-font-ui), sans-serif; letter-spacing: 0; font-size: 13px; }
+.phz-lang::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--phz-gradient-signature);
+}
+.phz-lang:hover { color: #fff; border-color: rgba(47, 180, 236, .5); transform: translateY(-1px); }
+
+/* Arabic: the whole document turns, and the type changes with it. */
+[dir="rtl"] body,
+[dir="rtl"] .phz-data,
+[dir="rtl"] .journey-section {
+  font-family: "Phaza Arabic", var(--phz-font-ui), system-ui, sans-serif;
+}
+[dir="rtl"] .phz-data h1,
+[dir="rtl"] .phz-data h2,
+[dir="rtl"] .phz-data h3,
+[dir="rtl"] .journey-section h1,
+[dir="rtl"] .journey-section h2 { font-family: "Phaza Arabic", var(--phz-font-display), sans-serif; }
+[dir="rtl"] .phz-data-ar { direction: rtl; text-align: inherit; }
+[dir="rtl"] .phz-data-steps li { grid-template-columns: 76px 1fr; }
+[dir="rtl"] .phz-data-table th,
+[dir="rtl"] .phz-data-table td { text-align: right; }
+[dir="rtl"] .phz-doc ul { padding-left: 0; padding-right: 20px; }
+[dir="rtl"] .phz-data-faq summary { padding: 20px 0 20px 34px; }
+[dir="rtl"] .phz-data-faq summary::after { right: auto; left: 4px; }
+[dir="rtl"] .phz-data-faq details p { padding: 0 0 24px 40px; }
+[dir="rtl"] .phz-data-shell { transform: translateX(-100%); }
+[dir="rtl"] .phz-data-shell.phz-data-in { transform: translateX(0); }
+[dir="rtl"] body.phz-data-open .phz-journey-root { transform: translateX(14vw); }
+[dir="rtl"] .phz-data-brand { left: auto; right: clamp(20px, 5vw, 56px); }
+[dir="rtl"] .phz-data-back { right: auto; left: 20px; }
+
+/* The research section reads from the centre, but the way into the note sits
+   at the edge the language runs towards: the right in English, the left in
+   Arabic. One logical rule does both. */
+.phz-cta-end {
+  align-self: flex-end;
+  margin-inline-end: clamp(0px, 6vw, 120px);
+}
+@media (max-width: 760px) {
+  .phz-cta-end { align-self: center; margin-inline-end: 0; }
+}
+
+/* ── Arabic display type ───────────────────────────────────────────────
+   Tajawal carries the body well but reads thin and quiet at headline size.
+   Readex Pro is the display companion: geometric like Poppins, with enough
+   weight to hold a screen. Arabic headlines also need a larger optical size
+   than their English counterparts to sit level with them. */
+@font-face {
+  font-family: "Phaza Arabic Display";
+  src: url(/assets/ar-readex-pro-400.woff2) format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Phaza Arabic Display";
+  src: url(/assets/ar-readex-pro-600.woff2) format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+[dir="rtl"] .journey-section h1,
+[dir="rtl"] .journey-section h2,
+[dir="rtl"] .phz-data h1,
+[dir="rtl"] .phz-data h2,
+[dir="rtl"] .phz-data-display {
+  font-family: "Phaza Arabic Display", "Phaza Arabic", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+[dir="rtl"] .journey-section h2 {
+  font-size: clamp(32px, 5.6vw, 72px) !important;
+  line-height: 1.32 !important;
+}
+[dir="rtl"] .journey-section h1 {
+  font-size: clamp(36px, 6.4vw, 82px) !important;
+  line-height: 1.26 !important;
+}
+[dir="rtl"] .phz-data h1 { font-size: clamp(34px, 5.6vw, 62px); line-height: 1.3; }
+[dir="rtl"] .phz-data h2 { font-size: clamp(24px, 3.4vw, 38px); line-height: 1.4; }
