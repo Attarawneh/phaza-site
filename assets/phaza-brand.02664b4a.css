@@ -1337,10 +1337,7 @@ body.phz-doc-open .phz-journey-root .phz-lang-toggle {
      of whatever is on screen. */
   top: clamp(92px, 15vh, 148px);
   inset-inline-start: clamp(16px, 3vw, 40px);
-  /* The rail is a sibling of the panel, not a child -- that is what keeps it
-     fixed to the viewport -- so it has to sit above the panel's own layer or
-     it is painted over and invisible. */
-  z-index: 215;
+  z-index: 3;
   width: 184px;
   max-height: calc(100vh - clamp(150px, 22vh, 230px));
   overflow: hidden;
