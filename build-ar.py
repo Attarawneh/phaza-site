@@ -31,6 +31,12 @@ DOCS = {
 }
 OUT = HERE / 'ar' / 'index.html'
 
+# While the Arabic copy is under review it is published but not indexed: a
+# reviewer can open it, a search engine cannot list it. Set to False to let
+# the Arabic site into the index.
+REVIEW = True
+NOINDEX = '<meta name="robots" content="noindex, nofollow" />'
+
 TITLE = 'فازا — ذكاء اصطناعي سيادي للحكومات والمؤسسات'
 DESC = ('فازا تبني طبقة الذكاء للحكومات والمؤسسات: سلام، نموذج لغوي كبير عربيٌّ منذ الرمز الأول، '
         'يُسلَّم مع المعرفة والبنية التحتية والتطبيقات والوكلاء منظومةً واحدة مملوكة لك.')
@@ -187,6 +193,8 @@ def build_page(bundle: str) -> None:
                           '    <meta property="og:locale" content="ar_JO" />')
     shell = shell.replace('<meta property="og:url" content="https://phaza.io/" />',
                           '<meta property="og:url" content="https://phaza.io/ar/" />')
+    if REVIEW:
+        shell = re.sub(r'<meta name="robots" content="[^"]*" />', NOINDEX, shell)
     shell = shell.replace('"inLanguage": "en"', '"inLanguage": "ar"')
     shell = re.sub(r'/assets/index-b\d+\.js', '/assets/' + bundle, shell)
     # integrity is computed for the English bundle; this page carries its own
@@ -225,7 +233,7 @@ def redirect_snippet() -> None:
     """An Arabic-speaking reader landing on the English root is sent to the
     Arabic one. ?lang=en switches that off for the visit, and the switch in the
     corner always wins -- no storage, no cookie, nothing to consent to."""
-    js = ("(function(){try{var p=location.pathname;"
+    js = ("(function(){if(1)return;try{var p=location.pathname;"
           "if(p!=='/'&&p!=='/index.html')return;"
           "if(location.search.indexOf('lang=en')>-1)return;"
           "var z=%s;"
@@ -284,6 +292,8 @@ def build_doc_pages(bundle: str) -> None:
             s = _re.sub(pat, r'\1' + d['title'] + r'\2', s)
         s = s.replace('<link rel="canonical" href="https://phaza.io/ar/" />',
                       '<link rel="canonical" href="' + url + '" />')
+        if REVIEW:
+            s = re.sub(r'<meta name="robots" content="[^"]*" />', NOINDEX, s)
         s = s.replace('<meta property="og:url" content="https://phaza.io/ar/" />',
                       '<meta property="og:url" content="' + url + '" />')
         s = _re.sub(r'\n? *<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', '', s)

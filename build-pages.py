@@ -53,6 +53,7 @@ NOTE01 = {
              'channel rather than one aggregate score — held-out sets, blind adjudication, '
              'contamination control, and what we will and will not publish.'),
     'scholarly': True,
+    'review': True,
 }
 PAGES = (DATA, PRIVACY, NOTE01)
 
@@ -168,6 +169,9 @@ def build(page: dict) -> None:
                           '<link rel="canonical" href="' + url + '" />')
     shell = shell.replace('<meta property="og:url" content="https://phaza.io/" />',
                           '<meta property="og:url" content="' + url + '" />')
+    if page.get('review'):
+        shell = re.sub(r'<meta name="robots" content="[^"]*" />',
+                       '<meta name="robots" content="noindex, nofollow" />', shell)
 
     # the homepage's entity graph describes the homepage; this page has its own
     shell = re.sub(r'<script type="application/ld\+json">.*?</script>',
