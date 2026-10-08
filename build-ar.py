@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+"""Build the Arabic site from the English one.
+
+There is one application. The Arabic site is the same bundle with its visible
+strings swapped from content/ar/journey-strings.json and a flag flipped, served
+at /ar/ with dir="rtl". Keeping it generated rather than forked means an edit to
+the journey reaches both languages, and the two can never drift into different
+products -- which is the usual fate of a translated website.
+
+    python3 build-ar.py        # after release.py has tagged the English entry
+
+Writes assets/index-ar-<tag>.js, ar/index.html, and updates the English pages'
+hreflang alternates.
+"""
+
+import json
+import pathlib
+import re
+import sys
+
+HERE = pathlib.Path(__file__).parent
+A = HERE / 'assets'
+STRINGS = HERE / 'content' / 'ar' / 'journey-strings.json'
+UI = HERE / 'content' / 'ar' / 'ui-strings.json'
+OUT = HERE / 'ar' / 'index.html'
+
+TITLE = 'فازا — ذكاء اصطناعي سيادي للحكومات والمؤسسات'
+DESC = ('فازا تبني طبقة الذكاء للحكومات والمؤسسات: سلام، نموذج لغوي كبير عربيٌّ منذ الرمز الأول، '
+        'يُسلَّم مع المعرفة والبنية التحتية والتطبيقات والوكلاء منظومةً واحدة مملوكة لك.')
+
+# Countries where the site should open in Arabic. Detection is by the reader's
+# own language preference and their time zone -- no geolocation lookup, no
+# third party, nothing stored, which keeps the privacy policy true.
+AR_ZONES = ['Asia/Amman', 'Asia/Jerusalem', 'Asia/Hebron', 'Asia/Beirut', 'Asia/Damascus',
+            'Asia/Baghdad', 'Asia/Riyadh', 'Asia/Dubai', 'Asia/Qatar', 'Asia/Bahrain',
+            'Asia/Kuwait', 'Asia/Muscat', 'Asia/Aden', 'Africa/Cairo', 'Africa/Khartoum',
+            'Africa/Tripoli', 'Africa/Tunis', 'Africa/Algiers', 'Africa/Casablanca',
+            'Africa/El_Aaiun', 'Africa/Nouakchott', 'Africa/Djibouti', 'Africa/Mogadishu',
+            'Indian/Comoro']
+
+
+def esc(text: str) -> str:
+    """Arabic into a JS string literal the bundle already quotes."""
+    return ''.join(c if ord(c) < 128 else '\\u%04x' % ord(c) for c in text)
+
+
+def entry_name() -> str:
+    m = re.search(r'/assets/(index-b\d+\.js)', (HERE / 'index.html').read_text())
+    if not m:
+        sys.exit('cannot find the English entry in index.html')
+    return m.group(1)
+
+
+def build_bundle(src_name: str) -> str:
+    js = (A / src_name).read_text()
+    table = json.loads(STRINGS.read_text())
+
+    missing = [k for k, v in table.items() if not v.strip()]
+    if missing:
+        sys.exit(f'{len(missing)} strings still untranslated, first: {missing[0][:60]}')
+
+    # A headline is often built from fragments -- "Meet " + a gradient span --
+    # so the literal in the bundle can carry the spaces that hold it together.
+    # Those spaces are preserved around the Arabic.
+    swapped, missed = 0, []
+    for en, ar in sorted(table.items(), key=lambda kv: -len(kv[0])):
+        for lead, trail in (('', ''), ('', ' '), (' ', ''), (' ', ' ')):
+            needle = '"' + lead + en + trail + '"'
+            if needle in js:
+                js = js.replace(needle, '"' + lead + esc(ar) + trail + '"')
+                swapped += 1
+                break
+        else:
+            missed.append(en)
+
+    js = js.replace('const PHZAR=false;', 'const PHZAR=true;', 1)
+    # the router owns "/" only; under /ar/ it would answer with its 404 page,
+    # so the Arabic build mounts the journey at the Arabic root instead
+    before = js.count('{path:"/"')
+    js = js.replace('{path:"/"', '{path:"/ar"', 1)
+    js = js.replace('{path:"/ar"', '{path:"/ar/"', 0)  # no-op, kept explicit
+    if before == 0:
+        sys.exit('could not find the route to move under /ar/')
+    out_name = src_name.replace('index-b', 'index-ar-b')
+    (A / out_name).write_text(js)
+    print(f'{out_name}: {swapped}/{len(table)} strings swapped')
+    if missed:
+        print('  not found in the bundle:', ', '.join(repr(m[:40]) for m in missed[:8]))
+    return out_name
+
+
+def build_widget(name: str) -> str:
+    """The contact and careers widgets are their own files, so they get their
+    own Arabic builds. Keyboard key names and header names are code and are
+    never in the table."""
+    src = A / (name + '.js')
+    js = src.read_text()
+    table = json.loads(UI.read_text())
+    swapped = 0
+    for en, ar in sorted(table.items(), key=lambda kv: -len(kv[0])):
+        hit = False
+        for q in ('"', "'", '`'):
+            if q + en + q in js:
+                js = js.replace(q + en + q, q + esc(ar) + q)
+                hit = True
+                break
+        # These widgets build their markup as HTML strings, so some copy sits
+        # between tags rather than alone inside quotes. Only text that is
+        # bounded by tags is swapped -- replacing a bare word anywhere in the
+        # file once turned a property name into Arabic and broke the parse.
+        if not hit:
+            pat = re.compile(r'(?<=>)(\s*)' + re.escape(en) + r'(\s*)(?=<)')
+            if pat.search(js):
+                js = pat.sub(lambda m: m.group(1) + esc(ar) + m.group(2), js)
+                hit = True
+        swapped += hit
+    out = name + '-ar.js'
+    (A / out).write_text(js)
+    print(f'{out}: {swapped} strings swapped')
+    return out
+
+
+def crawler_copy() -> str:
+    """Arabic prose for readers without JavaScript, and for a crawler deciding
+    what this page is about."""
+    return """<header><h1>فازا — ذكاء اصطناعي سيادي للحكومات</h1>
+<p>تبني فازا طبقة الذكاء للحكومات: سلام، نموذج لغوي سيادي عربيٌّ منذ الرمز الأول، يُسلَّم مع المعرفة والبنية التحتية والتطبيقات والوكلاء منظومةً واحدة مملوكة. مبنيّ عبر الإمارات والأردن لأمم تخطّط لعقود قادمة.</p></header>
+<main>
+<section><h2>تعرّف على سلام — النموذج اللغوي السيادي</h2>
+<p>سلام يقرأ ويستدلّ ويتكلّم العربية منذ الرمز الأول. مزيج خبراء متناثر، مُدرَّب من الصفر دون أي أساس مفتوح المصدر، على 125 إلى 1000 مليار رمز مُخلّص الحقوق، والعربية والإنجليزية نِدّان. ليس تحسيناً لنموذج جاهز، ولا غلافاً فوق نموذج غيرك. الأوزان تنتقل مع الصفقة: مملوكة لك، لا مستأجرة منك.</p>
+<ul>
+<li>سلام نانو (v1): 48 خبيراً، 7.8 مليار معامل، 125 مليار رمز تدريب — الصياغة والترجمة وأعمال اللغة اليومية.</li>
+<li>سلام كور (v2): 96 خبيراً، 14.4 مليار معامل، 250 مليار رمز تدريب — إجابات مؤصَّلة بسجلاتك وقوانينك.</li>
+<li>سلام برو (v4): 192 خبيراً، 27.6 مليار معامل، 500 مليار رمز تدريب — تحليل متعدد الخطوات عبر الوزارات والبيانات.</li>
+<li>سلام ماكس (v8): 384 خبيراً، 54 مليار معامل، 1000 مليار رمز تدريب — عمل حكومي شامل بعمق احترافي.</li>
+<li>سلام الوطني (v16): 224 خبيراً، كلٌّ منها أعمق مرتين، 150 مليار معامل، أكثر من 20 تريليون رمز تدريب — ذكاء أمة بأكمله داخل أسوارها، على هيكل سيادي واحد.</li>
+</ul></section>
+<section><h2>مُدرَّب على أمّتك</h2>
+<p>اللغة والقانون والتراث والعلم والسجل العام — مُخلّصة الحقوق وقابلة للتدقيق. حزم المعرفة من الدول الشريكة مُرخَّصة، لا منهوبة من الشبكة.</p>
+<p>والمسار نفسه يزوّد غيرنا ببيانات عربية: <a href="/arabic-data-for-ai/">مجموعات بيانات عربية لتدريب الذكاء الاصطناعي وتقييمه</a> — نصوصاً وأصواتاً وبيانات متعددة الوسائط، تُجمع دولةً دولة من الأردن إلى الشام والخليج ووادي النيل والمغرب العربي.</p></section>
+<section><h2>يعمل حيث تقول أنت</h2>
+<p>معزول تماماً على أرض وطنية، أو على سحابة سيادية داخل حدودك. لا استدلال يغادر النطاق، ولا شيء يتصل بالخارج. يُشترى مرة، ويُملك تماماً.</p></section>
+<section><h2>ثمانية وكلاء، وإجابة واحدة مسؤولة</h2>
+<p>أطلس يخطّط المدينة. فلو يحرّكها. غريد يمدّها بالطاقة. تيرا تحمي بيئتها. سيفيك يخدم ناسها. بروسبر ينمّي اقتصادها. سنتينل يحفظ أمنها. وفازا ون يجيب عنهم جميعاً.</p></section>
+<section><h2>تواصل</h2>
+<p>تعمل فازا من الإمارات العربية المتحدة والأردن. استخدم نموذج تواصل فازا في هذه الصفحة للاستفسارات التقنية والعروض، أو راسلنا على support@phaza.io.</p></section>
+</main>"""
+
+
+def build_page(bundle: str) -> None:
+    shell = (HERE / 'index.html').read_text()
+    shell = shell.replace('<html lang="en">', '<html lang="ar" dir="rtl">', 1)
+    shell = re.sub(r'<title>.*?</title>', '<title>' + TITLE + '</title>', shell, flags=re.S)
+    for pat in (r'(<meta name="description" content=")[^"]*(")',
+                r'(<meta property="og:description" content=")[^"]*(")',
+                r'(<meta name="twitter:description" content=")[^"]*(")'):
+        shell = re.sub(pat, r'\1' + DESC + r'\2', shell)
+    for pat in (r'(<meta property="og:title" content=")[^"]*(")',
+                r'(<meta name="twitter:title" content=")[^"]*(")'):
+        shell = re.sub(pat, r'\1' + TITLE + r'\2', shell)
+    shell = shell.replace('<link rel="canonical" href="https://phaza.io/" />',
+                          '<link rel="canonical" href="https://phaza.io/ar/" />\n'
+                          '    <meta property="og:locale" content="ar_JO" />')
+    shell = shell.replace('<meta property="og:url" content="https://phaza.io/" />',
+                          '<meta property="og:url" content="https://phaza.io/ar/" />')
+    shell = shell.replace('"inLanguage": "en"', '"inLanguage": "ar"')
+    shell = re.sub(r'/assets/index-b\d+\.js', '/assets/' + bundle, shell)
+    # integrity is computed for the English bundle; this page carries its own
+    shell = re.sub(r'<script type="module" crossorigin integrity="[^"]*"', '<script type="module" crossorigin', shell)
+    shell = shell.replace('<script src="/assets/phaza-lang.js"></script>\n    ', '')
+    for widget in ('phaza-connect', 'phaza-careers'):
+        shell = re.sub(r'/assets/' + widget + r'(?:\.[a-f0-9]+)?\.js', '/assets/' + build_widget(widget), shell)
+
+    start = shell.index('<div id="root">')
+    end = shell.index('</body>', start)
+    tail = shell[shell.rindex('</div>', start, end):end]
+    shell = (shell[:start] + '<div id="root"><!-- نسخة ثابتة للزواحف وللقراءة بلا جافاسكربت. -->\n'
+             + crawler_copy() + tail + shell[end:])
+
+    OUT.parent.mkdir(exist_ok=True)
+    OUT.write_text(shell)
+    print(f'ar/index.html written ({len(shell):,} bytes)')
+
+
+def alternates() -> None:
+    """Each language points at the other, both point at themselves, and the
+    root tells a search engine which to show where."""
+    links = ('    <link rel="alternate" hreflang="en" href="https://phaza.io/" />\n'
+             '    <link rel="alternate" hreflang="ar" href="https://phaza.io/ar/" />\n'
+             '    <link rel="alternate" hreflang="x-default" href="https://phaza.io/" />\n')
+    for f in ('index.html', 'ar/index.html'):
+        p = HERE / f
+        s = p.read_text()
+        s = re.sub(r'\n? *<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', '', s)
+        s = s.replace('    <link rel="canonical"', links + '    <link rel="canonical"', 1)
+        p.write_text(s)
+    print('hreflang alternates set on both roots')
+
+
+def redirect_snippet() -> None:
+    """An Arabic-speaking reader landing on the English root is sent to the
+    Arabic one. ?lang=en switches that off for the visit, and the switch in the
+    corner always wins -- no storage, no cookie, nothing to consent to."""
+    js = ("(function(){try{var p=location.pathname;"
+          "if(p!=='/'&&p!=='/index.html')return;"
+          "if(location.search.indexOf('lang=en')>-1)return;"
+          "var z=%s;"
+          "var l=(navigator.languages||[navigator.language||'']).join(',');"
+          "var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){}"
+          "if(/\\bar\\b|^ar|,ar/.test(l)||z.indexOf(tz)>-1){location.replace('/ar/')}"
+          "}catch(e){}})();" % json.dumps(AR_ZONES))
+    (A / 'phaza-lang.js').write_text(
+        '/* Opens the site in Arabic for readers in the Arabic-speaking world.\n'
+        '   Decided from the browser\'s own language list and time zone -- no\n'
+        '   geolocation service, no cookie, nothing written to the device, so the\n'
+        '   privacy policy stays true. ?lang=en opts out for the visit, and the\n'
+        '   switch in the corner of the second screen always wins. */\n' + js + '\n')
+    p = HERE / 'index.html'
+    s = p.read_text()
+    if 'phaza-lang' not in s:
+        s = s.replace('<script type="module" src="/assets/phaza-boot',
+                      '<script src="/assets/phaza-lang.js"></script>\n'
+                      '    <script type="module" src="/assets/phaza-boot', 1)
+        p.write_text(s)
+    print('language redirect written')
+
+
+if __name__ == '__main__':
+    redirect_snippet()
+    build_page(build_bundle(entry_name()))
+    alternates()
