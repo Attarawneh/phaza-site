@@ -16,6 +16,9 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Evaluating Arabic Language Models — Phaza Technical Note 01" />
     <meta name="twitter:description" content="How Phaza evaluates Arabic models: testing by country, variety, register, domain and channel rather than one aggregate score — held-out sets, blind adjudication, contamination control, and what we will and will not publish." />
+    <link rel="alternate" hreflang="en" href="https://phaza.io/" />
+    <link rel="alternate" hreflang="ar" href="https://phaza.io/ar/" />
+    <link rel="alternate" hreflang="x-default" href="https://phaza.io/" />
     <link rel="canonical" href="https://phaza.io/arabic-ai-evaluation/" />
     <meta property="og:url" content="https://phaza.io/arabic-ai-evaluation/" />
     <script type="application/ld+json">
@@ -77,11 +80,12 @@
 </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <script src="/assets/phaza-lang.js"></script>
     <script type="module" src="/assets/phaza-boot.fca65d89.js"></script>
-    <script type="module" crossorigin integrity="sha384-5FaXEZ2fT9oLFQJ9JJBC2htbEgatU0laM+kBomvXEnBhnc7gMiXonNiwGVaPxmWX" src="/assets/index-b136.js"></script>
+    <script type="module" crossorigin integrity="sha384-7rflvsn9De/OQg4XILH5P3WJMRZtivwUFjJF5XJ+VQOOvTIXTzzSXpw6d/w6y5AW" src="/assets/index-b140.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/cjs-helpers-CqkleIqs.js">
     <link rel="stylesheet" crossorigin integrity="sha384-BeG4Vv0or8HOqlHXcXO08WyNONs/t/+KlHxD7OWUJOtDcB1pC/sqPKmJO2HIzpIo" href="/assets/index-391a40ef.css">
-    <link rel="stylesheet" href="/assets/phaza-brand.de282604.css" />
+    <link rel="stylesheet" href="/assets/phaza-brand.733fd932.css" />
     <style>
       /* Phaza mark inside the hero orb: fades in once the orb's genesis
          reveal has finished (intro: brand out ~3.9s, orb 4.8–9.8s), so it
@@ -235,7 +239,49 @@
   <p class="phz-doc-updated">Published 8 October 2026 · Version 1.0</p>
 </header>
 
-<section class="phz-data-band">
+<section class="phz-data-band phz-pubs" id="ptn01-index">
+  <p class="phz-data-kicker">Phaza publications</p>
+  <h2>The series</h2>
+  <p class="phz-data-intro">
+    Phaza publishes numbered technical notes. Each one is dated, versioned and citable, and each
+    states its method before its findings. Model releases and their evaluation results appear here
+    as notes in the same series, under the rules set out in this one.
+  </p>
+  <ol class="phz-pubs-list">
+    <li class="phz-pubs-current">
+      <span class="phz-pubs-id">PTN-01</span>
+      <div>
+        <h3>Evaluating Arabic language models</h3>
+        <p>How Phaza tests Arabic systems, and what it will and will not publish as a result.</p>
+      </div>
+      <span class="phz-pubs-meta">v1.0 · 8 October 2026 · you are here</span>
+    </li>
+    <li class="phz-pubs-next">
+      <span class="phz-pubs-id">Next</span>
+      <div>
+        <h3>Salam model notes</h3>
+        <p>Each released rung will carry its own note: configuration, training data provenance,
+        per-cell results against the protocol above, known weaknesses, and the conditions the
+        measurements were taken under.</p>
+      </div>
+      <span class="phz-pubs-meta">in preparation</span>
+    </li>
+  </ol>
+  <p class="phz-data-kicker" style="margin-top:34px">In this note</p>
+  <ul class="phz-pubs-toc">
+    <li><a href="#ptn01-summary">Summary</a></li>
+    <li><a href="#ptn01-aggregate">What an aggregate score hides</a></li>
+    <li><a href="#ptn01-matrix">The evaluation matrix</a></li>
+    <li><a href="#ptn01-tasks">Task families</a></li>
+    <li><a href="#ptn01-sets">How test sets are built</a></li>
+    <li><a href="#ptn01-runs">How runs are conducted</a></li>
+    <li><a href="#ptn01-publish">What we publish, and what we will not</a></li>
+    <li><a href="#ptn01-limits">Limitations</a></li>
+    <li><a href="#ptn01-cite">Citation and versions</a></li>
+  </ul>
+</section>
+
+<section class="phz-data-band" id="ptn01-summary">
   <h2>Summary</h2>
   <p>
     Arabic is not one language problem. It is a formal written standard used across twenty-two
@@ -251,7 +297,7 @@
   </p>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-aggregate">
   <h2>What an aggregate score hides</h2>
   <p>
     Four properties of Arabic break the assumption that one score describes capability:
@@ -280,7 +326,7 @@
   </ul>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-matrix">
   <h2>The evaluation matrix</h2>
   <p>
     Every Phaza evaluation is specified along the same five axes used to specify a dataset, so a
@@ -300,7 +346,7 @@
   </p>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-tasks">
   <h2>Task families</h2>
   <ul>
     <li><strong>Comprehension and reasoning</strong> — questions whose answers are verifiable, in the variety and domain being tested.</li>
@@ -313,7 +359,7 @@
   </ul>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-sets">
   <h2>How test sets are built</h2>
   <h3>Held out, and kept out</h3>
   <p>
@@ -344,7 +390,7 @@
   </p>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-runs">
   <h2>How runs are conducted</h2>
   <ul>
     <li><strong>One protocol per comparison.</strong> Every model in a comparison is run by us, under the same prompts, the same decoding settings, the same context limits and the same scoring code. We do not place our numbers next to numbers published by someone else under unknown conditions.</li>
@@ -355,7 +401,7 @@
   </ul>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-publish">
   <h2>What we publish, and what we will not</h2>
   <p>
     When Phaza publishes a result for Salam or for any other system, it will carry: the checkpoint
@@ -377,7 +423,7 @@
   </p>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-limits">
   <h2>Limitations of this note</h2>
   <ul>
     <li>It describes Phaza's own practice. It is not a standard, and we do not claim it as one.</li>
@@ -387,7 +433,7 @@
   </ul>
 </section>
 
-<section class="phz-data-band">
+<section class="phz-data-band" id="ptn01-cite">
   <h2>Citation and versions</h2>
   <p>
     Cite as: <em>Phaza (2026). Evaluating Arabic language models. Phaza Technical Note 01,
