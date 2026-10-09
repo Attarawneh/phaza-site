@@ -21,8 +21,8 @@
     full_name: { label: '\u0627\u0633\u0645\u0643', type: 'text', required: true, autocomplete: 'name' },
     email: { label: '\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a', type: 'email', required: true, autocomplete: 'email' },
     phone: { label: '\u0627\u0644\u0647\u0627\u062a\u0641', type: 'tel', required: true, autocomplete: 'tel', hint: '\u0645\u0639 \u0631\u0645\u0632 \u0627\u0644\u062f\u0648\u0644\u0629 \u2014 \u200e+962 \u2026' },
-    linkedin_url: { label: 'LinkedIn', type: 'text', required: false, autocomplete: 'url', hint: 'linkedin.com/in/you (optional)' },
-    instagram_url: { label: 'Instagram', type: 'text', required: false, autocomplete: 'url', hint: '@yourhandle (optional)' },
+    linkedin_url: { label: '\u0644\u064a\u0646\u0643\u062f\u0625\u0646', type: 'text', required: false, autocomplete: 'url', hint: 'linkedin.com/in/you (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)' },
+    instagram_url: { label: '\u0625\u0646\u0633\u062a\u063a\u0631\u0627\u0645', type: 'text', required: false, autocomplete: 'url', hint: '@yourhandle (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)' },
   };
 
   let lastFocus = null;
@@ -137,45 +137,44 @@
         <h2 class="pz-title" id="pzc-title">\u0627\u0646\u0636\u0645\u0651 \u0625\u0644\u0649 \u0627\u0644\u0641\u0631\u064a\u0642</h2>
 
         <div class="pzc-step" data-step="pick">
-          <p class="pz-sub">Send your CV. We read it on the spot and show you honestly where you fit.</p>
-          <div class="pz-drop" role="button" tabindex="0" aria-label="Upload your CV">
+          <p class="pz-sub">\u0623\u0631\u0633\u0644 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629. \u0646\u0642\u0631\u0623\u0647\u0627 \u0641\u0648\u0631 \u0648\u0635\u0648\u0644\u0647\u0627\u060c \u0648\u0646\u0628\u064a\u0651\u0646 \u0644\u0643 \u0628\u0635\u0631\u0627\u062d\u0629 \u0623\u064a\u0646 \u062a\u0646\u0627\u0633\u0628\u0643.</p>
+          <div class="pz-drop" role="button" tabindex="0" aria-label="\u0623\u0631\u0641\u0650\u0642 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629">
             <b>\u0627\u062e\u062a\u0631 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629</b> \u0623\u0648 \u0623\u0641\u0644\u062a\u0647\u0627 \u0647\u0646\u0627
-            <small>PDF or Word — any reasonable size</small>
+            <small>PDF \u0623\u0648 Word \u2014 \u0628\u062d\u062c\u0645 \u0645\u0639\u0642\u0648\u0644</small>
           </div>
           <input type="file" accept="${ACCEPT}" hidden />
           <p class="pz-err" role="alert" hidden></p>
         </div>
 
         <div class="pzc-step" data-step="reading" hidden>
-          <div class="pz-reading">Reading your CV…</div>
+          <div class="pz-reading">\u0646\u0642\u0631\u0623 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629\u2026</div>
         </div>
 
         <div class="pzc-step" data-step="result" hidden>
           <p class="pz-sub pzc-verdict"></p>
           <div class="pzc-bars"></div>
           <p class="pz-err" role="alert" hidden></p>
-          <button class="pz-send pzc-proceed" type="button">I&rsquo;d like to proceed</button>
+          <button class="pz-send pzc-proceed" type="button">\u0623\u0631\u063a\u0628 \u0641\u064a \u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629</button>
           <button class="pzc-decline" type="button">\u0644\u064a\u0633 \u0627\u0644\u0622\u0646</button>
         </div>
 
         <form class="pzc-step pz-form" data-step="details" hidden novalidate>
-          <p class="pz-sub">A few things your CV didn&rsquo;t carry, to complete your file:</p>
+          <p class="pz-sub">\u0623\u0645\u0648\u0631 \u0644\u0645 \u062a\u0631\u062f \u0641\u064a \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629\u060c \u0644\u0627\u0633\u062a\u0643\u0645\u0627\u0644 \u0645\u0644\u0641\u0643:</p>
           <div class="pzc-fields"></div>
           <div class="pzc-uploads"></div>
           <label class="pzc-consent">
             <input type="checkbox" name="scout_consent" value="1" />
-            <span>I approve Phaza researching my public professional presence and social
-            activity through its channels as part of evaluating my application.</span>
+            <span>\u0623\u0648\u0627\u0641\u0642 \u0639\u0644\u0649 \u0623\u0646 \u062a\u0637\u0651\u0644\u0639 \u0641\u0627\u0632\u0627 \u0639\u0644\u0649 \u062d\u0636\u0648\u0631\u064a \u0627\u0644\u0645\u0647\u0646\u064a \u0627\u0644\u0639\u0627\u0645 \u0648\u0646\u0634\u0627\u0637\u064a \u0639\u0644\u0649 \u0627\u0644\u0645\u0646\u0635\u0627\u062a \u0627\u0644\u0639\u0627\u0645\u0629 \u0639\u0628\u0631 \u0642\u0646\u0648\u0627\u062a\u0647\u0627\u060c \u0636\u0645\u0646 \u062a\u0642\u064a\u064a\u0645 \u0637\u0644\u0628\u064a.</span>
           </label>
           <p class="pz-err" role="alert" hidden></p>
           <button class="pz-send" type="submit">\u0623\u0643\u0645\u0644 \u0637\u0644\u0628\u064a</button>
-          <p class="pz-note">Goes straight to the hiring team at careers@phaza.io.</p>
+          <p class="pz-note">\u062a\u0635\u0644 \u0645\u0628\u0627\u0634\u0631\u0629 \u0625\u0644\u0649 \u0641\u0631\u064a\u0642 \u0627\u0644\u062a\u0648\u0638\u064a\u0641 \u0639\u0644\u0649 careers@phaza.io.</p>
         </form>
 
         <div class="pzc-step pz-done" data-step="done" hidden>
           <h3 class="pz-title pzc-done-title">\u0634\u0643\u0631\u0627\u064b \u0644\u0643.</h3>
-          <p class="pz-sub pzc-done-sub">Your application is with the team. We reply to the address you gave.</p>
-          <button class="pz-send pz-close2" type="button">Close</button>
+          <p class="pz-sub pzc-done-sub">\u0648\u0635\u0644 \u0637\u0644\u0628\u0643 \u0625\u0644\u0649 \u0627\u0644\u0641\u0631\u064a\u0642\u060c \u0648\u0633\u064a\u0635\u0644\u0643 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0630\u064a \u0623\u062f\u062e\u0644\u062a\u0647.</p>
+          <button class="pz-send pz-close2" type="button">\u0625\u063a\u0644\u0627\u0642</button>
         </div>
       </div>`;
 
@@ -217,10 +216,10 @@
     /* The analysis wears its intelligence: a breathing orb and a line that
        tells the truth about what is happening, phrase by phrase. */
     const AI_LINES = [
-      'Reading your experience…',
-      'Mapping your skills to Phaza\u2019s functions…',
-      'Weighing the evidence…',
-      'Writing the honest answer…',
+      '\u0646\u0642\u0631\u0623 \u062e\u0628\u0631\u062a\u0643\u2026',
+      '\u0646\u0637\u0627\u0628\u0642 \u0645\u0647\u0627\u0631\u0627\u062a\u0643 \u0645\u0639 \u0648\u0638\u0627\u0626\u0641 \u0641\u0627\u0632\u0627\u2026',
+      '\u0646\u0632\u0650\u0646 \u0627\u0644\u0623\u062f\u0644\u0629\u2026',
+      '\u0646\u0643\u062a\u0628 \u0627\u0644\u062c\u0648\u0627\u0628 \u0627\u0644\u0635\u0631\u064a\u062d\u2026',
     ];
     const aiShow = () => {
       show('reading');
@@ -239,11 +238,11 @@
     const inspect = async (picked) => {
       if (!picked) return;
       if (picked.size > MAX_MB * 1024 * 1024) {
-        errAt('pick', `That file is over ${MAX_MB}MB — a CV should travel lighter.`);
+        errAt('pick', `\u062d\u062c\u0645 \u0627\u0644\u0645\u0644\u0641 \u064a\u062a\u062c\u0627\u0648\u0632 ${MAX_MB} \u0645\u064a\u063a\u0627\u0628\u0627\u064a\u062a \u2014 \u064a\u064f\u0641\u062a\u0631\u0636 \u0623\u0646 \u062a\u0643\u0648\u0646 \u0627\u0644\u0633\u064a\u0631\u0629 \u0627\u0644\u0630\u0627\u062a\u064a\u0629 \u0623\u062e\u0641\u0651 \u0645\u0646 \u0630\u0644\u0643.`);
         return;
       }
       show('reading');
-      dlg.querySelector('.pz-reading').textContent = 'Reading your CV…';
+      dlg.querySelector('.pz-reading').textContent = '\u0646\u0642\u0631\u0623 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629\u2026';
       try {
         const body = new FormData();
         body.append('cv', picked, picked.name);
@@ -258,7 +257,7 @@
         analyze();
       } catch {
         show('pick');
-        errAt('pick', 'The connection dropped mid-upload — check your network and try again, or email careers@phaza.io.');
+        errAt('pick', '\u0627\u0646\u0642\u0637\u0639 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u0631\u0641\u0639 \u2014 \u062a\u062d\u0642\u0651\u0642 \u0645\u0646 \u0634\u0628\u0643\u062a\u0643 \u0648\u0623\u0639\u062f \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629\u060c \u0623\u0648 \u0631\u0627\u0633\u0644\u0646\u0627 \u0639\u0644\u0649 careers@phaza.io.');
       }
     };
 
@@ -277,7 +276,7 @@
         poll(0);
       } catch {
         show('pick');
-        errAt('pick', 'The connection dropped — try again, or email careers@phaza.io.');
+        errAt('pick', '\u0627\u0646\u0642\u0637\u0639 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u2014 \u0623\u0639\u062f \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629\u060c \u0623\u0648 \u0631\u0627\u0633\u0644\u0646\u0627 \u0639\u0644\u0649 careers@phaza.io.');
       }
     };
 
@@ -292,7 +291,7 @@
         if (d.state === 'screened') { missing = d.missing || []; showResult(d); return; }
         if (d.state === 'not_cv') {
           show('pick');
-          errAt('pick', 'That file does not read as a CV — send the document that tells your work story.');
+          errAt('pick', '\u0647\u0630\u0627 \u0627\u0644\u0645\u0644\u0641 \u0644\u0627 \u064a\u0628\u062f\u0648 \u0633\u064a\u0631\u0629 \u0630\u0627\u062a\u064a\u0629 \u2014 \u0623\u0631\u0633\u0644 \u0627\u0644\u0648\u062b\u064a\u0642\u0629 \u0627\u0644\u062a\u064a \u062a\u0631\u0648\u064a \u0645\u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0645\u0647\u0646\u064a\u0629.');
           return;
         }
         // One sour answer is a hiccup, not a verdict — only three in a row
@@ -309,18 +308,18 @@
 
     const showResult = (d) => {
       aiStop();
-      dlg.querySelector('#pzc-title').textContent = firstName ? `Welcome, ${firstName}.` : '\u0623\u0647\u0644\u0627\u064b \u0628\u0643.';
+      dlg.querySelector('#pzc-title').textContent = firstName ? `\u0623\u0647\u0644\u064b\u0627 ${firstName}.` : '\u0623\u0647\u0644\u0627\u064b \u0628\u0643.';
       const verdict = dlg.querySelector('.pzc-verdict');
       const bars = dlg.querySelector('.pzc-bars');
       if (!d) {
-        verdict.textContent = 'Your CV is in — the deeper read finishes on our side. Complete your file and the team takes it from there.';
+        verdict.textContent = '\u0648\u0635\u0644\u062a \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629 \u2014 \u0648\u062a\u0643\u062a\u0645\u0644 \u0627\u0644\u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0645\u0639\u0645\u0651\u0642\u0629 \u0644\u062f\u064a\u0646\u0627. \u0623\u0643\u0645\u0644 \u0645\u0644\u0641\u0651\u0643 \u0648\u064a\u062a\u0648\u0644\u0651\u0649 \u0627\u0644\u0641\u0631\u064a\u0642 \u0627\u0644\u0628\u0627\u0642\u064a.';
         bars.innerHTML = '';
         if (!missing.length) missing = ['full_name', 'email', 'phone', 'linkedin_url'];
       } else {
         verdict.innerHTML = {
-          strong: 'A <b>\u062a\u0637\u0627\u0628\u0642 \u0642\u0648\u064a</b>. Your experience lines up closely with work we are hiring for:',
-          promising: 'A <b>\u062a\u0637\u0627\u0628\u0642 \u0648\u0627\u0639\u062f</b>. Parts of your experience line up well with:',
-          early: 'An <b>early-stage match</b> today — the closest areas to your experience:',
+          strong: '<b>\u062a\u0637\u0627\u0628\u0642 \u0642\u0648\u064a</b>. \u062e\u0628\u0631\u062a\u0643 \u0642\u0631\u064a\u0628\u0629 \u062c\u062f\u064b\u0627 \u0645\u0646 \u0648\u0638\u0627\u0626\u0641 \u0646\u0648\u0638\u0651\u0641 \u0644\u0647\u0627 \u062d\u0627\u0644\u064a\u064b\u0627:',
+          promising: '<b>\u062a\u0637\u0627\u0628\u0642 \u0648\u0627\u0639\u062f</b>. \u0623\u062c\u0632\u0627\u0621 \u0645\u0646 \u062e\u0628\u0631\u062a\u0643 \u062a\u062a\u0648\u0627\u0641\u0642 \u0645\u0639:',
+          early: '<b>\u062a\u0637\u0627\u0628\u0642 \u0645\u0628\u062f\u0626\u064a</b> \u0627\u0644\u064a\u0648\u0645 \u2014 \u0623\u0642\u0631\u0628 \u0627\u0644\u0645\u062c\u0627\u0644\u0627\u062a \u0625\u0644\u0649 \u062e\u0628\u0631\u062a\u0643:',
         }[d.band];
         bars.innerHTML = (d.top || []).map((t) => `
           <div class="pzc-bar">
@@ -375,7 +374,7 @@
       dlg.querySelector('.pz-reading').textContent = 'Noted…';
       try { await post('cv-complete', { token, proceed: false }); } catch { /* their choice stands regardless */ }
       dlg.querySelector('.pzc-done-title').textContent = '\u0645\u0641\u0647\u0648\u0645.';
-      dlg.querySelector('.pzc-done-sub').textContent = 'Your CV stays with us — if the fit strengthens, we know where to find you.';
+      dlg.querySelector('.pzc-done-sub').textContent = '\u062a\u0628\u0642\u0649 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629 \u0644\u062f\u064a\u0646\u0627 \u2014 \u0648\u0625\u0646 \u062a\u0639\u0632\u0651\u0632 \u0627\u0644\u062a\u0637\u0627\u0628\u0642 \u0644\u0627\u062d\u0642\u064b\u0627\u060c \u0646\u0639\u0631\u0641 \u0623\u064a\u0646 \u0646\u062c\u062f\u0643.';
       show('done');
     });
 
@@ -398,13 +397,13 @@
       if (form.querySelector('[name=scout_consent]').checked) body.append('scout_consent', '1');
 
       show('reading');
-      dlg.querySelector('.pz-reading').textContent = 'Completing your application…';
+      dlg.querySelector('.pz-reading').textContent = '\u0646\u0643\u0645\u0644 \u0637\u0644\u0628\u0643\u2026';
       try {
         const { r, d } = await post('cv-complete', body, true);
         if (r.status === 410) {
           token = null;
           show('pick');
-          errAt('pick', d.error || 'That took a while — please choose your file again.');
+          errAt('pick', d.error || '\u0627\u0633\u062a\u063a\u0631\u0642 \u0630\u0644\u0643 \u0648\u0642\u062a\u064b\u0627 \u0637\u0648\u064a\u0644\u064b\u0627 \u2014 \u064a\u0631\u062c\u0649 \u0627\u062e\u062a\u064a\u0627\u0631 \u0645\u0644\u0641\u0651\u0643 \u0645\u0646 \u062c\u062f\u064a\u062f.');
           return;
         }
         if (!r.ok) {
@@ -416,7 +415,7 @@
         dlg.querySelector('.pz-close2').focus();
       } catch {
         buildDetails();
-        errAt('details', 'The connection dropped — your file is still with us, press complete again.');
+        errAt('details', '\u0627\u0646\u0642\u0637\u0639 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u2014 \u0645\u0644\u0641\u0651\u0643 \u0645\u0627 \u064a\u0632\u0627\u0644 \u0644\u062f\u064a\u0646\u0627\u060c \u0627\u0636\u063a\u0637 \u00ab\u0625\u0643\u0645\u0627\u0644\u00bb \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.');
       }
     };
 
@@ -460,13 +459,13 @@
 
   /* When the server gives no words, the status code still has some. */
   const statusWords = (status) => ({
-    413: `That file is too large for the network to carry — the ceiling is ${MAX_MB}MB.`,
-    403: 'This form only works from phaza.io itself — open the live site and try there.',
-    422: 'That file type is not one we can read — send a PDF or Word document.',
-    429: 'A lot of tries in a short time — give it a minute and try again.',
+    413: `\u0627\u0644\u0645\u0644\u0641 \u0623\u0643\u0628\u0631 \u0645\u0646 \u0623\u0646 \u062a\u062d\u0645\u0644\u0647 \u0627\u0644\u0634\u0628\u0643\u0629 \u2014 \u0627\u0644\u062d\u062f\u0651 \u0627\u0644\u0623\u0639\u0644\u0649 ${MAX_MB} \u0645\u064a\u063a\u0627\u0628\u0627\u064a\u062a.`,
+    403: '\u0647\u0630\u0627 \u0627\u0644\u0646\u0645\u0648\u0630\u062c \u064a\u0639\u0645\u0644 \u0645\u0646 \u0645\u0648\u0642\u0639 phaza.io \u0646\u0641\u0633\u0647 \u0641\u0642\u0637 \u2014 \u0627\u0641\u062a\u062d \u0627\u0644\u0645\u0648\u0642\u0639 \u0627\u0644\u0645\u0628\u0627\u0634\u0631 \u0648\u062d\u0627\u0648\u0644 \u0647\u0646\u0627\u0643.',
+    422: '\u0644\u0627 \u064a\u0645\u0643\u0646\u0646\u0627 \u0642\u0631\u0627\u0621\u0629 \u0647\u0630\u0627 \u0627\u0644\u0646\u0648\u0639 \u0645\u0646 \u0627\u0644\u0645\u0644\u0641\u0627\u062a \u2014 \u0623\u0631\u0633\u0644 \u0645\u0644\u0641 PDF \u0623\u0648 Word.',
+    429: '\u0645\u062d\u0627\u0648\u0644\u0627\u062a \u0643\u062b\u064a\u0631\u0629 \u0641\u064a \u0648\u0642\u062a \u0642\u0635\u064a\u0631 \u2014 \u0627\u0646\u062a\u0638\u0631 \u062f\u0642\u064a\u0642\u0629 \u062b\u0645 \u0623\u0639\u062f \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629.',
   })[status] || (status >= 500
-    ? 'The careers desk hit a snag on our side — try again in a minute, or email careers@phaza.io.'
-    : `That did not go through (HTTP ${status || 'network error'}). Try once more, or email careers@phaza.io.`);
+    ? '\u0648\u0627\u062c\u0647 \u0645\u0643\u062a\u0628 \u0627\u0644\u062a\u0648\u0638\u064a\u0641 \u0639\u0637\u0644\u064b\u0627 \u0644\u062f\u064a\u0646\u0627 \u2014 \u0623\u0639\u062f \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0628\u0639\u062f \u062f\u0642\u064a\u0642\u0629\u060c \u0623\u0648 \u0631\u0627\u0633\u0644\u0646\u0627 \u0639\u0644\u0649 careers@phaza.io.'
+    : `\u0644\u0645 \u064a\u0643\u062a\u0645\u0644 \u0627\u0644\u0625\u0631\u0633\u0627\u0644 (HTTP ${status || 'network error'}). \u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649\u060c \u0623\u0648 \u0631\u0627\u0633\u0644\u0646\u0627 \u0639\u0644\u0649 careers@phaza.io.`);
 
   const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -510,7 +509,7 @@
       box.className = 'pz-drop pz-drop-inline';
       box.setAttribute('role', 'button');
       box.setAttribute('tabindex', '0');
-      box.setAttribute('aria-label', 'Upload your CV');
+      box.setAttribute('aria-label', '\u0623\u0631\u0641\u0650\u0642 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629');
       box.innerHTML = '<b>\u0627\u062e\u062a\u0631 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629</b> \u0623\u0648 \u0623\u0641\u0644\u062a\u0647\u0627 \u0647\u0646\u0627<small>PDF \u0623\u0648 Word \u2014 \u062a\u064f\u0642\u0631\u0623 \u0644\u062d\u0638\u0629 \u0648\u0635\u0648\u0644\u0647\u0627</small>';
 
       /* Straight to the file browser — no intermediate popup. The dialog
@@ -564,7 +563,7 @@
     if (!connect || connect.querySelector('.pzc-cross')) return;
     const line = document.createElement('p');
     line.className = 'pz-note pzc-cross';
-    line.innerHTML = 'Joining the team instead? <a href="#" data-phaza-careers style="color:#00CDFF">Upload your CV</a>.';
+    line.innerHTML = 'Joining the team instead? <a href="#" data-phaza-careers style="color:#00CDFF">\u0623\u0631\u0641\u0650\u0642 \u0633\u064a\u0631\u062a\u0643 \u0627\u0644\u0630\u0627\u062a\u064a\u0629</a>.';
     connect.appendChild(line);
   }).observe(document.body, { childList: true });
 })();

@@ -27,9 +27,9 @@ const RE_VOWEL = /[aeiouyàáâäãåèéêëìíîïòóôöõùúûüæøœы�
 
 const SENSE_MSG = {
   code: 'Please write in plain language rather than code. Salam reads every message that reaches us — give it something to read.',
-  links: 'That is a lot of links. Please describe your enquiry in your own words.',
-  repeat: 'This message repeats itself. Please say it once, in your own words — Salam reads it all.',
-  duplicate: 'You have already sent this. Salam read it the first time; add only what is new.',
+  links: '\u0639\u062f\u062f \u0627\u0644\u0631\u0648\u0627\u0628\u0637 \u0643\u0628\u064a\u0631. \u064a\u0631\u062c\u0649 \u0648\u0635\u0641 \u0627\u0633\u062a\u0641\u0633\u0627\u0631\u0643 \u0628\u0643\u0644\u0645\u0627\u062a\u0643.',
+  repeat: '\u0627\u0644\u0646\u0635 \u0645\u0643\u0631\u0631. \u0627\u0643\u062a\u0628\u0647 \u0645\u0631\u0629 \u0648\u0627\u062d\u062f\u0629 \u0628\u0643\u0644\u0645\u0627\u062a\u0643 \u2014 \u0633\u0644\u0627\u0645 \u064a\u0642\u0631\u0623\u0647 \u0643\u0627\u0645\u0644\u0627\u064b.',
+  duplicate: '\u0633\u0628\u0642 \u0623\u0646 \u0623\u0631\u0633\u0644\u062a \u0647\u0630\u0647 \u0627\u0644\u0631\u0633\u0627\u0644\u0629\u061b \u0642\u0631\u0623\u0647\u0627 \u0633\u0644\u0627\u0645 \u0641\u064a \u0627\u0644\u0645\u0631\u0629 \u0627\u0644\u0623\u0648\u0644\u0649\u060c \u0641\u0623\u0636\u0641 \u0627\u0644\u062c\u062f\u064a\u062f \u0641\u0642\u0637.',
   gibberish: 'That does not read as language. Salam reads every message that reaches us — please write a sentence, in whichever language you prefer.',
 };
 
@@ -99,7 +99,7 @@ const FIELDS = [
       : !RE_EMAIL.test(v) ? '\u0647\u0630\u0627 \u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u063a\u064a\u0631 \u0635\u0627\u0644\u062d.'
       : v.length > 120 ? '\u0647\u0630\u0627 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0637\u0648\u064a\u0644 \u0623\u0643\u062b\u0631 \u0645\u0646 \u0627\u0644\u0644\u0627\u0632\u0645.' : '' },
   { n: 'message', l: '\u0645\u0627 \u0627\u0644\u0630\u064a \u062a\u0648\u062f\u0651 \u0623\u0646 \u0646\u063a\u0637\u0651\u064a\u0647\u061f', t: 'area', max: 2000, optional: true,
-    check: (v) => v.length > 2000 ? 'Please keep this under 2000 characters.'
+    check: (v) => v.length > 2000 ? '\u064a\u0631\u062c\u0649 \u0623\u0644\u0651\u0627 \u064a\u062a\u062c\u0627\u0648\u0632 \u0627\u0644\u0646\u0635 2000 \u062d\u0631\u0641.'
       : senseCheck(v, false) },
 ];
 
@@ -133,7 +133,7 @@ function build() {
     <div class="pz-panel">
       <button class="pz-x" type="button" aria-label="\u0625\u063a\u0644\u0627\u0642">&times;</button>
       <p class="pz-kicker">\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627</p>
-      <h2 class="pz-title" id="pz-title">Phaza Connect</h2>
+      <h2 class="pz-title" id="pz-title">\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0641\u0627\u0632\u0627</h2>
       <p class="pz-sub">\u0623\u0633\u0626\u0644\u0629 \u062a\u0642\u0646\u064a\u0629 \u0623\u0648 \u0639\u0631\u0636 \u0639\u0645\u0644\u064a \u2014 \u0646\u0645\u0648\u0630\u062c \u0648\u0627\u062d\u062f\u060c \u064a\u062c\u064a\u0628 \u0639\u0646\u0647 \u0627\u0644\u0641\u0631\u064a\u0642 \u0645\u0628\u0627\u0634\u0631\u0629.</p>
       <form class="pz-form" novalidate>
         <div class="pz-row">
@@ -145,13 +145,13 @@ function build() {
         ${FIELDS.map(field).join('')}
         <input type="text" name="company_website" class="pz-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <p class="pz-err" role="alert" hidden></p>
-        <button class="pz-send" type="submit">Send</button>
-        <p class="pz-note">Sent straight to the Phaza team. We reply to the address you give.</p>
+        <button class="pz-send" type="submit">\u0625\u0631\u0633\u0627\u0644</button>
+        <p class="pz-note">\u062a\u0635\u0644 \u0631\u0633\u0627\u0644\u062a\u0643 \u0625\u0644\u0649 \u0641\u0631\u064a\u0642 \u0641\u0627\u0632\u0627 \u0645\u0628\u0627\u0634\u0631\u0629\u060c \u0648\u0646\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0630\u064a \u062a\u0632\u0648\u0651\u062f\u0646\u0627 \u0628\u0647.</p>
       </form>
       <div class="pz-done" hidden>
         <h3 class="pz-title">\u0634\u0643\u0631\u0627\u064b \u0644\u0643.</h3>
-        <p class="pz-sub">Your message is with the team. Expect a reply to the address you gave.</p>
-        <button class="pz-send pz-close2" type="button">Close</button>
+        <p class="pz-sub">\u0648\u0635\u0644\u062a \u0631\u0633\u0627\u0644\u062a\u0643 \u0625\u0644\u0649 \u0627\u0644\u0641\u0631\u064a\u0642\u060c \u0648\u0633\u064a\u0635\u0644\u0643 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0630\u064a \u0623\u062f\u062e\u0644\u062a\u0647.</p>
+        <button class="pz-send pz-close2" type="button">\u0625\u063a\u0644\u0627\u0642</button>
       </div>
     </div>`;
 
@@ -214,7 +214,7 @@ function build() {
     Object.keys(data).forEach((k) => { data[k] = String(data[k]).trim(); });
 
     if (!ENDPOINT) {
-      err.textContent = 'Sending is being connected right now. Please email support@phaza.io in the meantime.';
+      err.textContent = '\u062e\u062f\u0645\u0629 \u0627\u0644\u0625\u0631\u0633\u0627\u0644 \u0642\u064a\u062f \u0627\u0644\u062a\u0648\u0635\u064a\u0644 \u062d\u0627\u0644\u064a\u0627\u064b. \u064a\u0631\u062c\u0649 \u0645\u0631\u0627\u0633\u0644\u062a\u0646\u0627 \u0639\u0644\u0649 support@phaza.io \u0641\u064a \u0647\u0630\u0647 \u0627\u0644\u0623\u062b\u0646\u0627\u0621.';
       err.hidden = false;
       return;
     }
@@ -261,7 +261,7 @@ function build() {
       dlg.querySelector('.pz-done').hidden = false;
       dlg.querySelector('.pz-close2').focus();
     } catch {
-      err.textContent = 'That did not send. Please try once more, or email support@phaza.io.';
+      err.textContent = '\u062a\u0639\u0630\u0651\u0631 \u0627\u0644\u0625\u0631\u0633\u0627\u0644. \u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649\u060c \u0623\u0648 \u0631\u0627\u0633\u0644\u0646\u0627 \u0639\u0644\u0649 support@phaza.io.';
       err.hidden = false; send.disabled = false; send.textContent = '\u0625\u0631\u0633\u0627\u0644';
     }
   });

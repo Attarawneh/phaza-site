@@ -126,24 +126,24 @@ def build_widget(name: str) -> str:
     src = A / (name + '.js')
     js = src.read_text()
     table = json.loads(UI.read_text())
+    # Every strategy runs for every string: the same words appear as a quoted
+    # literal in one place, as markup text in another and as an aria-label in a
+    # third, and stopping at the first match left the other two in English.
     swapped = 0
     for en, ar in sorted(table.items(), key=lambda kv: -len(kv[0])):
-        hit = False
+        before = js
         for q in ('"', "'", '`'):
-            if q + en + q in js:
-                js = js.replace(q + en + q, q + esc(ar) + q)
-                hit = True
-                break
-        # These widgets build their markup as HTML strings, so some copy sits
-        # between tags rather than alone inside quotes. Only text that is
-        # bounded by tags is swapped -- replacing a bare word anywhere in the
-        # file once turned a property name into Arabic and broke the parse.
-        if not hit:
-            pat = re.compile(r'(?<=>)(\s*)' + re.escape(en) + r'(\s*)(?=<)')
-            if pat.search(js):
-                js = pat.sub(lambda m: m.group(1) + esc(ar) + m.group(2), js)
-                hit = True
-        swapped += hit
+            js = js.replace(q + en + q, q + esc(ar) + q)
+        # Markup text is wrapped across lines in the templates, so the words
+        # are matched with any whitespace between them, not a literal run.
+        flex = r'\s+'.join(re.escape(w) for w in en.split())
+        js = re.sub(r'(?<=>)(\s*)' + flex + r'(\s*)(?=<)',
+                    lambda m: m.group(1) + esc(ar) + m.group(2), js)
+        js = re.sub(r'((?:aria-label|title|placeholder|alt)=")' + re.escape(en) + r'(")',
+                    lambda m: m.group(1) + esc(ar) + m.group(2), js)
+        if js != before:
+            swapped += 1
+
     out = name + '-ar.js'
     (A / out).write_text(js)
     print(f'{out}: {swapped} strings swapped')
