@@ -103,6 +103,16 @@ def build_bundle(src_name: str) -> str:
                         'location.pathname.indexOf("/ar/%s")===0' % seg)
     js = js.replace('history.replaceState(null,"","/")', 'history.replaceState(null,"","/ar/")')
 
+    # Every href the app writes for its own documents has to point at the
+    # Arabic copy, or a middle-click — or a handler that does not intercept —
+    # drops an Arabic reader onto the English page.
+    rebased = 0
+    for seg in ('arabic-data-for-ai', 'privacy', 'arabic-ai-evaluation'):
+        for pat in ('href:"/%s/"' % seg, ',"/%s/"]' % seg):
+            rebased += js.count(pat)
+            js = js.replace(pat, pat.replace('"/%s/"' % seg, '"/ar/%s/"' % seg))
+    print(f'  document hrefs rebased under /ar/: {rebased}')
+
     js = js.replace('const PHZAR=false;', 'const PHZAR=true;', 1)
     # the router owns "/" only; under /ar/ it would answer with its 404 page,
     # so the Arabic build mounts the journey at the Arabic root instead
