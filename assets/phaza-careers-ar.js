@@ -20,7 +20,7 @@
   const ASK = {
     full_name: { label: '\u0627\u0633\u0645\u0643', type: 'text', required: true, autocomplete: 'name' },
     email: { label: '\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a', type: 'email', required: true, autocomplete: 'email' },
-    phone: { label: '\u0627\u0644\u0647\u0627\u062a\u0641', type: 'tel', required: true, autocomplete: 'tel', hint: '\u0645\u0639 \u0631\u0645\u0632 \u0627\u0644\u062f\u0648\u0644\u0629 \u2014 \u200e+962 \u2026' },
+    phone: { label: '\u0627\u0644\u0647\u0627\u062a\u0641', type: 'tel', required: true, autocomplete: 'tel', hint: '\u0645\u0639 \u0631\u0645\u0632 \u0627\u0644\u062f\u0648\u0644\u0629\u060c \u0645\u062b\u0644 \u200e+962 \u2026' },
     linkedin_url: { label: '\u0644\u064a\u0646\u0643\u062f\u0625\u0646', type: 'text', required: false, autocomplete: 'url', hint: 'linkedin.com/in/you (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)' },
     instagram_url: { label: '\u0625\u0646\u0633\u062a\u063a\u0631\u0627\u0645', type: 'text', required: false, autocomplete: 'url', hint: '@yourhandle (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)' },
   };
