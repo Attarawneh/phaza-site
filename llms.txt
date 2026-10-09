@@ -9,7 +9,7 @@
 ## The model
 
 Salam (peace in Arabic) is a sparse mixture-of-experts LLM, Arabic and
-English as equals, trained on 125B to 1T rights-cleared tokens:
+English as equals, trained on 125B to 1T Phaza-built tokens:
 
 - Salam Nano (v1) — 48 experts · 1.4B active of 7.8B parameters · 125B tokens
 - Salam Core (v2) — 96 experts · 1.4B active of 14.4B parameters · 250B tokens
@@ -33,8 +33,8 @@ external inference, nothing calls home.
 
 ## Arabic data
 
-The pipeline that trains Salam also supplies Arabic data to others: rights-cleared text,
-speech, video and document data, collected and labelled in-region, plus human-reviewed
+The pipeline that trains Salam also supplies Arabic data to others: text, speech,
+video and document data Phaza builds and licenses, collected and labelled in-region, plus human-reviewed
 evaluation sets. Coverage runs country by country from Jordan across the Levant, Gulf,
 Nile and Maghreb, including code-switching. https://phaza.io/arabic-data-for-ai/
 
