@@ -21,6 +21,7 @@ SLOTS = {
     'PHZDATAHTML': HERE / 'content' / 'phaza-data-page.html',
     'PHZPRIVHTML': HERE / 'content' / 'phaza-privacy-page.html',
     'PHZEVALHTML': HERE / 'content' / 'phaza-eval-page.html',
+    'PHZRESHTML': HERE / 'content' / 'phaza-research-page.html',
 }
 
 

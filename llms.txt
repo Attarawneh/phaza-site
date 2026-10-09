@@ -40,10 +40,14 @@ Nile and Maghreb, including code-switching. https://phaza.io/arabic-data-for-ai/
 
 ## Publications
 
+Phaza publishes a numbered series of technical notes, each dated, versioned and citable,
+each stating its method before its findings. The index lists every note:
+https://phaza.io/research/
+
 Phaza Technical Note 01 — Evaluating Arabic language models (v1.0, 8 October 2026):
 how Phaza tests Arabic systems by country, variety, register, domain and channel rather
 than by one aggregate score, and what it will and will not publish as a result.
-https://phaza.io/arabic-ai-evaluation/
+https://phaza.io/research/evaluating-arabic-language-models/
 
 ## Contact
 

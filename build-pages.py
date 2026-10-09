@@ -45,8 +45,8 @@ PRIVACY = {
 }
 NOTE01 = {
     'src': HERE / 'content' / 'phaza-eval-page.html',
-    'out': HERE / 'arabic-ai-evaluation' / 'index.html',
-    'path': '/arabic-ai-evaluation/',
+    'out': HERE / 'research' / 'evaluating-arabic-language-models' / 'index.html',
+    'path': '/research/evaluating-arabic-language-models/',
     'doc': True,
     'title': 'Evaluating Arabic Language Models — Phaza Technical Note 01',
     'desc': ('How Phaza evaluates Arabic models: testing by country, variety, register, domain and '
@@ -55,7 +55,18 @@ NOTE01 = {
     'scholarly': True,
     'review': True,
 }
-PAGES = (DATA, PRIVACY, NOTE01)
+RESEARCH = {
+    'src': HERE / 'content' / 'phaza-research-page.html',
+    'out': HERE / 'research' / 'index.html',
+    'path': '/research/',
+    'doc': True,
+    'title': 'Research — Phaza Technical Notes',
+    'desc': ('Phaza publishes a numbered series of technical notes: dated, versioned and citable, '
+             'each stating its method before its findings. Model releases and their evaluation '
+             'results appear in the same series.'),
+    'review': True,
+}
+PAGES = (DATA, PRIVACY, RESEARCH, NOTE01)
 
 
 def content(page: dict) -> str:
@@ -167,6 +178,16 @@ def build(page: dict) -> None:
         shell = re.sub(pat, r'\1' + page['title'] + r'\2', shell)
     shell = shell.replace('<link rel="canonical" href="https://phaza.io/" />',
                           '<link rel="canonical" href="' + url + '" />')
+
+    # Every page inherited the root's alternates, so each English document
+    # pointed an Arabic reader at /ar/ rather than at its own Arabic copy.
+    # hreflang has to be reciprocal or it is ignored, and the Arabic side
+    # already names these URLs.
+    shell = re.sub(r'\n? *<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', '', shell)
+    alts = ('    <link rel="alternate" hreflang="en" href="https://phaza.io' + page['path'] + '" />\n'
+            '    <link rel="alternate" hreflang="ar" href="https://phaza.io/ar' + page['path'] + '" />\n'
+            '    <link rel="alternate" hreflang="x-default" href="https://phaza.io' + page['path'] + '" />\n')
+    shell = shell.replace('<link rel="canonical"', alts + '    <link rel="canonical"', 1)
     shell = shell.replace('<meta property="og:url" content="https://phaza.io/" />',
                           '<meta property="og:url" content="' + url + '" />')
     if page.get('review'):
@@ -189,7 +210,7 @@ def build(page: dict) -> None:
             '<main class="' + cls + '">\n' + content(page) + '\n</main>')
     shell = shell[:start] + body + tail + shell[end:]
 
-    page['out'].parent.mkdir(exist_ok=True)
+    page['out'].parent.mkdir(parents=True, exist_ok=True)
     page['out'].write_text(shell)
     print(f"wrote {page['out'].relative_to(HERE)} ({len(shell):,} bytes, "
           f"{len(faq_schema(page))} FAQ entries)")

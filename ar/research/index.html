@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-src 'none'; manifest-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://tiles.openfreemap.org https://server.arcgisonline.com; connect-src 'self' blob: data: https://portal.phaza.io https://tiles.openfreemap.org https://server.arcgisonline.com https://cloudflareinsights.com; worker-src 'self' blob:; child-src 'self' blob:; upgrade-insecure-requests" />
+    <meta name="phaza-contact-endpoint" content="https://portal.phaza.io/phaza-connect" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>الأبحاث — المذكرات التقنية من فازا</title>
+    <meta name="description" content="تنشر فازا سلسلة مرقّمة من المذكرات التقنية: مؤرّخة ومرقّمة الإصدار وقابلة للاقتباس، تعرض كل منها منهجها قبل نتائجها. وتُنشر إصدارات النماذج ونتائج تقييمها ضمن السلسلة نفسها." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta property="og:title" content="الأبحاث — المذكرات التقنية من فازا" />
+    <meta property="og:description" content="تنشر فازا سلسلة مرقّمة من المذكرات التقنية: مؤرّخة ومرقّمة الإصدار وقابلة للاقتباس، تعرض كل منها منهجها قبل نتائجها. وتُنشر إصدارات النماذج ونتائج تقييمها ضمن السلسلة نفسها." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://phaza.io/brand/share-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="الأبحاث — المذكرات التقنية من فازا" />
+    <meta name="twitter:description" content="تنشر فازا سلسلة مرقّمة من المذكرات التقنية: مؤرّخة ومرقّمة الإصدار وقابلة للاقتباس، تعرض كل منها منهجها قبل نتائجها. وتُنشر إصدارات النماذج ونتائج تقييمها ضمن السلسلة نفسها." />
+    <link rel="alternate" hreflang="en" href="https://phaza.io/research/" />
+    <link rel="alternate" hreflang="ar" href="https://phaza.io/ar/research/" />
+    <link rel="canonical" href="https://phaza.io/ar/research/" />
+    <meta property="og:locale" content="ar_JO" />
+    <meta property="og:url" content="https://phaza.io/ar/research/" />
+    <script type="application/ld+json">
+{
+      "@context": "https://schema.org",
+      "@graph": [
+            {
+                  "@type": "Organization",
+                  "@id": "https://phaza.io/#org",
+                  "name": "Phaza",
+                  "legalName": "Phaza",
+                  "foundingDate": "2024-04-05",
+                  "url": "https://phaza.io/",
+                  "logo": {
+                        "@type": "ImageObject",
+                        "@id": "https://phaza.io/#logo",
+                        "url": "https://phaza.io/brand/phaza-logo-square.png",
+                        "contentUrl": "https://phaza.io/brand/phaza-logo-square.png",
+                        "width": 256,
+                        "height": 256,
+                        "caption": "Phaza"
+                  },
+                  "image": {
+                        "@id": "https://phaza.io/#logo"
+                  },
+                  "slogan": "The intelligence layer for governments and enterprises.",
+                  "description": "Phaza builds sovereign AI for governments and enterprises: Salam, an Arabic-first large language model trained from scratch with no open-source base, delivered with knowledge, infrastructure, applications and agents as one owned stack.",
+                  "telephone": "+962 79 303 0900",
+                  "email": "support@phaza.io",
+                  "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "Housing Bank Complex, Queen Noor Street, Shmeisani",
+                        "addressLocality": "Amman",
+                        "addressCountry": "JO"
+                  },
+                  "founder": {
+                        "@id": "https://phaza.io/#amer"
+                  },
+                  "sameAs": [
+                        "https://www.linkedin.com/company/phazanetwork",
+                        "https://www.instagram.com/phaza.ai/",
+                        "https://www.facebook.com/Phazaaai"
+                  ],
+                  "knowsAbout": [
+                        "Sovereign artificial intelligence",
+                        "Arabic large language models",
+                        "Government technology",
+                        "Air-gapped AI infrastructure",
+                        "Geospatial intelligence",
+                        "AI agents for public administration",
+                        "Digital twins of cities"
+                  ],
+                  "areaServed": [
+                        {
+                              "@type": "Country",
+                              "name": "United Arab Emirates"
+                        },
+                        {
+                              "@type": "Country",
+                              "name": "Jordan"
+                        },
+                        {
+                              "@type": "Place",
+                              "name": "Middle East and North Africa"
+                        }
+                  ],
+                  "contactPoint": [
+                        {
+                              "@type": "ContactPoint",
+                              "contactType": "sales",
+                              "email": "support@phaza.io",
+                              "availableLanguage": [
+                                    "English",
+                                    "Arabic"
+                              ],
+                              "areaServed": [
+                                    "AE",
+                                    "JO"
+                              ],
+                              "telephone": "+962 79 303 0900"
+                        },
+                        {
+                              "@type": "ContactPoint",
+                              "contactType": "human resources",
+                              "email": "careers@phaza.io",
+                              "availableLanguage": [
+                                    "English",
+                                    "Arabic"
+                              ]
+                        },
+                        {
+                              "@type": "ContactPoint",
+                              "contactType": "public relations",
+                              "email": "social@phaza.io",
+                              "availableLanguage": [
+                                    "English",
+                                    "Arabic"
+                              ]
+                        }
+                  ],
+                  "location": [
+                        {
+                              "@type": "Place",
+                              "address": {
+                                    "@type": "PostalAddress",
+                                    "addressCountry": "AE"
+                              }
+                        },
+                        {
+                              "@type": "Place",
+                              "address": {
+                                    "@type": "PostalAddress",
+                                    "addressCountry": "JO"
+                              }
+                        }
+                  ],
+                  "makesOffer": {
+                        "@type": "Offer",
+                        "itemOffered": {
+                              "@id": "https://phaza.io/#salam"
+                        }
+                  }
+            },
+            {
+                  "@type": "Person",
+                  "@id": "https://phaza.io/#amer",
+                  "name": "Amer Tarawneh",
+                  "jobTitle": "Chief Executive Officer",
+                  "worksFor": {
+                        "@id": "https://phaza.io/#org"
+                  }
+            },
+            {
+                  "@type": "WebSite",
+                  "@id": "https://phaza.io/#website",
+                  "url": "https://phaza.io/",
+                  "name": "Phaza",
+                  "description": "Phaza builds sovereign AI for governments and enterprises: Salam, an Arabic-first large language model trained from scratch with no open-source base, delivered with knowledge, infrastructure, applications and agents as one owned stack.",
+                  "publisher": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "inLanguage": "ar"
+            },
+            {
+                  "@type": "WebPage",
+                  "@id": "https://phaza.io/#webpage",
+                  "url": "https://phaza.io/",
+                  "name": "Phaza — Sovereign AI for Governments and Enterprises",
+                  "isPartOf": {
+                        "@id": "https://phaza.io/#website"
+                  },
+                  "about": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "primaryImageOfPage": {
+                        "@id": "https://phaza.io/#logo"
+                  },
+                  "inLanguage": "ar"
+            },
+            {
+                  "@type": "Product",
+                  "@id": "https://phaza.io/#salam",
+                  "name": "Salam",
+                  "brand": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "description": "Salam is a sovereign Arabic-first large language model for governments. Sparse mixture-of-experts, trained from scratch on 125B to 1T tokens of content Phaza built itself, with no open-source base. The weights transfer to the buying institution: owned outright, air-gapped or in-country cloud, nothing calls home.",
+                  "offers": [
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Nano (v1)",
+                              "description": "48 experts, 1.4B active of 7.8B parameters, 125B training tokens. Drafting, translation and everyday language work."
+                        },
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Core (v2)",
+                              "description": "96 experts, 1.4B active of 14.4B parameters, 250B training tokens. Answers grounded in your own records and law."
+                        },
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Pro (v4)",
+                              "description": "192 experts, 1.7B active of 27.6B parameters, 500B training tokens. Multi-step analysis across ministries and data."
+                        },
+                        {
+                              "@type": "Offer",
+                              "name": "Salam Max (v8)",
+                              "description": "384 experts, 1.7B active of 54B parameters, 1T training tokens. Whole-of-government work at professional depth."
+                        },
+                        {
+                              "@type": "Offer",
+                              "name": "Salam National (v16)",
+                              "description": "224 experts, each twice as deep, 10B active of 150B parameters, 20T+ training tokens. A nation's whole intelligence — running inside its own walls, on a single sovereign chassis."
+                        }
+                  ],
+                  "manufacturer": {
+                        "@id": "https://phaza.io/#org"
+                  },
+                  "category": "Large language model"
+            },
+            {
+                  "@type": "FAQPage",
+                  "mainEntity": [
+                        {
+                              "@type": "Question",
+                              "name": "What is Salam?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Salam (peace in Arabic) is Phaza's sovereign large language model for governments and enterprises: Arabic-first, sparse mixture-of-experts, trained from scratch with no open-source base on content Phaza built itself. It is sold with its weights, so the nation owns the model outright."
+                              }
+                        },
+                        {
+                              "@type": "Question",
+                              "name": "How is Salam different from other sovereign AI offers?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Most sovereign-AI offers are a rented model running in a local data centre. Salam is trained from zero and the weights transfer with the deal: air-gapped or in-country cloud, no external inference, nothing calls home."
+                              }
+                        },
+                        {
+                              "@type": "Question",
+                              "name": "What does a government receive with Salam?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Five layers as one stack: the Salam LLM, national knowledge packages, air-gapped or sovereign-cloud infrastructure, the application layer, and ready-to-deploy AI agents for planning, mobility, energy, environment, services, economy and safety."
+                              }
+                        },
+                        {
+                              "@type": "Question",
+                              "name": "Where does Phaza operate?",
+                              "acceptedAnswer": {
+                                    "@type": "Answer",
+                                    "text": "Phaza operates across the United Arab Emirates and Jordan, serving governments and enterprises in the MENA region and beyond."
+                              }
+                        }
+                  ],
+                  "@id": "https://phaza.io/#faq",
+                  "isPartOf": {
+                        "@id": "https://phaza.io/#webpage"
+                  },
+                  "about": {
+                        "@id": "https://phaza.io/#org"
+                  }
+            }
+      ]
+}
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <script type="module" src="/assets/phaza-boot.fca65d89.js"></script>
+    <script type="module" crossorigin src="/assets/index-ar-b175.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/cjs-helpers-CqkleIqs.js">
+    <link rel="stylesheet" crossorigin integrity="sha384-BeG4Vv0or8HOqlHXcXO08WyNONs/t/+KlHxD7OWUJOtDcB1pC/sqPKmJO2HIzpIo" href="/assets/index-391a40ef.css">
+    <link rel="stylesheet" href="/assets/phaza-brand.faa900ef.css" />
+    <style>
+      /* Phaza mark inside the hero orb: fades in once the orb's genesis
+         reveal has finished (intro: brand out ~3.9s, orb 4.8–9.8s), so it
+         never fights the opening logo lockup. Pseudo-element on the section
+         keeps it outside React's tree and scrolls away with the hero. */
+      #opening::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: clamp(44px, 9vmin, 76px);
+        height: clamp(44px, 9vmin, 76px);
+        transform: translate(-50%, -50%);
+        background: url('/brand/phaza-icon.svg') center / contain no-repeat;
+        opacity: 0;
+        /* Translucent: the mark sits INSIDE the orb, so the particles must
+           read through it rather than being masked by a solid glyph. */
+        mix-blend-mode: screen;
+        filter: drop-shadow(0 0 18px rgba(120, 180, 255, 0.35));
+        animation: phaza-orb-icon-in 1.6s ease-out 3.6s forwards;
+        pointer-events: none;
+      }
+      @keyframes phaza-orb-icon-in { to { opacity: 0.4; } }
+
+      /* ── opening cover ────────────────────────────────────────────────
+         Painted by the document itself so it is on screen before the bundle,
+         the stylesheet or any image has arrived. It hides the static copy in
+         #root -- which exists for crawlers -- until React has replaced it, so
+         the first thing anyone sees is the mark and not a wall of unstyled
+         prose. assets/phaza-boot.js takes it away on mount; the failsafe
+         animation below takes it away if that script never runs. */
+      #phz-boot {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #04070d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(40px, 7vmin, 62px);
+        opacity: 1;
+        transition: opacity .7s ease;
+        animation: phz-boot-failsafe .9s ease 10s forwards;
+      }
+      #phz-boot.phz-boot-out { opacity: 0; pointer-events: none; }
+      @keyframes phz-boot-failsafe { to { opacity: 0; visibility: hidden; } }
+
+      /* The aura the orb will occupy, breathing under the mark. */
+      #phz-boot::before {
+        content: '';
+        position: absolute;
+        width: min(64vmin, 460px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle,
+          rgba(0, 240, 255, .11) 0%,
+          rgba(105, 108, 255, .055) 52%,
+          rgba(138, 43, 226, 0) 72%);
+        animation: phz-boot-breathe 3.6s ease-in-out infinite;
+        pointer-events: none;
+      }
+      @keyframes phz-boot-breathe {
+        0%, 100% { transform: scale(1);    opacity: .85; }
+        50%      { transform: scale(1.06); opacity: 1; }
+      }
+
+      .phz-boot-mark {
+        position: relative;
+        width: clamp(58px, 12vmin, 100px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+      }
+      /* The halo, in the signature ramp: a conic sweep punched hollow, turning
+         once every two and a half seconds. Same language as the core the page
+         opens into. */
+      .phz-boot-mark::after {
+        content: '';
+        position: absolute;
+        inset: -42%;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg,
+          #00F0FF, #00CDFF, #21A0FF, #696CFF, #8A2BE2, #696CFF, #21A0FF, #00CDFF, #00F0FF);
+        -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+                mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+        filter: drop-shadow(0 0 12px rgba(33, 160, 255, .5));
+        animation: phz-boot-spin 2.6s linear infinite;
+      }
+      @keyframes phz-boot-spin { to { transform: rotate(1turn); } }
+      .phz-boot-mark svg { width: 62%; height: 62%; display: block; }
+
+      /* A hairline with the ramp travelling across it. Indeterminate on
+         purpose -- there is no honest percentage to report. */
+      .phz-boot-track {
+        position: relative;
+        width: clamp(118px, 22vmin, 186px);
+        height: 1px;
+        background: rgba(255, 255, 255, .09);
+        overflow: hidden;
+      }
+      .phz-boot-track i {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, #00CDFF 35%, #696CFF 65%, transparent);
+        transform: translateX(-100%);
+        animation: phz-boot-sweep 1.5s cubic-bezier(.4, 0, .2, 1) infinite;
+      }
+      @keyframes phz-boot-sweep { to { transform: translateX(100%); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        #phz-boot::before,
+        .phz-boot-mark::after,
+        .phz-boot-track i { animation: none; }
+        .phz-boot-track i { transform: none; opacity: .5; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #opening::after { animation: none; opacity: 0.4; }
+      }
+    </style>
+    <link rel="stylesheet" href="/assets/phaza-connect.7a14684b.css" />
+    <script type="module" src="/assets/phaza-connect-ar.js"></script>
+    <script type="module" src="/assets/phaza-careers-ar.js?v=8"></script>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="phzSignature" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00F0FF"/><stop offset=".25" stop-color="#00CDFF"/><stop offset=".5" stop-color="#21A0FF"/><stop offset=".75" stop-color="#696CFF"/><stop offset="1" stop-color="#8A2BE2"/></linearGradient></defs></svg>
+<div id="phz-boot" aria-hidden="true">
+  <div class="phz-boot-mark">
+    <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <defs><linearGradient id="phzBootRamp" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#00F0FF"/><stop offset=".25" stop-color="#00CDFF"/>
+        <stop offset=".5" stop-color="#21A0FF"/><stop offset=".75" stop-color="#696CFF"/>
+        <stop offset="1" stop-color="#8A2BE2"/></linearGradient></defs>
+      <path d="M48 37 H 89 A 12.5 12.5 0 0 1 89 62 H 56 L 26 91 L 42 43 Q 43 37 48 37 Z" fill="url(#phzBootRamp)" transform="translate(64 64) scale(1.18) translate(-64 -64)"/>
+    </svg>
+  </div>
+  <div class="phz-boot-track"><i></i></div>
+</div>
+<div id="root"><!-- نسخة ثابتة للزواحف وللقراءة بلا جافاسكربت. -->
+<main class="phz-data phz-doc">
+<header class="phz-data-hero">
+  <p class="phz-data-kicker">منشورات فازا</p>
+  <h1>الأبحاث</h1>
+  <p class="phz-data-lede">
+    تنشر فازا سلسلة مرقّمة من المذكرات التقنية. تحمل كل مذكرة تاريخًا ورقم إصدار وصيغة واضحة
+    للاقتباس، وتعرض منهجها قبل نتائجها. وتُنشر إصدارات النماذج ونتائج تقييمها ضمن السلسلة نفسها.
+  </p>
+</header>
+
+<section class="phz-data-band phz-pubs" id="res-notes">
+  <p class="phz-data-kicker">السلسلة</p>
+  <h2>المذكرات التقنية</h2>
+  <ol class="phz-pubs-list">
+    <li>
+      <span class="phz-pubs-id">PTN-01</span>
+      <div>
+        <h3><a href="/ar/research/evaluating-arabic-language-models/">تقييم النماذج اللغوية العربية</a></h3>
+        <p>كيف تختبر فازا الأنظمة العربية — بحسب الدولة والنمط والسجل اللغوي والمجال والقناة، لا
+        برقم مجمّع واحد — وما الذي تنشره وما الذي لا تنشره من نتائج.</p>
+      </div>
+      <span class="phz-pubs-meta">الإصدار 1.0 · 8 أكتوبر 2026</span>
+    </li>
+    <li class="phz-pubs-next">
+      <span class="phz-pubs-id">التالي</span>
+      <div>
+        <h3>مذكرات نماذج سلام</h3>
+        <p>لكل مستوى يُطلَق مذكّرته الخاصة: تكوينه، ومصدر بيانات تدريبه وحقوقها، ونتائجه في كل
+        خلية من خلايا بروتوكول PTN-01، ونقاط ضعفه المعروفة، والظروف التي أُخذت فيها القياسات.</p>
+      </div>
+      <span class="phz-pubs-meta">قيد الإعداد</span>
+    </li>
+  </ol>
+</section>
+
+<section class="phz-data-band" id="res-rules">
+  <p class="phz-data-kicker">كيف تعمل السلسلة</p>
+  <h2>ماذا يعني الرقم على مذكّرة من فازا</h2>
+  <div class="phz-data-grid phz-data-grid-4">
+    <article class="phz-data-card">
+      <span class="phz-data-num">01</span>
+      <h3>مرقّمة، لا مؤرّخة فقط</h3>
+      <p>المذكرات هي PTN-01 وPTN-02 وما بعدها، بترتيب النشر الأول. ولا يُعاد استخدام رقم ولا
+      يُسحب.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">02</span>
+      <h3>إصدارات على العنوان نفسه</h3>
+      <p>تحتفظ المذكّرة بعنوانها عبر إصداراتها. والتعديلات الجوهرية ترفع رقم الإصدار وتُدرَج في
+      سجل التغييرات داخل المذكّرة.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">03</span>
+      <h3>تُستبدل ولا تُحذف</h3>
+      <p>تبقى الإصدارات السابقة متاحة على عنوان خاص بكل إصدار، فيظل الاقتباس الذي كُتب العام
+      الماضي يشير إلى النص الذي اقتُبس منه.</p>
+    </article>
+    <article class="phz-data-card">
+      <span class="phz-data-num">04</span>
+      <h3>المنهج قبل النتائج</h3>
+      <p>تذكر المذكّرة كيف قيس الشيء قبل أن تذكر ما قيس. والنتائج التي لا يسبقها بروتوكول منشور
+      لا تصدر بوصفها مذكّرة.</p>
+    </article>
+  </div>
+  <p class="phz-data-foot">
+    صيغة الاقتباس: فازا (السنة). العنوان. مذكرة فازا التقنية NN، الإصدار N.N، مع عنوان المذكّرة.
+    وتُرسل المراسلات بشأن أي مذكّرة إلى <a href="mailto:support@phaza.io">support@phaza.io</a>.
+  </p>
+  <div class="phz-doc-foot">
+    <a href="/ar/">الصفحة الرئيسية</a>
+    <a href="/ar/arabic-data-for-ai/">البيانات العربية</a>
+    <a href="/ar/privacy/">الخصوصية</a>
+    <a href="mailto:support@phaza.io">support@phaza.io</a>
+  </div>
+</section>
+</main></div>
+  </body>
+</html>

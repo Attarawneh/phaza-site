@@ -28,6 +28,7 @@ DOCS = {
     'PHZDATAHTML': HERE / 'content' / 'ar' / 'phaza-data-page.html',
     'PHZPRIVHTML': HERE / 'content' / 'ar' / 'phaza-privacy-page.html',
     'PHZEVALHTML': HERE / 'content' / 'ar' / 'phaza-eval-page.html',
+    'PHZRESHTML': HERE / 'content' / 'ar' / 'phaza-research-page.html',
 }
 OUT = HERE / 'ar' / 'index.html'
 
@@ -98,7 +99,8 @@ def build_bundle(src_name: str) -> str:
 
     # the deep links live under /ar/ in this build, and land back on the
     # Arabic root rather than the English one
-    for seg in ('arabic-data-for-ai', 'privacy', 'arabic-ai-evaluation'):
+    for seg in ('arabic-data-for-ai', 'privacy',
+                'research/evaluating-arabic-language-models', 'research'):
         js = js.replace('location.pathname.indexOf("/%s")===0' % seg,
                         'location.pathname.indexOf("/ar/%s")===0' % seg)
     js = js.replace('history.replaceState(null,"","/")', 'history.replaceState(null,"","/ar/")')
@@ -107,11 +109,20 @@ def build_bundle(src_name: str) -> str:
     # Arabic copy, or a middle-click — or a handler that does not intercept —
     # drops an Arabic reader onto the English page.
     rebased = 0
-    for seg in ('arabic-data-for-ai', 'privacy', 'arabic-ai-evaluation'):
+    for seg in ('arabic-data-for-ai', 'privacy', 'research',
+                'research/evaluating-arabic-language-models'):
         for pat in ('href:"/%s/"' % seg, ',"/%s/"]' % seg):
             rebased += js.count(pat)
             js = js.replace(pat, pat.replace('"/%s/"' % seg, '"/ar/%s/"' % seg))
     print(f'  document hrefs rebased under /ar/: {rebased}')
+
+    # The breadcrumb root and the panel wordmark both said "/", which sent an
+    # Arabic reader to the English home page from inside an Arabic document.
+    home = 0
+    for pat in ('crumbs:[["' + esc('فازا') + '","/"]', 'href:"/",className:"phz-data-brand"'):
+        home += js.count(pat)
+        js = js.replace(pat, pat.replace('"/"', '"/ar/"'))
+    print(f'  home links rebased under /ar/: {home}')
 
     js = js.replace('const PHZAR=false;', 'const PHZAR=true;', 1)
     # the router owns "/" only; under /ar/ it would answer with its 404 page,
@@ -275,7 +286,11 @@ AR_DOCS = [
      'desc': ('بيانات عربية مُخلَّصة الحقوق — نصوص وأصوات ووسائط متعددة — لتدريب النماذج اللغوية '
               'وتقييمها والتعرّف على الكلام، بالفصحى وبلهجات الدول من الأردن إلى الشام والخليج '
               'ووادي النيل والمغرب العربي، من المسار الذي يدرّب سلام.')},
-    {'slug': 'arabic-ai-evaluation', 'src': DOCS['PHZEVALHTML'], 'doc': True,
+    {'slug': 'research', 'src': DOCS['PHZRESHTML'], 'doc': True,
+     'title': 'الأبحاث — المذكرات التقنية من فازا',
+     'desc': ('تنشر فازا سلسلة مرقّمة من المذكرات التقنية: مؤرّخة ومرقّمة الإصدار وقابلة للاقتباس، '
+              'تعرض كل منها منهجها قبل نتائجها. وتُنشر إصدارات النماذج ونتائج تقييمها ضمن السلسلة نفسها.')},
+    {'slug': 'research/evaluating-arabic-language-models', 'src': DOCS['PHZEVALHTML'], 'doc': True,
      'title': 'تقييم النماذج اللغوية العربية — مذكّرة فازا التقنية 01',
      'desc': ('كيف تقيس فازا النماذج العربية: اختبار بحسب الدولة والنمط والسجل والمجال والقناة بدل '
               'نتيجة مجمَّعة واحدة — مجموعات محجوزة، وفصل معمّى في الخلاف، وضبط للتسرّب، وما ننشره وما لن ننشره.')},
