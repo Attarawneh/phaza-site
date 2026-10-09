@@ -1,75 +1,82 @@
-# phaza.io — deployed site
+# phaza.io
 
-This repo IS the live site: whatever is on `main` is served at **https://phaza.io**
-via GitHub Pages (custom domain via the `CNAME` file — don't delete it, or
-`.nojekyll`, or `404.html`, which is the SPA fallback).
+This repo **is** the live site. Whatever is on `main` is served at
+https://phaza.io by GitHub Pages, usually within two minutes of a push. There
+is no staging environment.
 
-Push to `main` → live in ~2 minutes. Browsers cache the JS/favicon, so
-hard-refresh (or add `?x` to the URL) when checking a deploy.
+Don't delete `CNAME` (the custom domain), `.nojekyll`, or `404.html` (the SPA
+fallback).
 
-## Where things live
+**If you are working with Claude Code, read [CLAUDE.md](CLAUDE.md)** — it has the
+pipeline, the ordering rules and the failure modes. This file is the short
+human version.
 
-- **Source of truth (design/content):** the Replit team workspace
-  *ARES Workspace → "Photo Extractor"* (the repl name is historical — it's the
-  Phaza site). Work there happens with the Replit agent; the app publishes
-  privately to photo-extractor.replit.app.
-- **This repo:** a static mirror of that build, deployed to phaza.io.
-  It was captured from the published Replit app on 2026-08-31.
+## Getting set up
 
-## Hand-patches applied ON TOP of the Replit build
+```bash
+git clone git@github.com:Attarawneh/phaza-site.git
+cd phaza-site
+python3 serve.py 8794          # http://localhost:8794/
+```
 
-These exist ONLY in this repo — they are NOT in the Replit source. If you
-re-export/re-mirror from Replit, they will be LOST unless re-applied (or,
-better, first ported into the Replit source):
+Python 3 is all you need to build. Node is only used to syntax-check edited
+JavaScript (`node --check assets/<file>.js`).
 
-1. **Phaza P mark inside the hero orb** — pure CSS in `index.html`
-   (`#opening::after` + the `phaza-orb-icon-in` keyframes in the inline
-   `<style>` block). Also: the real favicon (`favicon.svg`,
-   `apple-touch-icon.png`) and cleaned meta description replaced Replit's
-   placeholders.
-2. **Salam orb scan-wave + twinkle** — a small edit inside the minified
-   `assets/index-DtPEwAVO.js`, in the particle draw loop (search for
-   `wv=Ee?Math.max` to find it). On the Salam sections the orb dots twinkle
-   in orb cyan continuously, and a brighter band sweeps left→right every ~3s.
+## Making a change
 
-## History note
+Content lives in `content/` — English at the top level, Arabic in `content/ar/`.
+Edit the content file, never the generated `*/index.html`.
 
-The previous site (the cinematic Abu Dhabi map journey, with full source) is
-archived on the original machine under
-`Desktop/Phaza/Phaza Online/Website/` (source + build), in case anything
-needs to be recovered from it.
+Then run the pipeline **in this order** and check the result locally:
 
-## Deploy rule (learned the hard way)
+```bash
+python3 inject-pages.py
+python3 build-pages.py
+python3 release.py
+python3 build-ar.py
+python3 preflight.py
+```
 
-GitHub Pages serves `/assets/*` with `max-age=14400`, so Cloudflare can hold a
-file for four hours. **Any file whose CONTENT changes must also change NAME.**
+`release.py` must run before `build-ar.py`, and `preflight.py` must pass before
+you push — it catches the one mistake that takes the site down silently (a
+script whose integrity digest no longer matches the file, which the browser
+blocks, leaving a blank page).
 
-The entry bundle and the map chunk import each other, so they move together
-under one deploy tag (`index-b<N>.js` + `AbuDhabiMap-b<N>.js`). If only one
-moves, the CDN can serve a mismatched pair from two different deploys, React
-initialises twice, and the page goes blank with minified error #321.
+## Publishing
 
-Never delete a previously published entry filename. Old names stay as small
-self-resolving shims: they read the current entry out of a no-store fetch of
-`index.html`, so a browser holding cached HTML still lands on the current
-build. `sw.js` is a tombstone that uninstalls the pre-rebuild service worker.
+```bash
+python3 preflight.py && git push origin main
+```
 
-## Releasing
+Live in about two minutes. The HTML is cached for 10 minutes and the JavaScript
+for 4 hours, so when you check a deploy, hard-refresh or add `?x=1` to the URL —
+otherwise you will be looking at the old copy and think nothing shipped.
 
-Run `python3 release.py`, then commit and push. It moves the entry bundle and
-map chunk to a new deploy tag together, regenerates the legacy shims, and
-recomputes Subresource Integrity for the entry and stylesheet. Do not rename
-those files by hand -- that is what caused the blank-page incidents.
+## What's on the site
 
-## Hardening in place
+| URL | |
+|---|---|
+| `/` | the scrolling journey (single-page app) |
+| `/arabic-data-for-ai/` | the Salam data library |
+| `/research/` | publications index |
+| `/research/evaluating-arabic-language-models/` | Technical Note 01 |
+| `/privacy/` | privacy policy |
+| `/ar/…` | the same five in Arabic |
 
-- **CSP** (meta, in `index.html`): `default-src 'self'`, no inline scripts, no
-  `eval`, `object-src 'none'`. Allowed egress is only the map tile host and
-  ArcGIS imagery. An injected inline script is refused by the browser.
-- **Subresource Integrity** on the entry bundle and stylesheet: if anything in
-  the delivery path alters them, the browser refuses to execute.
-- **Referrer-Policy** `strict-origin-when-cross-origin`.
-- No training/pipeline status is present in the DOM or the bundle.
+Every document exists twice: as a panel inside the app, and as a static page a
+search engine can read. Both are generated from the same content file.
 
-Two things CSP cannot set from a meta tag and that need Cloudflare rules:
-`frame-ancestors` (clickjacking) and `X-Content-Type-Options: nosniff`.
+## Not live yet
+
+The Arabic site and the research pages are published but carry `noindex`, are
+absent from `sitemap.xml`, and the automatic language redirect is off. Those
+three switches are listed in [CLAUDE.md](CLAUDE.md) and are Amer's call — they
+are gated on confirming the commitments Technical Note 01 makes.
+
+## History
+
+The site was originally mirrored from a Replit build in August 2026. It is no
+longer connected to it: content, the Arabic build and the publication pipeline
+all live here now, and re-exporting from Replit would overwrite them. The
+earlier cinematic Abu Dhabi map site is archived under
+`Desktop/Phaza/Phaza Online/Website/`.
